@@ -18,7 +18,8 @@ def setup_db(app, database_path=database_path):
 	'''
 		binds a flask application and a SQLAlchemy service
 	'''
-	app.config.from_object('config')
+	app.config['SQLALCHEMY_DATABASE_URI'] = database_path
+	app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 	db.app = app
 	db.init_app(app)
 	db.create_all()
@@ -44,14 +45,21 @@ class Artist(db.Model):
 		db.session.commit()
 
 	def delete(self):
-		db.sesson.delete(self)
+		db.session.delete(self)
 		db.session.commit()
 
 	def short(self):
+
+		formatted_releases = [{"release_id": release.id, "release_name": release.name, 
+								"release_price": release.price,
+								"tracks": [{"track_name": track.name, "track_id": track.id, "track_price": track.price} for track in release.tracks]}
+								for release in self.releases]
+
 		return {
 			'id': self.id,
 			'name': self.name,
-			'country': self.country
+			'country': self.country,
+			'releases': formatted_releases
 		}
 
 
@@ -73,7 +81,7 @@ class Release(db.Model):
 
 	def delete(self):
 		db.session.delete(self)
-		db.session.commit
+		db.session.commit()
 
 	def short(self):
 
@@ -106,7 +114,7 @@ class Track(db.Model):
 
 	def delete(self):
 		db.session.delete(self)
-		db.session.commit
+		db.session.commit()
 
 	def short(self):
 		return {

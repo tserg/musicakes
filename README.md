@@ -6,6 +6,11 @@ This is an application for artists to list their music for sale, and for fans to
 
 ### Prerequisites & Installation
 
+### Testing
+
+Auth0 login URL: `https://fsndgt.au.auth0.com/authorize?audience=dev&response_type=token&client_id=k0UiQ1k69kaVYwB7Os4lep8kHQRTj1do&redirect_uri=http://127.0.0.1:5000/artists`
+
+
 ## API Reference
 
 ### Getting Started
@@ -31,6 +36,143 @@ The API will return the following error types when requests fail:
 * AuthError: [AuthError['description']]
 
 ### Endpoints
+
+#### GET /artists
+* General
+  * Gets information of all artists
+* Sample: `curl http://127.0.0.1:5000/artists`
+
+```
+{
+  "artists": [
+    {
+      "country": "UK",
+      "id": 3,
+      "name": "shampoo",
+      "releases": [
+        {
+          "release_id": 2,
+          "release_name": "Half Sick",
+          "release_price": 7,
+          "tracks": [
+            {
+              "track_id": 1,
+              "track_name": "Forgotten Now",
+              "track_price": 2
+            }
+          ]
+        },
+        {
+          "release_id": 1,
+          "release_name": "Forgotten Times 2",
+          "release_price": 10,
+          "tracks": [
+            {
+              "track_id": 3,
+              "track_name": "Again",
+              "track_price": 2
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "success": true
+}
+```
+
+#### GET /releases
+* General
+  * Gets information of all releases
+* Sample: `curl http://127.0.0.1:5000/releases`
+
+```
+{
+  "releases": [
+    {
+      "artist_id": 3,
+      "artist_name": "shampoo",
+      "id": 2,
+      "price": 7,
+      "release_name": "Half Sick",
+      "tracks": [
+        {
+          "name": "Forgotten Now",
+          "track_id": 1
+        }
+      ]
+    },
+    {
+      "artist_id": 3,
+      "artist_name": "shampoo",
+      "id": 1,
+      "price": 10,
+      "release_name": "Forgotten Times 2",
+      "tracks": [
+        {
+          "name": "Again",
+          "track_id": 3
+        },
+        {
+          "name": "Before",
+          "track_id": 5
+        }
+      ]
+    }
+  ],
+  "success": true
+}
+```
+
+#### GET /tracks
+* General
+  * Gets information of all tracks
+* Sample: `curl http://127.0.0.1:5000/tracks`
+
+```
+{
+  "success": true,
+  "tracks": [
+    {
+      "artist_id": 3,
+      "artist_name": "shampoo",
+      "id": 1,
+      "price": 2,
+      "release_id": 2,
+      "release_name": "Half Sick",
+      "track_name": "Forgotten Now"
+    },
+    {
+      "artist_id": 1,
+      "artist_name": "Tsergggy",
+      "id": 2,
+      "price": 1,
+      "release_id": 3,
+      "release_name": "Test",
+      "track_name": "End Of An Era"
+    },
+    {
+      "artist_id": 3,
+      "artist_name": "shampoo",
+      "id": 3,
+      "price": 2,
+      "release_id": 1,
+      "release_name": "Forgotten Times 2",
+      "track_name": "Again"
+    },
+    {
+      "artist_id": 3,
+      "artist_name": "shampoo",
+      "id": 5,
+      "price": 2,
+      "release_id": 1,
+      "release_name": "Forgotten Times 2",
+      "track_name": "Before"
+    }
+  ]
+}
+```
+
 
 #### POST /artists
 * General
@@ -112,6 +254,39 @@ The API will return the following error types when requests fail:
   "name": "Forgotten Now",
   "price": 2,
   "release_id": 2,
+  "success": true
+}
+```
+
+#### DELETE /releases/<int:id>
+* General
+  * Deletes an artist, and all releases and tracks associated with that artist
+* Sample: `curl -X DELETE http://127.0.0.1:5000/artists/1`
+
+```
+{
+  "success": true
+}
+```
+
+#### DELETE /releases/<int:id>
+* General
+  * Deletes a release and all tracks in that release
+* Sample: `curl -X DELETE http://127.0.0.1:5000/releases/2`
+
+```
+{
+  "success": true
+}
+```
+
+#### DELETE /tracks/<int:id>
+* General
+  * Deletes a track
+* Sample: `curl -X DELETE http://127.0.0.1:5000/tracks/5`
+
+```
+{
   "success": true
 }
 ```

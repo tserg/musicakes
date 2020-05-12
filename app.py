@@ -47,15 +47,13 @@ def create_app(test_config=None):
 
   			formatted_all_releases = [release.short() for release in all_releases]
 
-  			print(formatted_all_releases)
-
   			return jsonify({
   					'success': True,
   					'releases': formatted_all_releases
   				})
 
-  		except Exception as e:
-  			print(e)
+  		except:
+
   			abort(404)
 
 
@@ -78,7 +76,8 @@ def create_app(test_config=None):
   			abort(404)
 
   	@app.route('/artists', methods=['POST'])
-  	def create_artist():
+  	@requires_auth('create:artist')
+  	def create_artist(payload):
 
   		try:
 
@@ -98,13 +97,13 @@ def create_app(test_config=None):
   				'country': new_artist.country
   				})
 
-  		except Exception as e:
-  			print(e)
+  		except:
 
   			abort(422)
 
   	@app.route('/releases', methods=['POST'])
-  	def create_release():
+  	@requires_auth('create:release')
+  	def create_release(payload):
 
   		try:
 
@@ -127,12 +126,13 @@ def create_app(test_config=None):
   					'price': new_release.price
   				})
 
-  		except Exception as e:
-  			print(e)
+  		except:
+
   			abort(422)
 
   	@app.route('/tracks', methods=['POST'])
-  	def create_track():
+  	@requires_auth('create:track')
+  	def create_track(payload):
 
   		try:
 
@@ -163,7 +163,8 @@ def create_app(test_config=None):
   			abort(422)
 
   	@app.route('/artists/<int:id>', methods=['PATCH'])
-  	def update_artist(id):
+  	@requires_auth('update:artist')
+  	def update_artist(payload, id):
 
   		try:
 
@@ -196,7 +197,8 @@ def create_app(test_config=None):
   			abort(400)
 
   	@app.route('/releases/<int:id>', methods=['PATCH'])
-  	def update_release(id):
+  	@requires_auth('update:release')
+  	def update_release(payload, id):
 
   		try:
 
@@ -233,7 +235,8 @@ def create_app(test_config=None):
   			abort(400)
 
   	@app.route('/tracks/<int:id>', methods=['PATCH'])
-  	def update_track(id):
+  	@requires_auth('update:track')
+  	def update_track(payload, id):
 
   		try:
 
@@ -273,6 +276,73 @@ def create_app(test_config=None):
 
   			abort(400)
 
+  	@app.route('/artists/<int:id>', methods=['DELETE'])
+  	@requires_auth('delete:artist')
+  	def delete_artist(payload, id):
+
+  		try:
+
+  			artist = Artist.query.get(id)
+
+  			if artist is None:
+
+  				abort(404)
+
+  			artist.delete()
+
+  			return jsonify({
+  					'success': True
+  				})
+
+  		except Exception as e:
+  			print(e)
+
+  			abort(422)
+
+  	@app.route('/releases/<int:id>', methods=['DELETE'])
+  	@requires_auth('delete:release')
+  	def delete_release(payload, id):
+
+  		try:
+
+  			release = Release.query.get(id)
+
+  			if release is None:
+
+  				abort(404)
+
+  			release.delete()
+
+  			return jsonify({
+  					'success': True
+  				})
+
+  		except:
+
+  			abort(422)  		
+
+  	@app.route('/tracks/<int:id>', methods=['DELETE'])
+  	@requires_auth('delete:track')
+  	def delete_track(payload, id):
+
+  		try:
+
+  			track = Track.query.get(id)
+
+  			if track is None:
+
+  				abort(404)
+
+  			track.delete()
+
+  			return jsonify({
+  					'success': True
+  				})
+
+  		except:
+
+  			abort(422)
+
 
   	"""
 		
@@ -304,6 +374,14 @@ def create_app(test_config=None):
   			'error': 405,
   			'message': 'method not allowed'
   		}), 405
+
+  	@app.errorhandler(422)
+  	def unprocessable(error):
+  		return jsonify({
+  			'success': False,
+  			'error': 422,
+  			'message': 'unprocessable'
+  			}), 422
 
   	@app.errorhandler(500)
   	def internal_server_error(error):
