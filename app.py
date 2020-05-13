@@ -392,9 +392,9 @@ def create_app(test_config=None):
   		}), 500
 
   	@app.errorhandler(AuthError)
-  	def auth_error(error):
+  	def auth_error(AuthError):
   		return jsonify({
-  			'success': True,
+  			'success': False,
   			'error': AuthError.status_code,
   			'message': AuthError.error['description']
   		}), 401
