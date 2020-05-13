@@ -6,9 +6,16 @@ import os
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
+from dotenv import load_dotenv
 
 from app import create_app
 from models import setup_db, Artist, Release, Track
+
+## Load environment variables from .env
+
+load_dotenv()
+
+TEST_DATABASE_PATH = os.getenv('TEST_DATABASE_PATH', 'Does not exist')
 
 class MusicakesTestCase(unittest.TestCase):
 
@@ -18,8 +25,8 @@ class MusicakesTestCase(unittest.TestCase):
 		"""Define test variables and initialise the app."""
 		self.app = create_app()
 		self.client = self.app.test_client
-		self.database_name = "musicakes_test"
-		self.database_path = "postgres://{}:{}@{}/{}".format('postgres', 'garytse17', 'localhost:5432', self.database_name)
+		
+		self.database_path = TEST_DATABASE_PATH
 		setup_db(self.app, self.database_path)
 
 		# binds the app to the current context

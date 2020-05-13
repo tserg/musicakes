@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -6,11 +7,11 @@ import json
 
 db = SQLAlchemy()
 
+## Load environment variables from .env
 
-database_name = 'musicakes'
-database_path = 'postgres://{}:{}@{}/{}'.format(
-    'postgres', 'garytse17', 'localhost:5432', database_name)
+load_dotenv()
 
+database_path = os.getenv('DATABASE_PATH', 'Does not exist')
 
 
 def setup_db(app, database_path=database_path):

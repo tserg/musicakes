@@ -1,14 +1,18 @@
 import json
 import os
+from dotenv import load_dotenv
 from flask import request, _request_ctx_stack, abort
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 
+## Load environment variables from .env
 
-AUTH0_DOMAIN = 'fsndgt.au.auth0.com'
-ALGORITHMS = ['RS256']
-API_AUDIENCE = 'dev'
+load_dotenv()
+
+AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN', 'Does not exist')
+ALGORITHMS = os.getenv('ALGORITHMS', 'Does not exist')
+API_AUDIENCE = os.getenv('API_AUDIENCE', 'Does not exist')
 
 ## AuthError Exception
 '''
