@@ -474,6 +474,7 @@ class MusicakesTestCase(unittest.TestCase):
 				follow_redirects=True
 			)
 
+
 		data = json.loads(res.data)
 
 		self.assertEqual(res.status_code, 401)

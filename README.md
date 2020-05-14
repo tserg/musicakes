@@ -8,7 +8,26 @@ This is an application for artists to list their music for sale, and for fans to
 
 ### Testing
 
-Auth0 login URL: `https://fsndgt.au.auth0.com/authorize?audience=dev&response_type=token&client_id=k0UiQ1k69kaVYwB7Os4lep8kHQRTj1do&redirect_uri=http://127.0.0.1:5000/artists`
+1. Set the environment variables for Flask then run `flask run`
+For Linux:
+```
+export FLASK_APP=app.py
+```
+For Windows:
+```
+set FLASK_APP=app.py
+```
+2. Navigate to Auth0 login URL: `https://fsndgt.au.auth0.com/authorize?audience=dev&response_type=token&client_id=k0UiQ1k69kaVYwB7Os4lep8kHQRTj1do&redirect_uri=http://127.0.0.1:5000/artists`
+3. Log in using the following credentials and copy the respective tokens from the URL:
+  * Manager
+    * Email: manager@udacity.com
+    * Password: Manager2020@
+  * Assistant
+    * Email: assistant@udacity.com
+    * Password: Assistant2020@
+4. Paste the respective tokens into MANAGER_TOKEN and ASSISTANT_TOKEN in .env
+5. Run `python test_app.py`
+
 
 
 ## API Reference
@@ -177,7 +196,7 @@ The API will return the following error types when requests fail:
 #### POST /artists
 * General
   * Creates an artist with the following request arguments: name, country
-* Sample: `curl -X POST -H "Content-Type: application/json" -d '{ "name": "shampoo", "country": "UK" }' http://127.0.0.1:5000/artists`
+* Sample: `curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <<MANAGER_TOKEN or ASSISTANT_TOKEN>>" -d '{ "name": "shampoo", "country": "UK" }' http://127.0.0.1:5000/artists` - replace "<<MANAGER_TOKEN or ASSISTANT_TOKEN>>" with MANAGER_TOKEN or ASSISTANT_TOKEN
 
 ```
 {
@@ -190,7 +209,7 @@ The API will return the following error types when requests fail:
 #### POST /releases
 * General
   * Creates a release with the following request arguments: name, artist_id, price
-* Sample: `curl -X POST -H "Content-Type: application/json" -d '{ "name": "Forgotten Times", "artist_id": 1, "price": 5 }' http://127.0.0.1:5000/releases`
+* Sample: `curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <<MANAGER_TOKEN or ASSISTANT_TOKEN>>" -d '{ "name": "Forgotten Times", "artist_id": 1, "price": 5 }' http://127.0.0.1:5000/releases` - replace "<<MANAGER_TOKEN or ASSISTANT_TOKEN>>" with MANAGER_TOKEN or ASSISTANT_TOKEN
 
 ```
 {
@@ -204,7 +223,7 @@ The API will return the following error types when requests fail:
 #### POST /tracks
 * General
   * Creates a track with the following request arguments: name, release_id, artist_id, price
-* Sample: `curl -X POST -H "Content-Type: application/json" -d '{ "name": "Forgotten Past", "release_id": 1, "artist_id": 1, "price": 1 }' http://127.0.0.1:5000/tracks`
+* Sample: `curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <<MANAGER_TOKEN or ASSISTANT_TOKEN>>" -d '{ "name": "Forgotten Past", "release_id": 1, "artist_id": 1, "price": 1 }' http://127.0.0.1:5000/tracks` - replace "<<MANAGER_TOKEN or ASSISTANT_TOKEN>>" with MANAGER_TOKEN or ASSISTANT_TOKEN
 
 ```
 {
@@ -219,7 +238,7 @@ The API will return the following error types when requests fail:
 #### PATCH /artists/<int:id>
 * General
   * Updates an artist's information
-* Sample: `curl -X PATCH -H "Content-Type: application/json" -d '{ "name": "Tsergggy", "country": "Tuvalu" }' http://127.0.0.1:5000/artists/1`
+* Sample: `curl -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer <<MANAGER_TOKEN or ASSISTANT_TOKEN>>" -d '{ "name": "Tsergggy", "country": "Tuvalu" }' http://127.0.0.1:5000/artists/1` - replace "<<MANAGER_TOKEN or ASSISTANT_TOKEN>>" with MANAGER_TOKEN or ASSISTANT_TOKEN
 
 ```
 {
@@ -232,7 +251,7 @@ The API will return the following error types when requests fail:
 #### PATCH /releases/<int:id>
 * General
   * Updates a release's information
-* Sample: `curl -X PATCH -H "Content-Type: application/json" -d '{ "name": "Forgotten Times 2", "price": 10, "artist_id": 3 }' http://127.0.0.1:5000/releases/1`
+* Sample: `curl -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer <<MANAGER_TOKEN or ASSISTANT_TOKEN>>" -d '{ "name": "Forgotten Times 2", "price": 10, "artist_id": 3 }' http://127.0.0.1:5000/releases/1` - replace "<<MANAGER_TOKEN or ASSISTANT_TOKEN>>" with MANAGER_TOKEN or ASSISTANT_TOKEN
 
 ```
 {
@@ -246,7 +265,7 @@ The API will return the following error types when requests fail:
 #### PATCH /tracks/<int:id>
 * General
   * Updates a track's information
-* Sample: `curl -X PATCH -H "Content-Type: application/json" -d '{ "name": "Forgotten Now", "price": 2, "release_id": 2, "artist_id": 3 }' http://127.0.0.1:5000/tracks/1`
+* Sample: `curl -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer <<MANAGER_TOKEN or ASSISTANT_TOKEN>>" -d '{ "name": "Forgotten Now", "price": 2, "release_id": 2, "artist_id": 3 }' http://127.0.0.1:5000/tracks/1` - replace "<<MANAGER_TOKEN or ASSISTANT_TOKEN>>" with MANAGER_TOKEN or ASSISTANT_TOKEN
 
 ```
 {
@@ -261,7 +280,7 @@ The API will return the following error types when requests fail:
 #### DELETE /releases/<int:id>
 * General
   * Deletes an artist, and all releases and tracks associated with that artist
-* Sample: `curl -X DELETE http://127.0.0.1:5000/artists/1`
+* Sample: `curl -X DELETE -H "Authorization: Bearer <<MANAGER_TOKEN>>" http://127.0.0.1:5000/artists/1` - replace "<<MANAGER_TOKEN>>" with MANAGER_TOKEN
 
 ```
 {
@@ -272,7 +291,7 @@ The API will return the following error types when requests fail:
 #### DELETE /releases/<int:id>
 * General
   * Deletes a release and all tracks in that release
-* Sample: `curl -X DELETE http://127.0.0.1:5000/releases/2`
+* Sample: `curl -X DELETE -H "Authorization: Bearer <<MANAGER_TOKEN>>" http://127.0.0.1:5000/releases/2` - replace "<<MANAGER_TOKEN>>" with MANAGER_TOKEN
 
 ```
 {
@@ -283,7 +302,7 @@ The API will return the following error types when requests fail:
 #### DELETE /tracks/<int:id>
 * General
   * Deletes a track
-* Sample: `curl -X DELETE http://127.0.0.1:5000/tracks/5`
+* Sample: `curl -X DELETE -H "Authorization: Bearer <<MANAGER_TOKEN>>" http://127.0.0.1:5000/tracks/5` - replace "<<MANAGER_TOKEN>>" with MANAGER_TOKEN
 
 ```
 {

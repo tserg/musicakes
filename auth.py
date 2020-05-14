@@ -68,10 +68,16 @@ def get_token_auth_header():
 '''
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
-        abort(400)
+        raise AuthError({
+                'code': 'permissions_header_missing',
+                'description': 'Permission header missing'
+            }, 400)
 
     if permission not in payload['permissions']:
-        abort(401)
+        raise AuthError({
+                'code': 'no_permission',
+                'description': 'No permission'
+            }, 401)
 
     return True
 
