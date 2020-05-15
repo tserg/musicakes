@@ -1,5 +1,5 @@
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -9,9 +9,11 @@ db = SQLAlchemy()
 
 ## Load environment variables from .env
 
-load_dotenv()
+# load_dotenv()
 
-database_path = os.getenv('DATABASE_PATH', 'Does not exist')
+# database_path = os.getenv('DATABASE_PATH', 'Does not exist')
+
+database_path = os.environ.get('DATABASE_URL')
 
 
 def setup_db(app, database_path=database_path):
