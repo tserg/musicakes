@@ -26,7 +26,8 @@ set FLASK_APP=app.py
     * Email: assistant@udacity.com
     * Password: Assistant2020@
 4. Paste the respective tokens into MANAGER_TOKEN and ASSISTANT_TOKEN in .env
-5. Run `python test_app.py`
+5. Change the database path for TEST_DATABASE_PATH in .env to your test database path.
+6. Run `python test_app.py`
 
 
 
