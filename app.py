@@ -7,401 +7,393 @@ from jose import jwt
 from models import setup_db, Artist, Release, Track
 from auth import AuthError, requires_auth
 
+
 def create_app(test_config=None):
-  # create and configure the app
-  	app = Flask(__name__)
-  	setup_db(app)
 
-  	CORS(app)
+    # create and configure the app
+    app = Flask(__name__)
+    setup_db(app)
 
-  	@app.route('/')
-  	def index():
+    CORS(app)
 
-  		return "Welcome to Musicakes!"
+    @app.route('/')
+    def index():
 
-  	@app.route('/artists', methods=['GET'])
-  	def get_artists():
+        return "Welcome to Musicakes!"
 
-  		try:
+    @app.route('/artists', methods=['GET'])
+    def get_artists():
 
-  			all_artists = Artist.query.all()
+        try:
 
-  			formatted_all_artists = [artist.short() for artist in all_artists]
+            all_artists = Artist.query.all()
 
-  			return jsonify({
-  					'success': True,
-  					'artists': formatted_all_artists
-  				})
+            formatted_all_artists = [artist.short() for artist in all_artists]
 
-  		except:
+            return jsonify({
+                'success': True,
+                'artists': formatted_all_artists
+            })
 
-  			abort(404)
+        except:
 
+            abort(404)
 
-  	@app.route('/releases', methods=['GET'])
-  	def get_releases():
+    @app.route('/releases', methods=['GET'])
+    def get_releases():
 
-  		try:
+        try:
 
-  			all_releases = Release.query.all()
+            all_releases = Release.query.all()
 
-  			formatted_all_releases = [release.short() for release in all_releases]
+            formatted_all_releases = [release.short()
+                                      for release in all_releases]
 
-  			return jsonify({
-  					'success': True,
-  					'releases': formatted_all_releases
-  				})
+            return jsonify({
+                'success': True,
+                'releases': formatted_all_releases
+            })
 
-  		except:
+        except:
 
-  			abort(404)
+            abort(404)
 
+    @app.route('/tracks', methods=['GET'])
+    def get_tracks():
 
-  	@app.route('/tracks', methods=['GET'])
-  	def get_tracks():
+        try:
 
-  		try: 
+            all_tracks = Track.query.all()
 
-  			all_tracks = Track.query.all()
+            formatted_all_tracks = [track.short() for track in all_tracks]
 
-  			formatted_all_tracks = [track.short() for track in all_tracks]
+            return jsonify({
+                'success': True,
+                'tracks': formatted_all_tracks
+            })
 
-  			return jsonify({
-  					'success': True,
-  					'tracks': formatted_all_tracks
-  				})
+        except:
 
-  		except:
+            abort(404)
 
-  			abort(404)
+    @app.route('/artists', methods=['POST'])
+    @requires_auth('create:artist')
+    def create_artist(payload):
 
-  	@app.route('/artists', methods=['POST'])
-  	@requires_auth('create:artist')
-  	def create_artist(payload):
+        try:
 
-  		try:
+            name = request.get_json()['name']
+            country = request.get_json()['country']
 
-  			name = request.get_json()['name']
-  			country = request.get_json()['country']
+            new_artist = Artist(
+                name=name,
+                country=country
+            )
 
-  			new_artist = Artist(
-  					name=name,
-  					country=country
-  				)
+            new_artist.insert()
 
-  			new_artist.insert()
+            return jsonify({
+                'success': True,
+                'name': new_artist.name,
+                'country': new_artist.country
+            })
 
-  			return jsonify({
-  				'success': True,
-  				'name': new_artist.name, 
-  				'country': new_artist.country
-  				})
+        except:
 
-  		except:
+            abort(422)
 
-  			abort(422)
+    @app.route('/releases', methods=['POST'])
+    @requires_auth('create:release')
+    def create_release(payload):
 
-  	@app.route('/releases', methods=['POST'])
-  	@requires_auth('create:release')
-  	def create_release(payload):
+        try:
 
-  		try:
+            name = request.get_json()['name']
+            artist_id = request.get_json()['artist_id']
+            price = request.get_json()['price']
 
-  			name = request.get_json()['name']
-  			artist_id = request.get_json()['artist_id']
-  			price = request.get_json()['price']
+            new_release = Release(
+                name=name,
+                artist_id=artist_id,
+                price=price
+            )
 
-  			new_release = Release(
-  					name = name,
-  					artist_id = artist_id,
-  					price = price
-  				)
+            new_release.insert()
 
-  			new_release.insert()
+            return jsonify({
+                'success': True,
+                'name': new_release.name,
+                'artist_id': new_release.artist_id,
+                'price': new_release.price
+            })
 
-  			return jsonify({
-  					'success': True,
-  					'name': new_release.name,
-  					'artist_id': new_release.artist_id,
-  					'price': new_release.price
-  				})
+        except:
 
-  		except:
+            abort(422)
 
-  			abort(422)
+    @app.route('/tracks', methods=['POST'])
+    @requires_auth('create:track')
+    def create_track(payload):
 
-  	@app.route('/tracks', methods=['POST'])
-  	@requires_auth('create:track')
-  	def create_track(payload):
+        try:
 
-  		try:
+            name = request.get_json()['name']
+            artist_id = request.get_json()['artist_id']
+            release_id = request.get_json()['release_id']
+            price = request.get_json()['price']
 
-  			name = request.get_json()['name']
-  			artist_id = request.get_json()['artist_id']
-  			release_id = request.get_json()['release_id']
-  			price = request.get_json()['price']
+            new_track = Track(
+                name=name,
+                artist_id=artist_id,
+                release_id=release_id,
+                price=price
+            )
 
-  			new_track = Track(
-  					name = name,
-  					artist_id = artist_id,
-  					release_id = release_id,
-  					price = price
-  				)
+            new_track.insert()
 
-  			new_track.insert()
+            return jsonify({
+                'success': True,
+                'name': new_track.name,
+                'artist_id': new_track.artist_id,
+                'release_id': new_track.release_id,
+                'price': new_track.price
+            })
 
-  			return jsonify({
-  					'success': True,
-  					'name': new_track.name,
-  					'artist_id': new_track.artist_id,
-  					'release_id': new_track.release_id,
-  					'price': new_track.price
-  				})
+        except:
 
-  		except:
+            abort(422)
 
-  			abort(422)
+    @app.route('/artists/<int:id>', methods=['PATCH'])
+    @requires_auth('update:artist')
+    def update_artist(payload, id):
 
-  	@app.route('/artists/<int:id>', methods=['PATCH'])
-  	@requires_auth('update:artist')
-  	def update_artist(payload, id):
+        try:
 
-  		try:
+            current_artist = Artist.query.get(id)
 
-  			current_artist = Artist.query.get(id)
+            if current_artist is None:
 
-  			if current_artist is None:
+                abort(404)
 
-  				abort(404)
+            if 'name' in request.get_json():
+                name = request.get_json()['name']
+                current_artist.name = name
 
-  			if 'name' in request.get_json():
-  				name = request.get_json()['name']
-  				current_artist.name = name
+            if 'country' in request.get_json():
+                country = request.get_json()['country']
+                current_artist.country = country
 
-  			if 'country' in request.get_json():
-  				country = request.get_json()['country']
-  				current_artist.country = country
+            current_artist.update()
 
+            return jsonify({
+                'success': True,
+                'name': current_artist.name,
+                'country': current_artist.country
+            })
 
+        except:
 
-  			current_artist.update()
+            abort(400)
 
-  			return jsonify({
-  					'success': True,
-  					'name': current_artist.name,
-  					'country': current_artist.country
-  				})
+    @app.route('/releases/<int:id>', methods=['PATCH'])
+    @requires_auth('update:release')
+    def update_release(payload, id):
 
-  		except:
+        try:
 
-  			abort(400)
+            current_release = Release.query.get(id)
 
-  	@app.route('/releases/<int:id>', methods=['PATCH'])
-  	@requires_auth('update:release')
-  	def update_release(payload, id):
+            if current_release is None:
 
-  		try:
+                abort(404)
 
-  			current_release = Release.query.get(id)
+            if 'name' in request.get_json():
+                name = request.get_json()['name']
+                current_release.name = name
 
-  			if current_release is None:
+            if 'artist_id' in request.get_json():
+                artist_id = request.get_json()['artist_id']
+                current_release.artist_id = artist_id
 
-  				abort(404)
+            if 'price' in request.get_json():
+                price = request.get_json()['price']
+                current_release.price = price
 
-  			if 'name' in request.get_json():
-  				name = request.get_json()['name']
-  				current_release.name = name
+            current_release.update()
 
-  			if 'artist_id' in request.get_json():
-  				artist_id = request.get_json()['artist_id']
-  				current_release.artist_id = artist_id
+            return jsonify({
+                'success': True,
+                'name': current_release.name,
+                'artist_id': current_release.artist_id,
+                'price': current_release.price
+            })
 
-  			if 'price' in request.get_json():
-  				price = request.get_json()['price']
-  				current_release.price = price
+        except:
 
-  			current_release.update()
+            abort(400)
 
+    @app.route('/tracks/<int:id>', methods=['PATCH'])
+    @requires_auth('update:track')
+    def update_track(payload, id):
 
-  			return jsonify({
-  					'success': True,
-  					'name': current_release.name,
-  					'artist_id': current_release.artist_id,
-  					'price': current_release.price
-  				})
+        try:
 
-  		except:
+            current_track = Track.query.get(id)
 
-  			abort(400)
+            if current_track is None:
 
-  	@app.route('/tracks/<int:id>', methods=['PATCH'])
-  	@requires_auth('update:track')
-  	def update_track(payload, id):
+                abort(404)
 
-  		try:
+            if 'name' in request.get_json():
+                name = request.get_json()['name']
+                current_track.name = name
 
-  			current_track = Track.query.get(id)
+            if 'artist_id' in request.get_json():
+                artist_id = request.get_json()['artist_id']
+                current_track.artist_id = artist_id
 
-  			if current_track is None:
+            if 'release_id' in request.get_json():
+                release_id = request.get_json()['release_id']
+                current_track.release_id = release_id
 
-  				abort(404)
+            if 'price' in request.get_json():
+                price = request.get_json()['price']
+                current_track.price = price
 
-  			if 'name' in request.get_json():
-  				name = request.get_json()['name']
-  				current_track.name = name
+            current_track.update()
 
-  			if 'artist_id' in request.get_json():
-  				artist_id = request.get_json()['artist_id']
-  				current_track.artist_id = artist_id
+            return jsonify({
+                'success': True,
+                'name': current_track.name,
+                'artist_id': current_track.artist_id,
+                'release_id': current_track.release_id,
+                'price': current_track.price
+            })
 
-  			if 'release_id' in request.get_json():
-  				release_id = request.get_json()['release_id']
-  				current_track.release_id = release_id
+        except:
 
-  			if 'price' in request.get_json():
-  				price = request.get_json()['price']
-  				current_track.price = price
+            abort(400)
 
-  			current_track.update()
+    @app.route('/artists/<int:id>', methods=['DELETE'])
+    @requires_auth('delete:artist')
+    def delete_artist(payload, id):
 
-  			return jsonify({
-  					'success': True,
-  					'name': current_track.name,
-  					'artist_id': current_track.artist_id,
-  					'release_id': current_track.release_id,
-  					'price': current_track.price
-  				})
+        try:
 
-  		except:
+            artist = Artist.query.get(id)
 
-  			abort(400)
+            if artist is None:
 
-  	@app.route('/artists/<int:id>', methods=['DELETE'])
-  	@requires_auth('delete:artist')
-  	def delete_artist(payload, id):
+                abort(404)
 
-  		try:
+            artist.delete()
 
-  			artist = Artist.query.get(id)
+            return jsonify({
+                'success': True
+            })
 
-  			if artist is None:
+        except Exception as e:
+            print(e)
 
-  				abort(404)
+            abort(422)
 
-  			artist.delete()
+    @app.route('/releases/<int:id>', methods=['DELETE'])
+    @requires_auth('delete:release')
+    def delete_release(payload, id):
 
-  			return jsonify({
-  					'success': True
-  				})
+        try:
 
-  		except Exception as e:
-  			print(e)
+            release = Release.query.get(id)
 
-  			abort(422)
+            if release is None:
 
-  	@app.route('/releases/<int:id>', methods=['DELETE'])
-  	@requires_auth('delete:release')
-  	def delete_release(payload, id):
+                abort(404)
 
-  		try:
+            release.delete()
 
-  			release = Release.query.get(id)
+            return jsonify({
+                'success': True
+            })
 
-  			if release is None:
+        except:
 
-  				abort(404)
+            abort(422)
 
-  			release.delete()
+    @app.route('/tracks/<int:id>', methods=['DELETE'])
+    @requires_auth('delete:track')
+    def delete_track(payload, id):
 
-  			return jsonify({
-  					'success': True
-  				})
+        try:
 
-  		except:
+            track = Track.query.get(id)
 
-  			abort(422)  		
+            if track is None:
 
-  	@app.route('/tracks/<int:id>', methods=['DELETE'])
-  	@requires_auth('delete:track')
-  	def delete_track(payload, id):
+                abort(404)
 
-  		try:
+            track.delete()
 
-  			track = Track.query.get(id)
+            return jsonify({
+                'success': True
+            })
 
-  			if track is None:
+        except:
 
-  				abort(404)
+            abort(422)
 
-  			track.delete()
+    """
+        Errors handling
+    """
 
-  			return jsonify({
-  					'success': True
-  				})
+    @app.errorhandler(400)
+    def bad_request(error):
+        return jsonify({
+            'success': False,
+            'error': 400,
+            'message': 'bad request'
+        }), 400
 
-  		except:
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            'success': False,
+            'error': 404,
+            'message': 'resource not found'
+        }), 404
 
-  			abort(422)
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        return jsonify({
+            'success': False,
+            'error': 405,
+            'message': 'method not allowed'
+        }), 405
 
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            'success': False,
+            'error': 422,
+            'message': 'unprocessable'
+        }), 422
 
-  	"""
-		
-		Errors handling
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        return jsonify({
+            'success': False,
+            'error': 500,
+            'message': 'internal server error'
+        }), 500
 
-  	"""
+    @app.errorhandler(AuthError)
+    def auth_error(AuthError):
+        return jsonify({
+            'success': False,
+            'error': AuthError.status_code,
+            'message': AuthError.error['description']
+        }), 401
 
-  	@app.errorhandler(400)
-  	def bad_request(error):
-  		return jsonify({
-  			'success': False,
-  			'error': 400,
-  			'message': 'bad request'
-  		}), 400
-
-
-  	@app.errorhandler(404)
-  	def not_found(error):
-  		return jsonify({
-  			'success': False,
-  			'error': 404,
-  			'message': 'resource not found'
-  		}), 404
-
-  	@app.errorhandler(405)
-  	def method_not_allowed(error):
-  		return jsonify({
-  			'success': False,
-  			'error': 405,
-  			'message': 'method not allowed'
-  		}), 405
-
-  	@app.errorhandler(422)
-  	def unprocessable(error):
-  		return jsonify({
-  			'success': False,
-  			'error': 422,
-  			'message': 'unprocessable'
-  			}), 422
-
-  	@app.errorhandler(500)
-  	def internal_server_error(error):
-  		return jsonify({
-  			'success': False,
-  			'error': 500,
-  			'message': 'internal server error'
-  		}), 500
-
-  	@app.errorhandler(AuthError)
-  	def auth_error(AuthError):
-  		return jsonify({
-  			'success': False,
-  			'error': AuthError.status_code,
-  			'message': AuthError.error['description']
-  		}), 401
-
-  	return app
-
-
+    return app
 
 
 app = create_app()
