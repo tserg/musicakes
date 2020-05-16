@@ -142,11 +142,11 @@ Errors are returned as JSON objects in the following format:
 
 The API will return the following error types when requests fail:
 * 400: Bad request
+* 401: Unauthorized
 * 404: Resource not found
 * 405: Method not allowed
 * 422: Unprocessable
 * 500: Internal server error
-* 503: Service unavailable
 * AuthError: [AuthError['description']]
 
 ### Endpoints
