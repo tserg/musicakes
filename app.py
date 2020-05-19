@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from jose import jwt
 
-from models import setup_db, Artist, Release, Track
+from models import setup_db, User, Artist, Release, Track
 from auth import AuthError, requires_auth
 
 
@@ -21,6 +21,28 @@ def create_app(test_config=None):
 
         return "Welcome to Musicakes!"
 
+
+    @app.route('/users', methods=['GET'])
+    def get_users():
+        try:
+
+
+            print(123)
+            all_users = User.query.all()
+
+            if all_users is None:
+                print(234)
+            formatted_all_users = [user.short() for user in all_users]
+
+            return jsonify({
+                'success': True,
+                'users': formatted_all_users
+            })
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
     @app.route('/artists', methods=['GET'])
     def get_artists():
 
@@ -35,8 +57,8 @@ def create_app(test_config=None):
                 'artists': formatted_all_artists
             })
 
-        except:
-
+        except Exception as e:
+            print(e)
             abort(404)
 
     @app.route('/releases', methods=['GET'])

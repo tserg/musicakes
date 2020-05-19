@@ -1,5 +1,5 @@
 # ignore Flask environment variables
- .env
+.env
 
 # ignore pycache
 __pycache__/

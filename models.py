@@ -26,6 +26,31 @@ def setup_db(app, database_path=database_path):
     migrate = Migrate(app, db)
 
 
+class User(db.Model):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String, nullable=False)
+    artist = db.relationship('Artist', uselist=False, back_populates='user')
+    
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def short(self):
+
+        return {
+            'id': self.id,
+            'artist_id': self.artist.id,
+        }
+
 class Artist(db.Model):
     __tablename__ = 'artists'
 
@@ -36,6 +61,8 @@ class Artist(db.Model):
         'Release', backref='artist', cascade='all, delete', lazy=True)
     tracks = db.relationship('Track', backref='artist',
                              cascade='all, delete', lazy=True)
+    user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
+    user = db.relationship('User', back_populates='artist')
 
     def insert(self):
         db.session.add(self)
@@ -61,6 +88,7 @@ class Artist(db.Model):
 
         return {
             'id': self.id,
+            'user': self.user_id,
             'name': self.name,
             'country': self.country,
             'releases': formatted_releases
