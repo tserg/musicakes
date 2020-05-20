@@ -46,9 +46,16 @@ class User(db.Model):
 
     def short(self):
 
+        artist_info = None
+
+        if self.artist is not None:
+
+            artist_info = self.artist.id
+
         return {
             'id': self.id,
-            'artist_id': self.artist.id,
+            'username': self.username,
+            'artist_id': artist_info
         }
 
 class Artist(db.Model):

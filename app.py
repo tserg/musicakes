@@ -26,12 +26,8 @@ def create_app(test_config=None):
     def get_users():
         try:
 
-
-            print(123)
             all_users = User.query.all()
 
-            if all_users is None:
-                print(234)
             formatted_all_users = [user.short() for user in all_users]
 
             return jsonify({
@@ -41,6 +37,27 @@ def create_app(test_config=None):
 
         except Exception as e:
             print(e)
+            abort(404)
+
+    @app.route('/users', methods=['POST'])
+    def add_user():
+        try:
+
+            username = request.get_json()['username']
+
+            new_user = User(
+                username=username
+            )
+
+            new_user.insert()
+
+            return jsonify({
+                'success': True,
+                'username': username
+            })
+
+        except:
+
             abort(404)
 
     @app.route('/artists', methods=['GET'])
