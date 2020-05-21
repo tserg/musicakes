@@ -39,27 +39,6 @@ def create_app(test_config=None):
             print(e)
             abort(404)
 
-    @app.route('/users', methods=['POST'])
-    def add_user():
-        try:
-
-            username = request.get_json()['username']
-
-            new_user = User(
-                username=username
-            )
-
-            new_user.insert()
-
-            return jsonify({
-                'success': True,
-                'username': username
-            })
-
-        except:
-
-            abort(404)
-
     @app.route('/artists', methods=['GET'])
     def get_artists():
 
@@ -109,6 +88,28 @@ def create_app(test_config=None):
             return jsonify({
                 'success': True,
                 'tracks': formatted_all_tracks
+            })
+
+        except:
+
+            abort(404)
+
+
+    @app.route('/users', methods=['POST'])
+    def create_user():
+        try:
+
+            username = request.get_json()['username']
+
+            new_user = User(
+                username=username
+            )
+
+            new_user.insert()
+
+            return jsonify({
+                'success': True,
+                'username': username
             })
 
         except:
@@ -312,6 +313,28 @@ def create_app(test_config=None):
         except:
 
             abort(400)
+
+    @app.route('/users/<int:id>', methods=['DELETE'])
+    def delete_user(id):
+
+        try:
+
+            user = User.query.get(id)
+
+            if user is None:
+
+                abort(404)
+
+            user.delete()
+
+            return jsonify({
+                'success': True
+            })
+
+        except Exception as e:
+            print(e)
+
+            abort(422)
 
     @app.route('/artists/<int:id>', methods=['DELETE'])
     @requires_auth('delete:artist')
