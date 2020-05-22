@@ -204,7 +204,7 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/artists/<int:id>', methods=['PATCH'])
-    @requires_auth('update:artist')
+    @requires_auth('update:artist', '5ebbf6f412bc0d0bef3b8481')
     def update_artist(payload, id):
 
         try:

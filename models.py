@@ -30,6 +30,7 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
+    auth_id = Column(String, nullable=False)
     username = Column(String, nullable=False)
     artist = db.relationship('Artist', uselist=False, back_populates='user')
     
