@@ -208,8 +208,16 @@ def create_app(test_config=None):
     def update_artist(payload, id):
 
         try:
-            
-            auth_id = Artist.query.get(id).user.auth_id
+
+            current_artist = Artist.query.get(id)
+
+            if current_artist is None:
+
+                abort(404)
+
+            # authenticates if the artist corresponds to the user
+
+            auth_id = current_artist.user.auth_id
 
             if auth_id is None:
 
@@ -219,11 +227,7 @@ def create_app(test_config=None):
 
                 abort(401)
 
-            current_artist = Artist.query.get(id)
-
-            if current_artist is None:
-
-                abort(404)
+            # actual function continues here
 
             if 'name' in request.get_json():
                 name = request.get_json()['name']
@@ -257,6 +261,21 @@ def create_app(test_config=None):
 
                 abort(404)
 
+            # authenticates if the artist corresponds to the user
+            
+            current_artist = Artist.query.get(current_release.artist_id)
+            auth_id = current_artist.user.auth_id
+
+            if auth_id is None:
+
+                abort(401)
+
+            elif check_auth_id(auth_id, payload) is not True:
+
+                abort(401)
+
+            # actual function continues here
+
             if 'name' in request.get_json():
                 name = request.get_json()['name']
                 current_release.name = name
@@ -288,6 +307,26 @@ def create_app(test_config=None):
 
         try:
 
+            current_track = Track.query.get(id)
+
+            if current_track is None:
+
+                abort(404)
+
+            # authenticates if the artist corresponds to the user
+
+            current_artist = Artist.query.get(current_track.release.artist_id)
+            auth_id = current_artist.user.auth_id
+
+            if auth_id is None:
+
+                abort(401)
+
+            elif check_auth_id(auth_id, payload) is not True:
+
+                abort(401)
+
+            # actual function continues here
             current_track = Track.query.get(id)
 
             if current_track is None:
@@ -358,6 +397,20 @@ def create_app(test_config=None):
 
                 abort(404)
 
+            # authenticates if the artist corresponds to the user
+
+            auth_id = artist.user.auth_id
+
+            if auth_id is None:
+
+                abort(401)
+
+            elif check_auth_id(auth_id, payload) is not True:
+
+                abort(401)
+
+            # actual function continues here
+
             artist.delete()
 
             return jsonify({
@@ -381,6 +434,21 @@ def create_app(test_config=None):
 
                 abort(404)
 
+            # authenticates if the artist corresponds to the user
+            
+            current_artist = Artist.query.get(release.artist_id)
+            auth_id = current_artist.user.auth_id
+
+            if auth_id is None:
+
+                abort(401)
+
+            elif check_auth_id(auth_id, payload) is not True:
+
+                abort(401)
+
+            # actual function continues here
+
             release.delete()
 
             return jsonify({
@@ -402,6 +470,21 @@ def create_app(test_config=None):
             if track is None:
 
                 abort(404)
+
+            # authenticates if the artist corresponds to the user
+
+            current_artist = Artist.query.get(track.release.artist_id)
+            auth_id = current_artist.user.auth_id
+
+            if auth_id is None:
+
+                abort(401)
+
+            elif check_auth_id(auth_id, payload) is not True:
+
+                abort(401)
+
+            # function continues here
 
             track.delete()
 
