@@ -73,7 +73,7 @@ def get_token_auth_header():
 
 
 def check_permissions(permission, payload):
-    print(123)
+
     if 'permissions' not in payload:
         raise AuthError({
             'code': 'permissions_header_missing',
@@ -100,8 +100,6 @@ def check_permissions(permission, payload):
 '''
 
 def check_auth_id(auth_id, payload):
-
-    print(123)
 
     if 'sub' not in payload: 
         raise AuthError({
@@ -198,7 +196,7 @@ def verify_decode_jwt(token):
     to the decorated method
 '''
 
-def requires_auth(permission='', auth_id=''):
+def requires_auth(permission=''):
     def requires_auth_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
@@ -211,7 +209,7 @@ def requires_auth(permission='', auth_id=''):
                 abort(401)
 
             check_permissions(permission, payload)
-            check_auth_id(auth_id, payload)
+
             return f(payload, *args, **kwargs)
 
         return wrapper

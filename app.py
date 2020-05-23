@@ -5,7 +5,7 @@ from flask_cors import CORS
 from jose import jwt
 
 from models import setup_db, User, Artist, Release, Track
-from auth import AuthError, requires_auth
+from auth import AuthError, requires_auth, check_auth_id
 
 
 def create_app(test_config=None):
@@ -204,10 +204,20 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/artists/<int:id>', methods=['PATCH'])
-    @requires_auth('update:artist', '5ebbf6f412bc0d0bef3b8481')
+    @requires_auth('update:artist')
     def update_artist(payload, id):
 
         try:
+            
+            auth_id = Artist.query.get(id).user.auth_id
+
+            if auth_id is None:
+
+                abort(401)
+
+            elif check_auth_id(auth_id, payload) is not True:
+
+                abort(401)
 
             current_artist = Artist.query.get(id)
 
