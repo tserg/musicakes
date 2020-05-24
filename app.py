@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, abort, jsonify, flash
+from flask import Flask, request, abort, jsonify, flash, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from jose import jwt
@@ -19,7 +19,7 @@ def create_app(test_config=None):
     @app.route('/')
     def index():
 
-        return "Welcome to Musicakes!"
+        return render_template('index.html')
 
 
     @app.route('/users', methods=['GET'])
