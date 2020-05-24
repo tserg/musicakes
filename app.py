@@ -39,6 +39,22 @@ def create_app(test_config=None):
             print(e)
             abort(404)
 
+    @app.route('/users/<int:user_id>', methods=['GET'])
+    def show_user(user_id):
+        try:
+
+            current_user = User.query.get(user_id)
+            if current_user is None:
+                abort(404)
+
+            data = current_user.short()
+
+            return render_template('pages/show_user.html', user=data)
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
     @app.route('/artists', methods=['GET'])
     def get_artists():
 
