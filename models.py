@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy import Column, String, Integer, create_engine, DateTime
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import json
@@ -33,6 +33,8 @@ class User(db.Model):
     auth_id = Column(String, nullable=False)
     username = Column(String, nullable=False)
     artist = db.relationship('Artist', uselist=False, back_populates='user')
+    created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
+
     
     def insert(self):
         db.session.add(self)
@@ -71,6 +73,7 @@ class Artist(db.Model):
                              cascade='all, delete', lazy=True)
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     user = db.relationship('User', back_populates='artist')
+    created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
     def insert(self):
         db.session.add(self)
@@ -112,6 +115,7 @@ class Release(db.Model):
     price = db.Column(db.Integer, nullable=False)
     tracks = db.relationship('Track', backref='release',
                              cascade='all, delete', lazy=True)
+    created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
     def insert(self):
         db.session.add(self)
@@ -147,6 +151,7 @@ class Track(db.Model):
     release_id = db.Column(db.Integer, db.ForeignKey('releases.id'))
     name = db.Column(db.String, nullable=False)
     price = db.Column(db.Integer, nullable=False)
+    created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
     def insert(self):
         db.session.add(self)
