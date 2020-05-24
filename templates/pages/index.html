@@ -1,0 +1,16 @@
+{% extends "layouts/layout.html" %}
+{% block title %}{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block content %}
+  <h1>Musicakes</h1>
+  <p class="important">
+    Welcome to Musicakes!
+  <p>
+  	<a href="https://fsndgt.au.auth0.com/authorize?audience=dev&response_type=token&client_id=k0UiQ1k69kaVYwB7Os4lep8kHQRTj1do&redirect_uri=http://127.0.0.1:5000/index">Log In/Sign up</a>
+  </p> 
+{% endblock %}
