@@ -64,10 +64,7 @@ def create_app(test_config=None):
 
             formatted_all_artists = [artist.short() for artist in all_artists]
 
-            return jsonify({
-                'success': True,
-                'artists': formatted_all_artists
-            })
+            return render_template('/pages/artists.html', artists=formatted_all_artists)
 
         except Exception as e:
             print(e)
@@ -83,13 +80,10 @@ def create_app(test_config=None):
             formatted_all_releases = [release.short()
                                       for release in all_releases]
 
-            return jsonify({
-                'success': True,
-                'releases': formatted_all_releases
-            })
+            return render_template('/pages/releases.html', releases=formatted_all_releases)
 
-        except:
-
+        except Exception as e:
+            print(e)
             abort(404)
 
     @app.route('/tracks', methods=['GET'])
@@ -101,10 +95,7 @@ def create_app(test_config=None):
 
             formatted_all_tracks = [track.short() for track in all_tracks]
 
-            return jsonify({
-                'success': True,
-                'tracks': formatted_all_tracks
-            })
+            return render_template('/pages/tracks.html', tracks=formatted_all_tracks)
 
         except:
 

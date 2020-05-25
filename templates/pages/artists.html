@@ -1,0 +1,19 @@
+{% extends 'layouts/layout.html' %}
+{% block title %}Musicakes | Artists{% endblock %}
+{% block content %}
+<ul class="items">
+	{% if not artists %}
+		<h2>There are no artists currently listed.</h2>
+	{% endif %}
+	{% for artist in artists %}
+	<li>
+		<a href="/artists/{{ artist.id }}">
+			<i class="fas fa-users"></i>
+			<div class="item">
+				<h5>{{ artist.name }}</h5>
+			</div>
+		</a>
+	</li>
+	{% endfor %}
+</ul>
+{% endblock %}

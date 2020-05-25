@@ -20,6 +20,7 @@
           <ul class="nav navbar-nav">
             <li {% if request.endpoint == 'artists' %} class="active" {% endif %}><a href="{{ url_for('get_artists') }}">Artists</a></li>
             <li {% if request.endpoint == 'shows' %} class="active" {% endif %}><a href="{{ url_for('get_releases') }}">Releases</a></li>
+            <li {% if request.endpoint == 'shows' %} class="active" {% endif %}><a href="{{ url_for('get_tracks') }}">Tracks</a></li>
           </ul>
         </div>
       </div>
