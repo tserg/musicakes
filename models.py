@@ -58,7 +58,8 @@ class User(db.Model):
         return {
             'id': self.id,
             'username': self.username,
-            'artist_id': artist_info
+            'artist_id': artist_info,
+            'created_on': self.created_on
         }
 
 class Artist(db.Model):
