@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import Column, String, Integer, create_engine, DateTime
+from sqlalchemy import Column, String, Integer, Float, create_engine, DateTime, UniqueConstraint
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import json
@@ -110,10 +110,10 @@ class Artist(db.Model):
 class Release(db.Model):
     __tablename__ = 'releases'
 
-    id = db.Column(db.Integer, primary_key=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'))
-    name = db.Column(db.String, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    id = Column(Integer, primary_key=True)
+    artist_id = Column(Integer, db.ForeignKey('artists.id'))
+    name = Column(String, nullable=False)
+    price = Column(Integer, nullable=False)
     tracks = db.relationship('Track', backref='release',
                              cascade='all, delete', lazy=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
@@ -140,19 +140,22 @@ class Release(db.Model):
             'artist_name': self.artist.name,
             'release_name': self.name,
             'price': self.price,
-            'tracks': formatted_tracks
+            'tracks': formatted_tracks,
+            'created_on': self.created_on
         }
 
 
 class Track(db.Model):
     __tablename__ = 'tracks'
 
-    id = db.Column(db.Integer, primary_key=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'))
-    release_id = db.Column(db.Integer, db.ForeignKey('releases.id'))
-    name = db.Column(db.String, nullable=False)
-    price = db.Column(db.Integer, nullable=False)
+    id = Column(Integer, primary_key=True)
+    artist_id = Column(Integer, db.ForeignKey('artists.id'))
+    release_id = Column(Integer, db.ForeignKey('releases.id'))
+    name = Column(String, nullable=False)
+    price = Column(Integer, nullable=False)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
+
+    __table_args__ = (UniqueConstraint('artist_id', 'release_id', 'name', name='unique_track_name'), )
 
     def insert(self):
         db.session.add(self)
@@ -174,4 +177,35 @@ class Track(db.Model):
             'release_name': self.release.name,
             'track_name': self.name,
             'price': self.price
+        }
+
+class Purchases(db.Model):
+    __tablename__ = 'purchases'
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, db.ForeignKey('users.id'))
+    release_id = Column(Integer, db.ForeignKey('releases.id'))
+    paid = Column(Float, nullable=False)
+    purchased_on = Column(DateTime, server_default=db.func.now(), nullable=False)
+
+    __table_args__ = (UniqueConstraint('user_id', 'release_id', name='unique_release_purchase'), )
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def short(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'release_id': self.release_id,
+            'paid': self.paid,
+            'purchased_on': self.purchased_on
         }
