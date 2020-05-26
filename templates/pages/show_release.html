@@ -1,0 +1,32 @@
+{% extends "layouts/layout.html" %}
+{% block title %}{% endblock %}
+{% block content %}
+<div>
+
+	<div>
+		<h4>
+			Release: {{ release.release_name }}
+		</h4>
+		<h4>
+			Artist: {{ release.artist_name }}
+		<h4>
+		<h4>
+			Price: {{ release.price }}
+		<h4>
+		<h4>
+			Tracks: 
+		<h4>
+		<ol>
+			{% for track in release.tracks %}
+			<li>{{ track.name }}</li>
+			{% endfor %}
+		<ol>
+		<h4>
+			Created on: {{ release.created_on }}
+		<h4>
+
+	</div>
+</div>
+
+
+{% endblock %}

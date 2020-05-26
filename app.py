@@ -86,6 +86,22 @@ def create_app(test_config=None):
             print(e)
             abort(404)
 
+    @app.route('/releases/<int:release_id>', methods=['GET'])
+    def show_release(release_id):
+        try:
+
+            current_release = Release.query.get(release_id)
+            if current_release is None:
+                abort(404)
+
+            data = current_release.short()
+
+            return render_template('pages/show_release.html', release=data)
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
     @app.route('/tracks', methods=['GET'])
     def get_tracks():
 
