@@ -179,7 +179,7 @@ class Track(db.Model):
             'price': self.price
         }
 
-class Purchases(db.Model):
+class Purchase(db.Model):
     __tablename__ = 'purchases'
 
     id = Column(Integer, primary_key=True)
