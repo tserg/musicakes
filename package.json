@@ -1,0 +1,22 @@
+{
+  "name": "musicakes",
+  "version": "1.0.0",
+  "description": "This is an application for artists to list their music for sale, and for fans to buy music from artists. Artists can post their releases and tracks for sale. Every track must have a release, but a release can have a single track or multiple tracks.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tserg/musicakes.git"
+  },
+  "author": "Gary Tse",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tserg/musicakes/issues"
+  },
+  "homepage": "https://github.com/tserg/musicakes#readme",
+  "dependencies": {
+    "@truffle/contract": "^4.2.6"
+  }
+}

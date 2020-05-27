@@ -28,6 +28,136 @@
 	</div>
 </div>
 
+
+    <h1 align="center">Dividend Token</h1>
+    <br>
+    <h3 align="center">Please refresh the page after each action.</h3>
+
+    <div id = "user-dashboard" class="dashboard">
+
+      <span><h3>User Dashboard</h3></span>
+
+      <div id="wallet_display">
+        <span>Current wallet: </span>
+        <span id ="account"></span>
+      </div>
+
+      <div id="eth_balance_display">
+        <span>Current ETH balance: </span>
+        <span id = "account_balance"></span>
+      </div>
+
+      <div id="status_display">
+        <span>Account status: </span>
+        <span id ="account_status"></span>
+      </div>
+
+      <br>
+
+
+    </div>
+
+    <div id ="payment-token-dashboard" class="dashboard">
+
+      <h3>Payment Token Dashboard</h3>
+      <div id="payment-token-balance-display">
+        <span>Current payment token balance: </span>
+        <span id ="payment-token-balance"></span>
+      </div>
+
+      <div>
+
+        <span>Transfer payment tokens to address: </span>
+        <input type="text" size=50 id="transfer-payment-token-address">
+
+      </div>
+      <div>
+
+        <span>Amount of payment tokens to transfer: </span>
+        <input type="text" size=50 id="transfer-payment-token-amount">
+
+      </div>
+      <div id="transfer-payment-token-section">
+        <button type="button" id="btn-transfer-payment-token">Transfer</button>
+      </div>
+      <div>
+
+        <span>Pay payment tokens to token contract: </span>
+        <input type="text" size=50 id="pay-contract-amount">
+
+      </div>
+
+      <div>
+
+        <button type="button" id="btn-pay-contract">Pay</button>
+
+      </div>
+
+
+
+    </div>
+
+    <div id = "fdt-dashboard" class = "dashboard">
+      <h3>FDT Dashboard</h3>
+      <div id = "contract-address-display">
+        <span>Contract address: </span>
+        <span id = "contract-address"></span>
+      </div>
+
+      <div id = "token-supply-display">
+        <span>Total supply of FDT: </span>
+        <span id = "token-supply"></span>
+      </div>
+
+      <div id = "user-token-count-display">
+        <span>Number of FDT held in this wallet: </span>
+        <span id = "user-token-count"></span>
+      </div>
+
+
+      <div id = "contract-funds-display">
+        <span>Payment token balance in token contract: </span>
+        <span id = "contract-funds-balance"></span>
+      </div>
+
+      <div id="dividend-display">
+        <span>Dividends unclaimed: </span>
+        <span id="dividend-balance"></span>
+      </div>
+
+      <div id="claim-dividends-section">
+        <button type="button" id="btn-claim-dividends">Claim Dividends</button>
+      </div>
+
+      <div id="update-dividends-section">
+        <button type="button" id="btn-update-dividends">Update Dividends</button>
+      </div>
+
+    </div>
+
+    <div id = "fdt-management-dashboard" class = "dashboard">
+
+      <div>
+
+        <h3>Funds Distribution Token Management Dashboard</h3>
+
+      </div>
+
+      
+      <div>
+
+        <span>Address to transfer FDT: </span>
+        <input type="text" size=50 id="transfer-FDT-address">
+
+        <span>Number of FDT to transfer: </span>
+        <input type="text" size=50 id="transfer-FDT-amount">
+
+        <button type="button" id="btn-transfer-FDT">Transfer</button>
+      </div>
+
+    </div>
+
+
 <script type="text/javascript">
 	window.appConfig = {
 		price: {{ release.price }}
@@ -36,5 +166,12 @@
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
 
 {% endblock %}
