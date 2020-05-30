@@ -3,6 +3,8 @@
 {% block content %}
 <div>
 
+  <button id="enableEthereumButton">Enable Ethereum</button>
+
 	<div>
 		<h4>
 			Release: {{ release.release_name }}
@@ -39,7 +41,7 @@
 
       <div id="wallet_display">
         <span>Current wallet: </span>
-        <span id ="account"></span>
+        <span id ="account_address"></span>
       </div>
 
       <div id="eth_balance_display">
@@ -161,17 +163,17 @@
 <script type="text/javascript">
 	window.appConfig = {
 		price: {{ release.price }}
-	}
+  }
 </script>
 
-<script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
 
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 {% endblock %}
