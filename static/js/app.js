@@ -11,6 +11,9 @@ const showAccountUnclaimedDividends = document.querySelector('#account-unclaimed
 const musicakesPayButton = document.querySelector('#btn-pay-contract');
 const musicakesPayValue = document.querySelector('#pay-contract-amount');
 
+const musicakesClaimDividendsButton = document.querySelector('#btn-claim-dividends');
+const musicakesUpdateDividendsButton = document.querySelector('#btn-update-dividends');
+
 console.log(ethereumButton);
 console.log(showAccountAddress);
 console.log(showAccountBalance);
@@ -29,6 +32,13 @@ musicakesPayButton.addEventListener('click', () => {
 	payMusicakes();
 });
 
+musicakesClaimDividendsButton.addEventListener('click', () => {
+	claimDividends();
+});
+
+musicakesUpdateDividendsButton.addEventListener('click', () => {
+	updateDividends();
+});
 
 /* Payment token contract */
 
@@ -722,18 +732,18 @@ async function payMusicakes() {
 		.once('transactionHash', function(hash) {
 			console.log(hash);
 		})
-		.on('confirmation', function(confNumber) {
-			console.log(confNumber);
+		.once('receipt', function(receipt) {
+			console.log(receipt);
 		})
 		.on('error', function(error) {
 			console.log(error);
 		}).then(function() {
 			paymentTokenContract.methods.transferFrom(account, musicakesAddress, payAmountFormatted).send({from: account})
-			.once('transactionHash', function(hash2) {
-				console.log(hash2);
+			.once('transactionHash', function(hash) {
+				console.log(hash);
 			})
-			.on('confirmation', function(confNumber2) {
-				console.log(confNumber2);
+			.once('receipt', function(receipt) {
+				console.log(confNumber);
 			})
 			.on('error', function(error) {
 				console.log(error);
@@ -742,4 +752,43 @@ async function payMusicakes() {
 
 	});
 	
+}
+
+async function claimDividends() {
+
+	web3.eth.getAccounts().then(function(accounts) {
+		var account = accounts[0];
+		console.log(account);
+
+		musicakesContract.methods.withdrawFunds().send({from: account})
+		.once('transactionHash', function(hash) {
+			console.log(hash);
+		})
+		.once('receipt', function(receipt) {
+			console.log(receipt);
+		})
+		.on('error', function(error) {
+			console.log(error);
+		});
+
+	});
+}
+
+async function updateDividends() {
+
+	web3.eth.getAccounts().then(function(accounts) {
+		var account = accounts[0];
+
+		musicakesContract.methods.updateFundsReceived().send({from: account})
+		.once('transactionHash', function(hash) {
+			console.log(hash);
+		})
+		.once('receipt', function(receipt) {
+			console.log(receipt);
+		})
+		.on('error', function(error) {
+			console.log(error);
+		});
+
+	});
 }
