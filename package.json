@@ -18,7 +18,6 @@
   "homepage": "https://github.com/tserg/musicakes#readme",
   "dependencies": {
     "@truffle/contract": "^4.2.6",
-    "server": "^1.0.27",
     "web3": "^1.2.8"
   },
   "devDependencies": {}

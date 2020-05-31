@@ -4,6 +4,12 @@ const showAccountBalance = document.querySelector('#account-balance');
 const showAccountPaymentTokenBalance = document.querySelector('#payment-token-balance');
 const showMusicakesTotalSupply = document.querySelector('#musicakes-supply');
 const showAccountMusicakesBalance = document.querySelector('#user-musicakes-balance');
+const showMusicakesPaymentTokenBalance = document.querySelector('#musicakes-payment-token-balance');
+const showAccountUnclaimedDividends = document.querySelector('#account-unclaimed-dividends')
+
+
+const musicakesPayButton = document.querySelector('#btn-pay-contract');
+const musicakesPayValue = document.querySelector('#pay-contract-amount');
 
 console.log(ethereumButton);
 console.log(showAccountAddress);
@@ -19,6 +25,9 @@ ethereumButton.addEventListener('click', () => {
 	getAccount();
 });
 
+musicakesPayButton.addEventListener('click', () => {
+	payMusicakes();
+});
 
 
 /* Payment token contract */
@@ -674,4 +683,63 @@ async function getAccount() {
 		}
 	});
 
+	// Get payment token balance in Musicakes contract
+
+	var musicakesPaymentTokenBalance = paymentTokenContract.methods.balanceOf(musicakesAddress).call(function(error, result) {
+		if (!error) {
+			console.log(result);
+			var musicakesPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
+			showMusicakesPaymentTokenBalance.innerHTML = musicakesPaymentTokenBalanceFormatted;
+		} else {
+			console.log(error);
+		}
+	});
+
+	// Get unclaimed dividends of current account
+
+	var accountUnclaimedDividends = musicakesContract.methods.withdrawableFundsOf(account).call(function(error, result) {
+		if (!error) {
+			console.log(result);
+			accountUnclaimedDividendsFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
+			showAccountUnclaimedDividends.innerHTML = accountUnclaimedDividendsFormatted;
+		} else {
+			console.log(error);
+		}
+	})
+
+}
+
+async function payMusicakes() {
+
+	web3.eth.getAccounts().then(function(accounts) {
+		var account = accounts[0];
+		console.log(account);
+
+		var payAmount = musicakesPayValue.value;
+		var payAmountFormatted = web3.utils.toBN(payAmount).mul(web3.utils.toBN(10**18));
+
+		paymentTokenContract.methods.approve(account, payAmountFormatted).send({from: account})
+		.once('transactionHash', function(hash) {
+			console.log(hash);
+		})
+		.on('confirmation', function(confNumber) {
+			console.log(confNumber);
+		})
+		.on('error', function(error) {
+			console.log(error);
+		}).then(function() {
+			paymentTokenContract.methods.transferFrom(account, musicakesAddress, payAmountFormatted).send({from: account})
+			.once('transactionHash', function(hash2) {
+				console.log(hash2);
+			})
+			.on('confirmation', function(confNumber2) {
+				console.log(confNumber2);
+			})
+			.on('error', function(error) {
+				console.log(error);
+			});
+		});
+
+	});
+	
 }
