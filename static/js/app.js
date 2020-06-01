@@ -14,15 +14,13 @@ const musicakesPayValue = document.querySelector('#pay-contract-amount');
 const musicakesClaimDividendsButton = document.querySelector('#btn-claim-dividends');
 const musicakesUpdateDividendsButton = document.querySelector('#btn-update-dividends');
 
-console.log(ethereumButton);
-console.log(showAccountAddress);
-console.log(showAccountBalance);
-console.log(showAccountPaymentTokenBalance);
-console.log(showAccountMusicakesBalance);
+const musicakesTransferButton = document.querySelector('#btn-transfer-musicakes');
+const musicakesTransferAddress = document.querySelector('#transfer-musicakes-address');
+const musicakesTransferAmount = document.querySelector('#transfer-musicakes-amount');
 
 var web3 = new Web3(Web3.givenProvider);
 
-console.log(web3);
+// Initialise buttons
 
 ethereumButton.addEventListener('click', () => {
 	getAccount();
@@ -38,6 +36,10 @@ musicakesClaimDividendsButton.addEventListener('click', () => {
 
 musicakesUpdateDividendsButton.addEventListener('click', () => {
 	updateDividends();
+});
+
+musicakesTransferButton.addEventListener('click', () => {
+  transferMusicakes();
 });
 
 /* Payment token contract */
@@ -633,28 +635,27 @@ var _musicakesAbi = [
 const paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
 const musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
 
-console.log("Payment Token Contract");
-console.log(paymentTokenContract);
-console.log("Musicakes Contract");
-console.log(musicakesContract);
+ethereum.on('accountsChanged', function(accounts) {
+  loadInterface();
+});
 
 async function getAccount() {
-	const accounts = await ethereum.enable();
-	console.log(accounts);
-	const account = accounts[0];
-	console.log(account)
+	await ethereum.enable();
+  loadInterface();
+}
+
+async function loadInterface() {
+
+  const account = ethereum.selectedAddress;
 	showAccountAddress.innerHTML = account;
 
 	// Get ETH balance of current address
 
 	var accountWeiBalance = web3.eth.getBalance(account, function(error, result) {
 		if (!error) {
-
-
-		console.log(result);
-		var accountBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-		showAccountBalance.innerHTML = accountBalance;
-		} else {
+  		var accountBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
+  		showAccountBalance.innerHTML = accountBalance;
+  		} else {
 			console.log(error);
 		}
 	});
@@ -663,7 +664,6 @@ async function getAccount() {
 
 	var accountPaymentTokenBalance = paymentTokenContract.methods.balanceOf(account).call(function(error, result) {
 		if (!error) {
-			console.log(result);
 			var accountPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
 			showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
 		} else {
@@ -675,7 +675,6 @@ async function getAccount() {
 	
 	var musicakesTotalSupply = musicakesContract.methods.totalSupply().call(function(error, result) {
 		if (!error) {
-			console.log(result);
 			showMusicakesTotalSupply.innerHTML = result;
 		} else {
 			console.log(error);
@@ -686,7 +685,6 @@ async function getAccount() {
 
 	var accountMusicakesBalance = musicakesContract.methods.balanceOf(account).call(function(error, result) {
 		if (!error) {
-			console.log(result);
 			showAccountMusicakesBalance.innerHTML = result;
 		} else {
 			console.log(error);
@@ -697,7 +695,6 @@ async function getAccount() {
 
 	var musicakesPaymentTokenBalance = paymentTokenContract.methods.balanceOf(musicakesAddress).call(function(error, result) {
 		if (!error) {
-			console.log(result);
 			var musicakesPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
 			showMusicakesPaymentTokenBalance.innerHTML = musicakesPaymentTokenBalanceFormatted;
 		} else {
@@ -709,7 +706,6 @@ async function getAccount() {
 
 	var accountUnclaimedDividends = musicakesContract.methods.withdrawableFundsOf(account).call(function(error, result) {
 		if (!error) {
-			console.log(result);
 			accountUnclaimedDividendsFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
 			showAccountUnclaimedDividends.innerHTML = accountUnclaimedDividendsFormatted;
 		} else {
@@ -721,74 +717,89 @@ async function getAccount() {
 
 async function payMusicakes() {
 
-	web3.eth.getAccounts().then(function(accounts) {
-		var account = accounts[0];
-		console.log(account);
+  const account = ethereum.selectedAddress;
 
-		var payAmount = musicakesPayValue.value;
-		var payAmountFormatted = web3.utils.toBN(payAmount).mul(web3.utils.toBN(10**18));
+	var payAmount = musicakesPayValue.value;
+	var payAmountFormatted = web3.utils.toBN(payAmount).mul(web3.utils.toBN(10**18));
 
-		paymentTokenContract.methods.approve(account, payAmountFormatted).send({from: account})
+	paymentTokenContract.methods.approve(account, payAmountFormatted).send({from: account})
+	.once('transactionHash', function(hash) {
+		console.log(hash);
+	})
+	.once('receipt', function(receipt) {
+		console.log(receipt);
+	})
+	.on('error', function(error) {
+		console.log(error);
+	}).then(function() {
+		paymentTokenContract.methods.transferFrom(account, musicakesAddress, payAmountFormatted).send({from: account})
 		.once('transactionHash', function(hash) {
 			console.log(hash);
 		})
 		.once('receipt', function(receipt) {
 			console.log(receipt);
+      location.reload();
 		})
 		.on('error', function(error) {
 			console.log(error);
-		}).then(function() {
-			paymentTokenContract.methods.transferFrom(account, musicakesAddress, payAmountFormatted).send({from: account})
-			.once('transactionHash', function(hash) {
-				console.log(hash);
-			})
-			.once('receipt', function(receipt) {
-				console.log(confNumber);
-			})
-			.on('error', function(error) {
-				console.log(error);
-			});
 		});
-
 	});
+
+
 	
 }
 
 async function claimDividends() {
 
-	web3.eth.getAccounts().then(function(accounts) {
-		var account = accounts[0];
-		console.log(account);
+  const account = ethereum.selectedAddress;
 
-		musicakesContract.methods.withdrawFunds().send({from: account})
-		.once('transactionHash', function(hash) {
-			console.log(hash);
-		})
-		.once('receipt', function(receipt) {
-			console.log(receipt);
-		})
-		.on('error', function(error) {
-			console.log(error);
-		});
-
+	musicakesContract.methods.withdrawFunds().send({from: account})
+	.once('transactionHash', function(hash) {
+		console.log(hash);
+	})
+	.once('receipt', function(receipt) {
+		console.log(receipt);
+    location.reload();
+	})
+	.on('error', function(error) {
+		console.log(error);
 	});
 }
 
 async function updateDividends() {
 
-	web3.eth.getAccounts().then(function(accounts) {
-		var account = accounts[0];
+  const account = ethereum.selectedAddress;
 
-		musicakesContract.methods.updateFundsReceived().send({from: account})
-		.once('transactionHash', function(hash) {
-			console.log(hash);
-		})
-		.once('receipt', function(receipt) {
-			console.log(receipt);
-		})
-		.on('error', function(error) {
-			console.log(error);
-		});
-
+	musicakesContract.methods.updateFundsReceived().send({from: account})
+	.once('transactionHash', function(hash) {
+		console.log(hash);
+	})
+	.once('receipt', function(receipt) {
+		console.log(receipt);
+    location.reload();
+	})
+	.on('error', function(error) {
+		console.log(error);
 	});
+}
+
+async function transferMusicakes() {
+
+  const account = ethereum.selectedAddress;
+
+  var musicakesTransferAddressValue = musicakesTransferAddress.value;
+  var musicakesTransferAmountValue = musicakesTransferAmount.value;
+
+  musicakesContract.methods.transfer(musicakesTransferAddressValue,
+    musicakesTransferAmountValue).send({from: account})
+  .once('transactionHash', function(hash) {
+    console.log(hash);
+  })
+  .once('receipt', function(receipt) {
+    console.log(receipt);
+    location.reload();
+  })
+  .on('error', function(error) {
+    console.log(error);
+  });
 }
