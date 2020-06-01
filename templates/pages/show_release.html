@@ -1,56 +1,56 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div>
+<div id = "release-and-user-dashboard" class = "dashboard">
+  <div id = "user-dashboard" class="sub-dashboard">
 
-  <button id="enable-ethereum-button">Enable Ethereum</button>
+    <span><h3>User Dashboard</h3></span>
 
-	<div>
-		<h4>
-			Release: {{ release.release_name }}
-		</h4>
-		<h4>
-			Artist: {{ release.artist_name }}
-		<h4>
-		<h4>
-			Price: {{ release.price }}
-		<h4>
-		<h4>
-			Tracks: 
-		<h4>
-		<ol>
-			{% for track in release.tracks %}
-			<li>{{ track.name }}</li>
-			{% endfor %}
-		<ol>
-		<h4>
-			Created on: {{ release.created_on }}
-		<h4>
-
-	</div>
-</div>
-
-    <h3 align="center">Please refresh the page after each action.</h3>
-
-    <div id = "user-dashboard" class="dashboard">
-
-      <span><h3>User Dashboard</h3></span>
-
-      <div id="wallet_display">
-        <span>Current wallet: </span>
-        <span id ="account-address"></span>
-      </div>
-
-      <div id="eth_balance_display">
-        <span>Current ETH balance: </span>
-        <span id = "account-balance"></span>
-      </div>
-
-      <br>
-
+    <div id="wallet_display">
+      <span>Current wallet: </span>
+      <span id ="account-address"></span>
     </div>
 
-    <div id ="payment-token-dashboard" class="dashboard">
+    <div id="eth_balance_display">
+      <span>Current ETH balance: </span>
+      <span id = "account-balance"></span>
+    </div>
+
+    <br>
+
+  </div>
+
+  <div id = "release-dashboard" class="sub-dashboard">
+
+    <button id="enable-ethereum-button">Enable Ethereum</button>
+
+  	<div>
+  		<h4>
+  			Release: {{ release.release_name }}
+  		</h4>
+  		<h4>
+  			Artist: {{ release.artist_name }}
+  		<h4>
+  		<h4>
+  			Price: {{ release.price }}
+  		<h4>
+  		<h4>
+  			Tracks: 
+  		<h4>
+  		<ol>
+  			{% for track in release.tracks %}
+  			<li>{{ track.name }}</li>
+  			{% endfor %}
+  		</ol>
+  		<h4>
+  			Created on: {{ release.created_on }}
+  		</h4>
+
+  	</div>
+  </div>
+</div>
+<div class = "dashboard">
+    <div id ="payment-token-dashboard" class="sub-dashboard">
 
       <h3>Payment Token Dashboard</h3>
       <div id="payment-token-balance-display">
@@ -75,7 +75,7 @@
 
     </div>
 
-    <div id = "musicakes-dashboard" class = "dashboard">
+    <div id = "musicakes-dashboard" class = "sub-dashboard">
       <h3>Musicakes Dashboard</h3>
       <div id = "musicakes-contract-address-display">
         <span>Contract address: </span>
@@ -113,7 +113,7 @@
 
     </div>
 
-    <div id = "fdt-management-dashboard" class = "dashboard">
+    <div id = "fdt-management-dashboard" class = "sub-dashboard">
 
       <div>
 
@@ -124,17 +124,19 @@
       
       <div>
 
-        <span>Address to transfer Musicakes: </span>
-        <input type="text" size=50 id="transfer-musicakes-address">
 
-        <span>Number of Musicakes to transfer: </span>
-        <input type="text" size=50 id="transfer-musicakes-amount">
-
+          Address to transfer Musicakes: 
+          <input type="text" size=50 id="transfer-musicakes-address">
+        <br>
+          Number of Musicakes to transfer: 
+          <input type="text" size=50 id="transfer-musicakes-amount">
+        <br>
+        
         <button type="button" id="btn-transfer-musicakes">Transfer</button>
       </div>
 
     </div>
-
+</div>
 
 <script type="text/javascript">
 	window.appConfig = {

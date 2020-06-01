@@ -5,3 +5,18 @@
 	height: auto;
 }
 
+.dashboard {
+	float: left;
+	clear: none;
+}
+
+
+#release-and-user-dashboard {
+	width: 400px;
+}
+
+#footer {
+	clear:both;
+	position: relative;
+	margin-top: -200px;
+}
