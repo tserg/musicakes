@@ -1,40 +1,157 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div>
+<div id = "release-and-user-dashboard" class = "dashboard">
+  <div id = "user-dashboard" class="sub-dashboard">
 
-	<div>
-		<h4>
-			Release: {{ release.release_name }}
-		</h4>
-		<h4>
-			Artist: {{ release.artist_name }}
-		<h4>
-		<h4>
-			Price: {{ release.price }}
-		<h4>
-		<h4>
-			Tracks: 
-		<h4>
-		<ol>
-			{% for track in release.tracks %}
-			<li>{{ track.name }}</li>
-			{% endfor %}
-		<ol>
-		<h4>
-			Created on: {{ release.created_on }}
-		<h4>
+    <span><h3>User Dashboard</h3></span>
 
-	</div>
+    <div id="wallet_display">
+      <span>Current wallet: </span>
+      <span id ="account-address"></span>
+    </div>
+
+    <div id="eth_balance_display">
+      <span>Current ETH balance: </span>
+      <span id = "account-balance"></span>
+    </div>
+
+    <br>
+
+  </div>
+
+  <div id = "release-dashboard" class="sub-dashboard">
+
+    <button id="enable-ethereum-button">Enable Ethereum</button>
+
+  	<div>
+  		<h4>
+  			Release: {{ release.release_name }}
+  		</h4>
+  		<h4>
+  			Artist: {{ release.artist_name }}
+  		<h4>
+  		<h4>
+  			Price: {{ release.price }}
+  		<h4>
+  		<h4>
+  			Tracks: 
+  		<h4>
+  		<ol>
+  			{% for track in release.tracks %}
+  			<li>{{ track.name }}</li>
+  			{% endfor %}
+  		</ol>
+  		<h4>
+  			Created on: {{ release.created_on }}
+  		</h4>
+
+  	</div>
+  </div>
+</div>
+<div class = "dashboard">
+    <div id ="payment-token-dashboard" class="sub-dashboard">
+
+      <h3>Payment Token Dashboard</h3>
+      <div id="payment-token-balance-display">
+        <span>Current payment token balance: </span>
+        <span id ="payment-token-balance"></span>
+      </div>
+
+      <div>
+
+        <span>Pay payment tokens to token contract: </span>
+        <input type="text" size=50 id="pay-contract-amount">
+
+      </div>
+
+      <div>
+
+        <button type="button" id="btn-pay-contract">Pay</button>
+
+      </div>
+
+
+
+    </div>
+
+    <div id = "musicakes-dashboard" class = "sub-dashboard">
+      <h3>Musicakes Dashboard</h3>
+      <div id = "musicakes-contract-address-display">
+        <span>Contract address: </span>
+        <span id = "musicakes-address"></span>
+      </div>
+
+      <div id = "musicakes-supply-display">
+        <span>Total supply of Musicakes: </span>
+        <span id = "musicakes-supply"></span>
+      </div>
+
+      <div id = "user-token-balance-display">
+        <span>Number of Musicakes held in this wallet: </span>
+        <span id = "user-musicakes-balance"></span>
+      </div>
+
+
+      <div id = "musicakes-payment-token-display">
+        <span>Payment token balance in Musicakes contract: </span>
+        <span id = "musicakes-payment-token-balance"></span>
+      </div>
+
+      <div id="account-unclaimed-dividends-display">
+        <span>Dividends unclaimed: </span>
+        <span id="account-unclaimed-dividends"></span>
+      </div>
+
+      <div id="claim-dividends-section">
+        <button type="button" id="btn-claim-dividends">Claim Dividends</button>
+      </div>
+
+      <div id="update-dividends-section">
+        <button type="button" id="btn-update-dividends">Update Dividends</button>
+      </div>
+
+    </div>
+
+    <div id = "musicakes-management-dashboard" class = "sub-dashboard">
+
+      <div>
+
+        <h3>Transfer your Musicakes</h3>
+
+      </div>
+
+      
+      <div>
+
+
+          Address to transfer Musicakes: 
+          <input type="text" size=50 id="transfer-musicakes-address">
+        <br>
+          Number of Musicakes to transfer: 
+          <input type="text" size=50 id="transfer-musicakes-amount">
+        <br>
+        
+        <button type="button" id="btn-transfer-musicakes">Transfer</button>
+      </div>
+
+    </div>
 </div>
 
 <script type="text/javascript">
 	window.appConfig = {
 		price: {{ release.price }}
-	}
+  }
 </script>
 
-<script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 
+<script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 
 {% endblock %}
