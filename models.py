@@ -47,7 +47,7 @@ class User(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def short(self):
+    def short_private(self):
 
         artist_info = None
 
@@ -59,6 +59,13 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'artist_id': artist_info,
+            'created_on': self.created_on
+        }
+
+    def short_public(self):
+
+        return {
+            'username': self.username,
             'created_on': self.created_on
         }
 

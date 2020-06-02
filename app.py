@@ -21,7 +21,7 @@ def create_app(test_config=None):
 
         return render_template('pages/index.html')
 
-
+    '''
     @app.route('/users', methods=['GET'])
     def get_users():
         try:
@@ -38,6 +38,7 @@ def create_app(test_config=None):
         except Exception as e:
             print(e)
             abort(404)
+    '''
 
     @app.route('/users/<int:user_id>', methods=['GET'])
     def show_user(user_id):
@@ -47,7 +48,7 @@ def create_app(test_config=None):
             if current_user is None:
                 abort(404)
 
-            data = current_user.short()
+            data = current_user.short_public()
 
             return render_template('pages/show_user.html', user=data)
 
@@ -64,7 +65,7 @@ def create_app(test_config=None):
 
             formatted_all_artists = [artist.short() for artist in all_artists]
 
-            return render_template('/pages/artists.html', artists=formatted_all_artists)
+            return render_template('pages/artists.html', artists=formatted_all_artists)
 
         except Exception as e:
             print(e)
@@ -80,7 +81,7 @@ def create_app(test_config=None):
             formatted_all_releases = [release.short()
                                       for release in all_releases]
 
-            return render_template('/pages/releases.html', releases=formatted_all_releases)
+            return render_template('pages/releases.html', releases=formatted_all_releases)
 
         except Exception as e:
             print(e)

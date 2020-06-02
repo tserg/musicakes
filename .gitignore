@@ -3,3 +3,7 @@
 
 # ignore pycache
 __pycache__/
+
+# ignore node_modules
+
+node_modules/
