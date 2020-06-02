@@ -97,6 +97,8 @@ def create_app(test_config=None):
 
             data = current_release.short()
 
+            print(data['smart_contract_address'])
+
             return render_template('pages/show_release.html', release=data)
 
         except Exception as e:

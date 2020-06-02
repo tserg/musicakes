@@ -78,7 +78,10 @@
     <div id = "musicakes-dashboard" class = "sub-dashboard">
       <h3>Musicakes Dashboard</h3>
       <div id = "musicakes-contract-address-display">
-        <span>Contract address: </span>
+        <span>Contract address: {{ release.smart_contract_address }}</span>
+
+        <!-- proxy element to store and query smart contract address for window.appConfig --->
+        <meta id="smart_contract_address" data-address="{{ release.smart_contract_address }}">
         <span id = "musicakes-address"></span>
       </div>
 
@@ -138,13 +141,15 @@
     </div>
 </div>
 
-<script type="text/javascript">
-	window.appConfig = {
-		price: {{ release.price }}
-  }
-</script>
+
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
+
+<script type="text/javascript">
+  window.appConfig = {
+    smart_contract_address: $('#smart_contract_address').data()
+  }
+</script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
 

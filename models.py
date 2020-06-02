@@ -124,6 +124,7 @@ class Release(db.Model):
     tracks = db.relationship('Track', backref='release',
                              cascade='all, delete', lazy=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
+    smart_contract_address=Column(String, unique=True, nullable=True)
 
     def insert(self):
         db.session.add(self)
@@ -148,7 +149,8 @@ class Release(db.Model):
             'release_name': self.name,
             'price': self.price,
             'tracks': formatted_tracks,
-            'created_on': self.created_on
+            'created_on': self.created_on,
+            'smart_contract_address': self.smart_contract_address
         }
 
 
