@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from jose import jwt
 
-from models import setup_db, User, Artist, Release, Track
+from models import setup_db, User, Artist, Release, Track, Purchase
 from auth import AuthError, requires_auth, check_auth_id
 
 
@@ -49,6 +49,22 @@ def create_app(test_config=None):
                 abort(404)
 
             data = current_user.short_public()
+
+            purchased = Purchase.query.filter(Purchase.user_id==user_id). \
+                        join(Release).all()
+
+            temp=[]
+
+            for purchase in purchased:
+                release_name = Release.query.get(purchase.release_id).name
+                temp_dict = {}
+
+                if release_name not in temp:
+                    temp_dict['release_id'] = purchase.release_id
+                    temp_dict['release_name'] = release_name
+                    temp.append(temp_dict)
+
+            data['purchased_releases'] = temp
 
             return render_template('pages/show_user.html', user=data)
 

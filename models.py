@@ -35,6 +35,7 @@ class User(db.Model):
     artist = db.relationship('Artist', uselist=False, back_populates='user')
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
+
     
     def insert(self):
         db.session.add(self)
@@ -46,6 +47,7 @@ class User(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
 
     def short_private(self):
 
@@ -66,7 +68,7 @@ class User(db.Model):
 
         return {
             'username': self.username,
-            'created_on': self.created_on
+            'created_on': self.created_on,
         }
 
 class Artist(db.Model):
@@ -125,6 +127,7 @@ class Release(db.Model):
                              cascade='all, delete', lazy=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     smart_contract_address=Column(String, unique=True, nullable=True)
+
 
     def insert(self):
         db.session.add(self)
@@ -196,7 +199,8 @@ class Purchase(db.Model):
     release_id = Column(Integer, db.ForeignKey('releases.id'))
     paid = Column(Float, nullable=False)
     purchased_on = Column(DateTime, server_default=db.func.now(), nullable=False)
-
+    transactionHash = Column(String, unique=True, nullable=True)
+    
     __table_args__ = (UniqueConstraint('user_id', 'release_id', name='unique_release_purchase'), )
 
     def insert(self):

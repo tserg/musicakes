@@ -7,9 +7,18 @@
 		<h4>
 			Username: {{ user.username }}
 		</h4>
+
 		<h4>
 			Created on: {{ user.created_on }}
 		</h4>
+		<h4>Purchases: </h4>
+		{% for release in user.purchased_releases %}
+			<ol>
+
+				<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
+
+			</ol>
+		{% endfor %}
 
 	</div>
 </div>
