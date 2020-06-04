@@ -1,7 +1,9 @@
 import os
-from flask import Flask, request, abort, jsonify, flash, render_template
+from flask import Flask, request, abort, jsonify, flash, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_wtf import Form, CSRFProtect
+from forms import *
 from jose import jwt
 
 from models import setup_db, User, Artist, Release, Track, Purchase
@@ -12,6 +14,11 @@ def create_app(test_config=None):
 
     # create and configure the app
     app = Flask(__name__)
+
+    app.config.from_object('config')
+    csrf = CSRFProtect()
+    csrf.init_app(app)
+
     setup_db(app)
 
     CORS(app)
@@ -168,6 +175,36 @@ def create_app(test_config=None):
             abort(404)
 
 
+    @app.route('/users/create', methods=['GET'])
+    def create_user_form():
+        form = UserForm()
+        return render_template('forms/new_user.html', form=form)
+
+
+    @app.route('/users/create', methods=['POST'])
+    def create_user_submission():
+        form = UserForm(request.form)
+
+        try:
+
+            if form.validate():
+
+                new_user = User(
+                    auth_id = 'abc',
+                    username = form.username.data
+                )
+
+                new_user.insert()
+
+                flash('Your account has been successfully created.')
+
+        except Exception as e:
+
+            print(e)
+            flash('Your account could not be created.')
+
+        return redirect(url_for('index'))
+    '''
     @app.route('/users', methods=['POST'])
     def create_user():
         try:
@@ -188,6 +225,7 @@ def create_app(test_config=None):
         except:
 
             abort(404)
+    '''
 
     @app.route('/artists', methods=['POST'])
     @requires_auth('create:artist')
@@ -573,6 +611,7 @@ def create_app(test_config=None):
         Errors handling
     """
 
+    """
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({
@@ -620,6 +659,17 @@ def create_app(test_config=None):
             'error': AuthError.status_code,
             'message': AuthError.error['description']
         }), 401
+
+    """
+
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('errors/404.html'), 404
+
+    @app.errorhandler(500)
+    def server_error(error):
+        return render_template('errors/500.html'), 500
+
 
     return app
 

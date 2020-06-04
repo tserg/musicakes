@@ -30,8 +30,8 @@ class User(db.Model):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    auth_id = Column(String, nullable=False)
-    username = Column(String, nullable=False)
+    auth_id = Column(String, unique=True, nullable=False)
+    username = Column(String, unique=True, nullable=False)
     artist = db.relationship('Artist', uselist=False, back_populates='user')
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
