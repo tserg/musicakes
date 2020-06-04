@@ -113,7 +113,21 @@ def create_app(test_config=None):
 
             data = current_release.short()
 
-            print(data['smart_contract_address'])
+            purchases = Purchase.query.filter(Purchase.release_id==release_id). \
+                        join(Release).all()
+
+            temp=[]
+
+            for purchase in purchases:
+                purchaser_name = User.query.get(purchase.user_id).username
+                temp_dict = {}
+
+                if purchaser_name not in temp:
+                    temp_dict['user_id'] = purchase.user_id
+                    temp_dict['username'] = purchaser_name
+                    temp.append(temp_dict)
+
+            data['purchasers'] = temp
 
             return render_template('pages/show_release.html', release=data)
 

@@ -46,6 +46,15 @@
   			Created on: {{ release.created_on }}
   		</h4>
 
+      <h4>
+        Purchasers:
+        {% for purchaser in release.purchasers %}
+        <ol>
+          <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
+        </ol>
+        {% endfor %}
+      </h4>
+
   	</div>
   </div>
 </div>

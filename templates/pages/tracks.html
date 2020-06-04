@@ -7,12 +7,11 @@
 	{% endif %}
 	{% for track in tracks %}
 	<li>
-		<a href="/tracks/{{ track.id }}">
-			<i class="fas fa-users"></i>
-			<div class="item">
+		
+		<div class="item">
 				<h5>{{ track.track_name }} - {{ track.artist_name }}</h5>
-			</div>
-		</a>
+		</div>
+		
 	</li>
 	{% endfor %}
 </ul>
