@@ -87,6 +87,23 @@ def create_app(test_config=None):
             print(e)
             abort(404)
 
+    @app.route('/artists/<int:artist_id>', methods=['GET'])
+    def show_artist(artist_id):
+        try:
+
+            current_artist = Artist.query.get(artist_id)
+            if current_artist is None:
+                abort(404)
+
+            data = current_artist.short()
+
+            return render_template('pages/show_artist.html', artist=data)
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
+
     @app.route('/releases', methods=['GET'])
     def get_releases():
 
