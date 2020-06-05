@@ -178,6 +178,7 @@ def create_app(test_config=None):
     @app.route('/users/create', methods=['GET'])
     def create_user_form():
         form = UserForm()
+
         return render_template('forms/new_user.html', form=form)
 
 
@@ -185,12 +186,14 @@ def create_app(test_config=None):
     def create_user_submission():
         form = UserForm(request.form)
 
+        auth_id = request.args.get('auth_id')
+
         try:
 
             if form.validate():
 
                 new_user = User(
-                    auth_id = 'abc',
+                    auth_id = auth_id,
                     username = form.username.data
                 )
 
