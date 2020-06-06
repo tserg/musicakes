@@ -7,7 +7,7 @@ from forms import *
 from jose import jwt
 
 from models import setup_db, User, Artist, Release, Track, Purchase
-from auth import AuthError, requires_auth, check_auth_id
+from auth import AuthError, requires_auth, check_auth_id, verify_decode_jwt
 
 
 def create_app(test_config=None):
@@ -25,8 +25,45 @@ def create_app(test_config=None):
 
     @app.route('/')
     def index():
-
         return render_template('pages/index.html')
+
+
+    # after logging in
+
+    @app.route('/home')
+    def home():
+
+        jwt_token = request.args.get('access_token')
+
+        print(jwt_token)
+
+        if jwt_token:
+
+            payload = verify_decode_jwt(jwt_token)
+
+            auth_id = payload['sub'][6:]
+
+            print(auth_id)
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+
+                print(user.username)
+
+                data = {
+                    'username': user.username
+                }
+
+            else:
+
+                data = None
+
+        else:
+
+            data = None 
+
+        return render_template('pages/home.html', user_data=data)
 
     '''
     @app.route('/users', methods=['GET'])
