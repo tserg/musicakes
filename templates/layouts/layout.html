@@ -31,41 +31,30 @@
         <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
 
 
-        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white"><img src="{{ url_for('static', filename='img/musicakes.png') }}" /></a>
+        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white w3-hover-white"><img src="{{ url_for('static', filename='img/musicakes.png') }}" /></a>
 
         <a href="{{ url_for('get_artists') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Artists</a>
         <a href="{{ url_for('get_releases') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Releases</a>
         <a href="{{ url_for('get_tracks') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Tracks</a>
+        {% if userinfo %}
+            <a href="{{ url_for('get_tracks') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">{{userinfo['username']}}</a>
+            <a class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" href="/logout">Logout</a>
+        {% else %}
+
+            <a href='/login' class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Log In/Sign up</a>
+
+        {% endif %}
       </div>
 
       <!-- Navbar on small screens -->
       <div id="navDemo" class="w3-bar-block w3-white w3-hide w3-hide-large w3-hide-medium w3-large">
-        <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 1</a>
-
-        <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 2</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 3</a>
-        <a href="#" class="w3-bar-item w3-button w3-padding-large">Link 4</a>
         <a href="{{ url_for('get_artists') }}" class="w3-bar-item w3-button w3-padding-large">Artists</a>
         <a href="{{ url_for('get_releases') }}" class="w3-bar-item w3-button w3-padding-large">Releases</a>
         <a href="{{ url_for('get_tracks') }}" class="w3-bar-item w3-button w3-padding-large">Tracks</a>
       </div>
     </div>
 
-    <!-- Fixed navbar -->
-    <div class="navbar">
-      <div class="container">
-        <div class="navbar-header">
-          <h1>Welcome to Musicakes!</h1>
-      
-
-          <ul class="nav navbar-nav">
-            <li {% if request.endpoint == 'artists' %} class="active" {% endif %}><a href="{{ url_for('get_artists') }}">Artists</a></li>
-            <li {% if request.endpoint == 'shows' %} class="active" {% endif %}><a href="{{ url_for('get_releases') }}">Releases</a></li>
-            <li {% if request.endpoint == 'shows' %} class="active" {% endif %}><a href="{{ url_for('get_tracks') }}">Tracks</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
+    <h1>Welcome to Musicakes!</h1>
 
   {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -76,6 +65,8 @@
       </ul>
     {% endif %}
   {% endwith %}
+
+
 
 
 
