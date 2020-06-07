@@ -73,12 +73,35 @@ def create_app(test_config=None):
     def login():
         return auth0.authorize_redirect(redirect_uri='http://localhost:5000/callback')
 
-
+    @app.route('/logout')
+    def logout():
+        # Clear session stored data
+        session.clear()
+        # Redirect user to logout endpoint
+        params = {'returnTo': url_for('index', _external=True), 'client_id': 'TYNrPQ3cGpX0P16gl9Q8zyEVUxxVlTkh'}
+        return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
 
     @app.route('/')
-
     def index():
-        return render_template('pages/index.html')
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_public()
+
+            else: 
+
+                data = None
+
+        else:
+
+            data = None
+
+        return render_template('pages/index.html', userinfo=data)
 
 
     # after logging in
