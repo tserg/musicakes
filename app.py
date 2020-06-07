@@ -1,5 +1,7 @@
 import os
-from flask import Flask, request, abort, jsonify, flash, render_template, redirect, url_for
+import json
+from functools import wraps
+from flask import Flask, request, abort, jsonify, flash, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_wtf import Form, CSRFProtect
@@ -7,7 +9,10 @@ from forms import *
 from jose import jwt
 
 from models import setup_db, User, Artist, Release, Track, Purchase
-from auth import AuthError, requires_auth, check_auth_id, verify_decode_jwt
+from auth import AuthError, requires_auth, check_auth_id
+
+from authlib.integrations.flask_client import OAuth
+from six.moves.urllib.parse import urlencode
 
 
 def create_app(test_config=None):
@@ -23,47 +28,79 @@ def create_app(test_config=None):
 
     CORS(app)
 
+    oauth = OAuth(app)
+
+    auth0 = oauth.register(
+        'auth0',
+        client_id='TYNrPQ3cGpX0P16gl9Q8zyEVUxxVlTkh',
+        client_secret='8oYk_9RSrFUuqZ-6IhpiRG5irPLypPECaMMDT-qg0PQ7WWW4D9gfYwV5bDvmxIGk',
+        api_base_url='https://musicakes.auth0.com',
+        access_token_url='https://musicakes.auth0.com/oauth/token',
+        authorize_url='https://musicakes.auth0.com/authorize',
+        client_kwargs={
+            'scope': 'openid profile email',
+        },
+    )
+
+    def requires_auth_2(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            if 'profile' not in session:
+                return redirect('/')
+            return f(*args, **kwargs)
+        return decorated
+
+    # /server.py
+
+    # Here we're using the /callback route.
+    @app.route('/callback')
+    def callback_handling():
+        # Handles response from token endpoint
+        auth0.authorize_access_token()
+        resp = auth0.get('userinfo')
+        userinfo = resp.json()
+
+        # Store the user information in flask session.
+        session['jwt_payload'] = userinfo
+        session['profile'] = {
+            'user_id': userinfo['sub'],
+            'name': userinfo['name'],
+            'picture': userinfo['picture']
+        }
+        return redirect('/home')
+
+    @app.route('/login')
+    def login():
+        return auth0.authorize_redirect(redirect_uri='http://localhost:5000/callback')
+
+
+
     @app.route('/')
+
     def index():
         return render_template('pages/index.html')
 
 
     # after logging in
 
-    @app.route('/home')
+    @app.route('/home', methods=['GET'])
+    @requires_auth_2
     def home():
 
-        jwt_token = request.args.get('access_token')
+        auth_id = session['jwt_payload']['sub'][6:]
 
-        print(jwt_token)
+        print(auth_id)
 
-        if jwt_token:
+        user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
-            payload = verify_decode_jwt(jwt_token)
-
-            auth_id = payload['sub'][6:]
-
-            print(auth_id)
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-
-                print(user.username)
-
-                data = {
-                    'username': user.username
-                }
-
-            else:
-
-                data = None
+        if user:
+            data = user.short_public()
 
         else:
 
-            data = None 
+            data = None
 
-        return render_template('pages/home.html', user_data=data)
+        return render_template('pages/home.html', userinfo=data)
 
     '''
     @app.route('/users', methods=['GET'])

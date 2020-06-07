@@ -7,11 +7,10 @@
   </style>
 {% endblock %}
 {% block content %}
-  <h1>Welcome to Musicakes!</h1>
 
+	<div class="logged-in-box auth0-box logged-in">
+	    <h2>Welcome {{userinfo['username']}}!</h2>
+	    <a class="btn btn-primary btn-lg btn-logout btn-block" href="/logout">Logout</a>
+	</div>
 
-  
-  <p>
-  	<a href="">Log Out</a>
-  </p> 
 {% endblock %}
