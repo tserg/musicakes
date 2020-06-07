@@ -89,8 +89,6 @@ def create_app(test_config=None):
 
         auth_id = session['jwt_payload']['sub'][6:]
 
-        print(auth_id)
-
         user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
         if user:
@@ -162,7 +160,24 @@ def create_app(test_config=None):
 
             formatted_all_artists = [artist.short() for artist in all_artists]
 
-            return render_template('pages/artists.html', artists=formatted_all_artists)
+            if 'jwt_payload' in session:
+
+                auth_id = session['jwt_payload']['sub'][6:]
+
+                user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+                if user:
+                    data = user.short_public()
+
+                else: 
+
+                    data = None
+
+            else:
+
+                data = None
+
+            return render_template('pages/artists.html', artists=formatted_all_artists, userinfo=data)
 
         except Exception as e:
             print(e)
@@ -195,7 +210,24 @@ def create_app(test_config=None):
             formatted_all_releases = [release.short()
                                       for release in all_releases]
 
-            return render_template('pages/releases.html', releases=formatted_all_releases)
+            if 'jwt_payload' in session:
+
+                auth_id = session['jwt_payload']['sub'][6:]
+
+                user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+                if user:
+                    data = user.short_public()
+
+                else: 
+
+                    data = None
+
+            else:
+
+                data = None
+
+            return render_template('pages/releases.html', releases=formatted_all_releases, userinfo=data)
 
         except Exception as e:
             print(e)
@@ -242,7 +274,24 @@ def create_app(test_config=None):
 
             formatted_all_tracks = [track.short() for track in all_tracks]
 
-            return render_template('/pages/tracks.html', tracks=formatted_all_tracks)
+            if 'jwt_payload' in session:
+
+                auth_id = session['jwt_payload']['sub'][6:]
+
+                user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+                if user:
+                    data = user.short_public()
+
+                else: 
+
+                    data = None
+
+            else:
+
+                data = None
+
+            return render_template('/pages/tracks.html', tracks=formatted_all_tracks, userinfo=data)
 
         except:
 
