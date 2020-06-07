@@ -1,18 +1,7 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Musicakes | Releases{% endblock %}
 {% block content %}
-{% if userinfo %}
-<div class="logged-in-box auth0-box logged-in">
-    <h2>Current account: {{userinfo['username']}}</h2>
-    <a class="btn btn-primary btn-lg btn-logout btn-block" href="/logout">Logout</a>
-</div>
-{% else %}
-  <p>
-  	<a href='/login'>Log In/Sign up</a>
-  </p> 
 
-
-{% endif %}
 <ul class="items">
 
 	{% if not releases %}

@@ -67,7 +67,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 	width:auto;
 	border:none;
 	display:block;
-	outline:0
+	outline:0;
 }
 
 .w3-bar .w3-dropdown-hover,.w3-bar .w3-dropdown-click{position:static;float:left}
@@ -114,6 +114,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 .w3-bar-item.w3-mobile,.w3-dropdown-hover.w3-mobile,.w3-dropdown-click.w3-mobile {
 	text-align:center
+
 }
 
 .w3-dropdown-hover.w3-mobile,.w3-dropdown-hover.w3-mobile .w3-btn,.w3-dropdown-hover.w3-mobile .w3-button,.w3-dropdown-click.w3-mobile,.w3-dropdown-click.w3-mobile .w3-btn,.w3-dropdown-click.w3-mobile .w3-button{width:100%}}
@@ -129,6 +130,7 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 
 .w3-top {
 	top:0;
+
 }
 
 .w3-top div {
