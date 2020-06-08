@@ -1,0 +1,21 @@
+{% extends 'layouts/layout.html' %}
+{% block title %}Create an artist profile{% endblock %}
+{% block content %}
+  <div class="form-wrapper">
+    <form method="post" class="form">
+      {{ form.hidden_tag() }}
+      <h3 class="form-heading">Create an artist profile</h3>
+
+      <div class="form-group">
+          <label for="artist_name">Artist name</label>
+          {{ form.artist_name(class_ = 'form-control', autofocus = true) }}
+
+      </div>
+      <div class="form-group">
+        <label for="artist_country">Country</label>
+          {{ form.artist_country(class_ = 'form-control', placeholder='Country', autofocus = true) }}
+        </div>
+      <input type="submit" value="Create artist profile" class="btn btn-primary btn-lg btn-block">
+    </form>
+  </div>
+{% endblock %}

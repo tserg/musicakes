@@ -387,6 +387,13 @@ def create_app(test_config=None):
             abort(404)
     '''
 
+    @app.route('/artists/create', methods=['GET'])
+    @requires_auth_2
+    def create_artist_form():
+        form = ArtistForm()
+
+        return render_template('forms/new_artist.html', form=form)
+
     @app.route('/artists', methods=['POST'])
     @requires_auth('create:artist')
     def create_artist(payload):
