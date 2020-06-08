@@ -31,7 +31,7 @@
         <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
 
 
-        <a href="#" class="w3-bar-item w3-button w3-padding-large w3-white w3-hover-white"><img src="{{ url_for('static', filename='img/musicakes.png') }}" /></a>
+        <a href="{{ url_for('index') }}" class="w3-bar-item w3-button w3-padding-large w3-white w3-hover-white"><img src="{{ url_for('static', filename='img/musicakes.png') }}" /></a>
 
         <a href="{{ url_for('get_artists') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Artists</a>
         <a href="{{ url_for('get_releases') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Releases</a>
@@ -42,7 +42,7 @@
           
             <button class="w3-hide-small w3-padding-large w3-hover-white w3-button">{{userinfo['username']}}</button>
             <div class="w3-dropdown-content">
-              <a href="#">View Account</a>
+              <a href="/users/{{ userinfo['id'] }}">View Account</a>
               <a href="#">Purchases</a>
             </div>
         </div>

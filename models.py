@@ -67,6 +67,7 @@ class User(db.Model):
     def short_public(self):
 
         return {
+            'id': self.id,
             'username': self.username,
             'created_on': self.created_on,
         }

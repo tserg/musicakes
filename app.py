@@ -146,6 +146,17 @@ def create_app(test_config=None):
     def show_user(user_id):
         try:
 
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                user_data = user.short_public()
+
+            else:
+
+                user_data = None
+
             current_user = User.query.get(user_id)
             if current_user is None:
                 abort(404)
@@ -168,7 +179,7 @@ def create_app(test_config=None):
 
             data['purchased_releases'] = temp
 
-            return render_template('pages/show_user.html', user=data)
+            return render_template('pages/show_user.html', user=data, userinfo=user_data)
 
         except Exception as e:
             print(e)
