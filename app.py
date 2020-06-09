@@ -56,11 +56,19 @@ def create_app(test_config=None):
     @app.route('/callback')
     def callback_handling():
         # Handles response from token endpoint
-        auth0.authorize_access_token()
+        token = auth0.authorize_access_token()
+        print(token)
         resp = auth0.get('userinfo')
         userinfo = resp.json()
 
+        print(userinfo)
+
+        resp2 = auth0.get('metadata')
+        metadata = resp.json()
+        print(metadata)
+
         # Store the user information in flask session.
+        session['token'] = token
         session['jwt_payload'] = userinfo
         session['profile'] = {
             'user_id': userinfo['sub'],
@@ -184,6 +192,43 @@ def create_app(test_config=None):
         except Exception as e:
             print(e)
             abort(404)
+
+    @app.route('/account', methods=['GET'])
+    @requires_auth_2
+    def show_account():
+
+        auth_id = session['jwt_payload']['sub'][6:]
+
+        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+        if user:
+            data = user.short_private()
+
+        else:
+
+            abort(404)
+
+        artist_name = Artist.query.filter(Artist.user_id==user.id).one_or_none()
+
+        data['artist_name'] = artist_name
+
+        purchased = Purchase.query.filter(Purchase.user_id==user.id). \
+                    join(Release).all()
+
+        temp=[]
+
+        for purchase in purchased:
+            release_name = Release.query.get(purchase.release_id).name
+            temp_dict = {}
+
+            if release_name not in temp:
+                temp_dict['release_id'] = purchase.release_id
+                temp_dict['release_name'] = release_name
+                temp.append(temp_dict)
+
+        data['purchased_releases'] = temp
+
+        return render_template('pages/show_account.html', userinfo=data)
 
     @app.route('/artists', methods=['GET'])
     def get_artists():
@@ -390,35 +435,54 @@ def create_app(test_config=None):
     @app.route('/artists/create', methods=['GET'])
     @requires_auth_2
     def create_artist_form():
+
+        print(session['jwt_payload'])
+        print(session['token'])
+
+        auth_id = session['jwt_payload']['sub'][6:]
+
+        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+        if user:
+            data = user.short_public()
+
+        else:
+
+            data = None
+
         form = ArtistForm()
 
-        return render_template('forms/new_artist.html', form=form)
+        return render_template('forms/new_artist.html', form=form, userinfo=data)
 
-    @app.route('/artists', methods=['POST'])
-    @requires_auth('create:artist')
+    @app.route('/artists/create', methods=['POST'])
+    @requires_auth_2
     def create_artist(payload):
+
+        form = UserForm(request.form)
+
+        auth_id = session['jwt_payload']['sub'][6:]
+        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        user_id = user.id
 
         try:
 
-            name = request.get_json()['name']
-            country = request.get_json()['country']
+            if form.validate():
 
-            new_artist = Artist(
-                name=name,
-                country=country
-            )
+                new_artist = Artist(
+                    name = form.artist_name.data,
+                    country = form.artist_country.data,
+                    user_id = user_id
+                )
 
-            new_artist.insert()
+                new_artist.insert()
+                flash('Your artist profile has been successfully created.')
 
-            return jsonify({
-                'success': True,
-                'name': new_artist.name,
-                'country': new_artist.country
-            })
+        except Exception as e:
 
-        except:
+            print(e)
+            flash('Your artist profile could not be created.')
 
-            abort(422)
+        return redirect(url_for('index'))
 
     @app.route('/releases', methods=['POST'])
     @requires_auth('create:release')
