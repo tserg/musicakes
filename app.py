@@ -409,7 +409,7 @@ def create_app(test_config=None):
 
             abort(404)
 
-        artist_name = Artist.query.filter(Artist.user_id==user.id).one_or_none()
+        artist_name = Artist.query.filter(Artist.user_id==user.id).one_or_none().name
 
         data['artist_name'] = artist_name
 
@@ -678,7 +678,7 @@ def create_app(test_config=None):
 
                 new_artist.insert()
                 flash('Your artist profile has been successfully created.')
-                
+
         except Exception as e:
 
             print(e)
