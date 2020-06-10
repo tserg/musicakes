@@ -16,14 +16,7 @@
 			Artist profile: {% if userinfo.artist_name is defined %} {{ userinfo.artist_name}} {% else %} You have not created an artist profile {% endif %}
 		</h4>
 
-		<h4>Purchases: </h4>
-		{% for release in userinfo.purchased_releases %}
-			<ol>
 
-				<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
-
-			</ol>
-		{% endfor %}
 
 	</div>
 </div>

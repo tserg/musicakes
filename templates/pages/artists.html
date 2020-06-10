@@ -2,6 +2,8 @@
 {% block title %}Musicakes | Artists{% endblock %}
 {% block content %}
 
+{% if userinfo.artist_name is defined %} You have an existing artist profile tied to this account. {% else %} 
+
 <ul class="items">
 	{% if not artists %}
 		<h2>There are no artists currently listed.</h2>
@@ -9,7 +11,7 @@
 	{% for artist in artists %}
 	<li>
 		<a href="/artists/{{ artist.id }}">
-			<i class="fas fa-users"></i>
+
 			<div class="item">
 				<h5>{{ artist.name }}</h5>
 			</div>
@@ -17,4 +19,6 @@
 	</li>
 	{% endfor %}
 </ul>
+
+{% endif %}
 {% endblock %}

@@ -1,6 +1,7 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Create an artist profile{% endblock %}
 {% block content %}
+{% if userinfo.artist_name is defined %} <h4> You have an existing artist profile tied to this account.</h4> {% else %} 
   <div class="form-wrapper">
     <form method="post" class="form">
       {{ form.hidden_tag() }}
@@ -18,4 +19,5 @@
       <input type="submit" value="Create artist profile" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>
+{% endif %}
 {% endblock %}

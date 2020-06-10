@@ -1,6 +1,7 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Create an account{% endblock %}
 {% block content %}
+
   <div class="form-wrapper">
     <form method="post" class="form">
       {{ form.hidden_tag() }}
@@ -14,4 +15,5 @@
       <input type="submit" value="Create an account" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>
+
 {% endblock %}
