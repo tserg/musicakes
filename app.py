@@ -660,23 +660,15 @@ def create_app(test_config=None):
     @requires_auth('create:artist')
     def create_artist(payload):
 
-        print(payload)
-
-        form = UserForm(request.form)
+        form = ArtistForm(request.form)
 
         auth_id = session['jwt_payload']['sub'][6:]
         user = User.query.filter(User.auth_id==auth_id).one_or_none()
         user_id = user.id
 
-        print("create_artist triggered")
-
         try:
 
-            print("pre validation")
-
             if form.validate():
-
-                print("form validated")
 
                 new_artist = Artist(
                     name = form.artist_name.data,
@@ -686,7 +678,7 @@ def create_app(test_config=None):
 
                 new_artist.insert()
                 flash('Your artist profile has been successfully created.')
-            print("form not validated")
+                
         except Exception as e:
 
             print(e)

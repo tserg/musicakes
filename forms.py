@@ -14,5 +14,5 @@ class ArtistForm(FlaskForm):
 
 	artist_country = SelectField(
 			'artist_country', validators=[DataRequired()],
-			choices = [country.name for country in pycountry.countries]
+			choices = [(country.name, country.name) for country in pycountry.countries]
 		)
