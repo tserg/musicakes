@@ -750,8 +750,10 @@ async function payMusicakes() {
   			console.log(hash);
   		})
   		.once('receipt', function(receipt) {
+        console.log('Receipt for purchase');
   			console.log(receipt);
-        location.reload();
+        console.log(receipt.transactionHash);
+        // location.reload();
   		})
   		.on('error', function(error) {
   			console.log(error);
