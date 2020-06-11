@@ -1,7 +1,7 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div id = "release-and-user-dashboard" class = "dashboard">
+<div id = "release-and-user-dashboard" class = "w3-third">
   <div id = "user-dashboard" class="sub-dashboard">
 
     <span><h3>User Dashboard</h3></span>
@@ -58,7 +58,7 @@
   	</div>
   </div>
 </div>
-<div class = "dashboard">
+<div class = "w3-two-third">
     <div id ="payment-token-dashboard" class="sub-dashboard">
 
       <h3>DAI Dashboard</h3>
@@ -67,21 +67,19 @@
         <span id ="payment-token-balance"></span>
       </div>
 
-      <div>
+      <form>
+          <div>
 
-        <span>Pay DAI to token contract: </span>
-        <input type="text" size=50 id="pay-contract-amount">
+        
+          <label for="pay-contract-amount">Pay DAI to token contract: </label>
+          <input type="number" size=50 id="pay-contract-amount" />
+          </div>
 
-      </div>
-
-      <div>
-
-        <button type="button" id="btn-pay-contract">Pay</button>
-
-      </div>
-
-
-
+          <div>
+          <button type="button" id="btn-pay-contract">Pay</button>
+ 
+          </div>
+      </form>
     </div>
 
     <div id = "musicakes-dashboard" class = "sub-dashboard">
@@ -91,6 +89,10 @@
 
         <!-- proxy element to store and query smart contract address for window.appConfig --->
         <meta id="smart_contract_address" data-address="{{ release.smart_contract_address }}">
+
+        <!-- proxy element to store and query release price for window.appConfig --->
+        <meta id="price" data-address="{{ release.price }}">
+
         <span id = "musicakes-address"></span>
       </div>
 
@@ -156,7 +158,8 @@
 
 <script type="text/javascript">
   window.appConfig = {
-    smart_contract_address: $('#smart_contract_address').data()
+    smart_contract_address: $('#smart_contract_address').data(),
+    price: $('#price').data()
   }
 </script>
 

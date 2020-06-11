@@ -18,7 +18,12 @@ const musicakesTransferButton = document.querySelector('#btn-transfer-musicakes'
 const musicakesTransferAddress = document.querySelector('#transfer-musicakes-address');
 const musicakesTransferAmount = document.querySelector('#transfer-musicakes-amount');
 
+const enableEthereumButton = document.querySelector('#enable-ethereum-button');
+
 var web3 = new Web3(Web3.givenProvider);
+
+const price = parseFloat(window.appConfig.price.address);
+console.log(price);
 
 // Initialise buttons
 
@@ -721,30 +726,38 @@ async function payMusicakes() {
   const account = ethereum.selectedAddress;
 
 	var payAmount = musicakesPayValue.value;
-	var payAmountFormatted = web3.utils.toBN(payAmount).mul(web3.utils.toBN(10**18));
 
-	paymentTokenContract.methods.approve(account, payAmountFormatted).send({from: account})
-	.once('transactionHash', function(hash) {
-		console.log(hash);
-	})
-	.once('receipt', function(receipt) {
-		console.log(receipt);
-	})
-	.on('error', function(error) {
-		console.log(error);
-	}).then(function() {
-		paymentTokenContract.methods.transferFrom(account, musicakesAddress, payAmountFormatted).send({from: account})
-		.once('transactionHash', function(hash) {
-			console.log(hash);
-		})
-		.once('receipt', function(receipt) {
-			console.log(receipt);
-      location.reload();
-		})
-		.on('error', function(error) {
-			console.log(error);
-		});
-	});
+  if (payAmount < price) {
+    alert("The minimum price to pay is " + price.toString() + ".");
+  }
+
+  else {
+
+  	var payAmountFormatted = web3.utils.toBN(payAmount).mul(web3.utils.toBN(10**18));
+
+  	paymentTokenContract.methods.approve(account, payAmountFormatted).send({from: account})
+  	.once('transactionHash', function(hash) {
+  		console.log(hash);
+  	})
+  	.once('receipt', function(receipt) {
+  		console.log(receipt);
+  	})
+  	.on('error', function(error) {
+  		console.log(error);
+  	}).then(function() {
+  		paymentTokenContract.methods.transferFrom(account, musicakesAddress, payAmountFormatted).send({from: account})
+  		.once('transactionHash', function(hash) {
+  			console.log(hash);
+  		})
+  		.once('receipt', function(receipt) {
+  			console.log(receipt);
+        location.reload();
+  		})
+  		.on('error', function(error) {
+  			console.log(error);
+  		});
+  	});
+  }
 
 
 	
