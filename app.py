@@ -54,37 +54,6 @@ def create_app(test_config=None):
         },
     )
 
-    # Auth Header
-
-    def get_token_auth_header():
-        auth = request.headers.get('Authorization', None)
-        if not auth:
-            raise AuthError({
-                'code': 'authorization_header_missing',
-                'description': 'Authorization header is expected.'
-            }, 401)
-
-        parts = auth.split()
-        if parts[0].lower() != 'bearer':
-            raise AuthError({
-                'code': 'invalid_header',
-                'description': 'Authorization header must start with "Bearer".'
-            }, 401)
-
-        elif len(parts) == 1:
-            raise AuthError({
-                'code': 'invalid_header',
-                'description': 'Token not found.'
-            }, 401)
-
-        elif len(parts) > 2:
-            raise AuthError({
-                'code': 'invalid_header',
-                'description': 'Authorization header must be bearer token.'
-            }, 401)
-
-        token = parts[1]
-        return token
 
 
     '''
@@ -98,6 +67,11 @@ def create_app(test_config=None):
         return true otherwise
     '''
 
+    ###################################################
+
+    # Auth
+
+    ###################################################
 
     def check_permissions(permission, payload):
 
@@ -215,7 +189,7 @@ def create_app(test_config=None):
         @INPUTS
             permission: string permission (i.e. 'post:drink')
 
-        uses the get_token_auth_header method to get the token
+        gets the access token from the Flask session
         uses the verify_decode_jwt method to decode the jwt
         uses the check_permissions method validate claims and
         check the requested permission
@@ -247,7 +221,7 @@ def create_app(test_config=None):
         return requires_auth_decorator
 
 
-    def requires_auth_2(f):
+    def requires_log_in(f):
         @wraps(f)
         def decorated(*args, **kwargs):
             if 'profile' not in session:
@@ -316,7 +290,7 @@ def create_app(test_config=None):
     # after logging in
 
     @app.route('/home', methods=['GET'])
-    @requires_auth_2
+    @requires_log_in
     def home():
 
         auth_id = session['jwt_payload']['sub'][6:]
@@ -357,7 +331,7 @@ def create_app(test_config=None):
     ###################################################
 
     @app.route('/account', methods=['GET'])
-    @requires_auth_2
+    @requires_log_in
     def show_account():
 
         auth_id = session['jwt_payload']['sub'][6:]
@@ -428,6 +402,7 @@ def create_app(test_config=None):
             abort(404)
 
     @app.route('/users/create', methods=['GET'])
+    @requires_log_in
     def create_user_form():
         form = UserForm()
 
@@ -519,7 +494,7 @@ def create_app(test_config=None):
         return redirect('/')
 
     @app.route('/artists/create', methods=['GET'])
-    @requires_auth_2
+    @requires_log_in
     def create_artist_form():
 
         auth_id = session['jwt_payload']['sub'][6:]
@@ -542,7 +517,7 @@ def create_app(test_config=None):
         return render_template('forms/new_artist.html', form=form, userinfo=data)
 
     @app.route('/artists/create', methods=['POST'])
-    @requires_auth_2
+    @requires_log_in
     @requires_auth('create:artist')
     def create_artist(payload):
 
@@ -579,7 +554,7 @@ def create_app(test_config=None):
     ###################################################
 
     @app.route('/account/purchases', methods=['GET'])
-    @requires_auth_2
+    @requires_log_in
     def show_purchases():
 
         auth_id = session['jwt_payload']['sub'][6:]
@@ -610,6 +585,7 @@ def create_app(test_config=None):
         data['purchased_releases'] = temp
 
         return render_template('pages/show_purchases.html', userinfo=data)
+
     ###################################################
 
     # Releases
@@ -1125,6 +1101,8 @@ def create_app(test_config=None):
             'message': 'internal server error'
         }), 500
 
+    """
+
     @app.errorhandler(AuthError)
     def auth_error(AuthError):
         return jsonify({
@@ -1133,7 +1111,6 @@ def create_app(test_config=None):
             'message': AuthError.error['description']
         }), 401
 
-    """
 
     @app.errorhandler(404)
     def not_found_error(error):
