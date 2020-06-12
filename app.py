@@ -362,16 +362,24 @@ def create_app(test_config=None):
     def show_user(user_id):
         try:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+            if 'jwt_payload' in session:
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
-            if user:
-                user_data = user.short_public()
+
+                auth_id = session['jwt_payload']['sub'][6:]
+
+                user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+                if user:
+                    user_data = user.short_public()
+
+                else:
+
+                    user_data = None
 
             else:
 
-                user_data = None
+                user_data=None
 
             current_user = User.query.get(user_id)
             if current_user is None:
@@ -410,6 +418,7 @@ def create_app(test_config=None):
 
 
     @app.route('/users/create', methods=['POST'])
+    @requires_log_in
     def create_user_submission():
         form = UserForm(request.form)
 
@@ -444,28 +453,28 @@ def create_app(test_config=None):
     @app.route('/artists', methods=['GET'])
     def get_artists():
 
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_public()
+
+            else: 
+
+                data = None
+
+        else:
+
+            data = None
+
         try:
 
             all_artists = Artist.query.all()
 
             formatted_all_artists = [artist.short() for artist in all_artists]
-
-            if 'jwt_payload' in session:
-
-                auth_id = session['jwt_payload']['sub'][6:]
-
-                user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-                if user:
-                    data = user.short_public()
-
-                else: 
-
-                    data = None
-
-            else:
-
-                data = None
 
             return render_template('pages/artists.html', artists=formatted_all_artists, userinfo=data)
 
@@ -477,15 +486,33 @@ def create_app(test_config=None):
 
     @app.route('/artists/<int:artist_id>', methods=['GET'])
     def show_artist(artist_id):
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_public()
+
+            else: 
+
+                data = None
+
+        else:
+
+            data = None
+
         try:
 
             current_artist = Artist.query.get(artist_id)
             if current_artist is None:
                 abort(404)
 
-            data = current_artist.short()
+            artist_data = current_artist.short()
 
-            return render_template('pages/show_artist.html', artist=data)
+            return render_template('pages/show_artist.html', artist=artist_data, userinfo=data)
 
         except Exception as e:
             print(e)
@@ -497,12 +524,18 @@ def create_app(test_config=None):
     @requires_log_in
     def create_artist_form():
 
-        auth_id = session['jwt_payload']['sub'][6:]
+        if 'jwt_payload' in session:
 
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+            auth_id = session['jwt_payload']['sub'][6:]
 
-        if user:
-            data = user.short_private()
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_private()
+
+            else:
+
+                data = None
 
         else:
 
@@ -517,7 +550,6 @@ def create_app(test_config=None):
         return render_template('forms/new_artist.html', form=form, userinfo=data)
 
     @app.route('/artists/create', methods=['POST'])
-    @requires_log_in
     @requires_auth('create:artist')
     def create_artist(payload):
 
@@ -627,13 +659,29 @@ def create_app(test_config=None):
 
     @app.route('/releases/<int:release_id>', methods=['GET'])
     def show_release(release_id):
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_public()
+
+            else:
+
+                data = None
+        else:
+            data = None
+
         try:
 
             current_release = Release.query.get(release_id)
             if current_release is None:
                 abort(404)
 
-            data = current_release.short()
+            release_data = current_release.short()
 
             purchases = Purchase.query.filter(Purchase.release_id==release_id). \
                         join(Release).all()
@@ -649,9 +697,9 @@ def create_app(test_config=None):
                     temp_dict['username'] = purchaser_name
                     temp.append(temp_dict)
 
-            data['purchasers'] = temp
+            release_data['purchasers'] = temp
 
-            return render_template('pages/show_release.html', release=data)
+            return render_template('pages/show_release.html', release=release_data, userinfo=data)
 
         except Exception as e:
             print(e)
