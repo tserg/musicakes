@@ -69,7 +69,7 @@
 
       {% if userinfo %}
 
-      <form action="/releases/{{ release.id }}/purchase" method="post" >
+      <form action="" method="post" >
 
           <div>
             <label for="pay-contract-amount">Pay DAI to token contract: </label>
@@ -78,7 +78,7 @@
             <input type="hidden" name="wallet_address" id="current-wallet-address"/>
           </div>
           <div>
-            <button type="button" id="btn-pay-contract"><input type='submit'></button>
+            <button type="button" id="btn-pay-contract"><input type='submit' value="Pay"></button>
           </div>
       </form>
 

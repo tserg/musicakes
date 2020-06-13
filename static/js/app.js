@@ -140,28 +140,28 @@ var _paymentTokenAbi = [
     "type": "function"
   },
   {
-    "constant": false,
-    "inputs": [
-        {
-            "name": "_spender",
-            "type": "address"
-        },
-        {
-            "name": "_value",
-            "type": "uint256"
-        }
-    ],
-    "name": "approve",
-    "outputs": [
-        {
-            "name": "",
-            "type": "bool"
-        }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_to",
+                "type": "address"
+            },
+            {
+                "name": "_value",
+                "type": "uint256"
+            }
+        ],
+        "name": "transfer",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
 ];
 
 var _musicakesAbi = [
@@ -538,37 +538,6 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "sender",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "recipient",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "transferFrom",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
       "constant": true,
       "inputs": [
         {
@@ -655,8 +624,10 @@ async function loadInterface() {
 
   const account = ethereum.selectedAddress;
 	showAccountAddress.innerHTML = account;
-  currentWalletAddress.value = account;
 
+  if (currentWalletAddress != null) {
+    currentWalletAddress.value = account;
+  }
 	// Get ETH balance of current address
 
 	var accountWeiBalance = web3.eth.getBalance(account, function(error, result) {
@@ -735,36 +706,27 @@ async function payMusicakes() {
 
   else {
 
+    /* add transfer method to ABI */
+
   	var payAmountFormatted = web3.utils.toBN(payAmount).mul(web3.utils.toBN(10**18));
 
-  	paymentTokenContract.methods.approve(account, payAmountFormatted).send({from: account})
-  	.once('transactionHash', function(hash) {
-  		console.log(hash);
-  	})
-  	.once('receipt', function(receipt) {
-  		console.log(receipt);
-  	})
-  	.on('error', function(error) {
-  		console.log(error);
-  	}).then(function() {
-  		paymentTokenContract.methods.transferFrom(account, musicakesAddress, payAmountFormatted).send({from: account})
-  		.once('transactionHash', function(hash) {
-  			console.log(hash);
-  		})
-  		.once('receipt', function(receipt) {
-        console.log('Receipt for purchase');
-  			console.log(receipt);
-        console.log(receipt.transactionHash);
-        
-        // location.reload();
-  		})
-  		.on('error', function(error) {
-  			console.log(error);
-  		});
-  	});
+
+		paymentTokenContract.methods.transfer(musicakesAddress, payAmountFormatted).send({from: account})
+		.once('transactionHash', function(hash) {
+			console.log(hash);
+		})
+		.once('receipt', function(receipt) {
+      console.log('Receipt for purchase');
+			console.log(receipt);
+      console.log(receipt.transactionHash);
+      
+      // location.reload();
+		})
+		.on('error', function(error) {
+			console.log(error);
+		});
+
   }
-
-
 	
 }
 
