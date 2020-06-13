@@ -422,7 +422,7 @@ def create_app(test_config=None):
     def create_user_submission():
         form = UserForm(request.form)
 
-        auth_id = request.args.get('auth_id')
+        auth_id = session['profile']['user_id'][6:]
 
         try:
 
@@ -617,6 +617,47 @@ def create_app(test_config=None):
         data['purchased_releases'] = temp
 
         return render_template('pages/show_purchases.html', userinfo=data)
+
+    @app.route('/releases/<int:release_id>/purchase', methods=['POST'])
+    @requires_log_in
+    def purchase_release_initial(release_id):
+
+        print("purchase_release triggered")
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user is None:
+
+                abort(404)
+
+        else:
+
+            abort(404)
+
+        try:
+
+            paid = request.form.get('pay-contract-amount')
+
+            print(paid)
+
+            purchase = Purchase(
+                    user_id = user.id,
+                    release_id = release_id,
+                    paid = paid
+                )
+
+            purchase.insert()
+
+            return redirect(url_for('/releases/' + str(release_id)))
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
 
     ###################################################
 

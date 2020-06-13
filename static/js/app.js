@@ -753,6 +753,7 @@ async function payMusicakes() {
         console.log('Receipt for purchase');
   			console.log(receipt);
         console.log(receipt.transactionHash);
+        
         // location.reload();
   		})
   		.on('error', function(error) {
