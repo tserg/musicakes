@@ -7,6 +7,7 @@ const showAccountMusicakesBalance = document.querySelector('#user-musicakes-bala
 const showMusicakesPaymentTokenBalance = document.querySelector('#musicakes-payment-token-balance');
 const showAccountUnclaimedDividends = document.querySelector('#account-unclaimed-dividends')
 
+const currentWalletAddress = document.querySelector('#current-wallet-address');
 
 const musicakesPayButton = document.querySelector('#btn-pay-contract');
 const musicakesPayValue = document.querySelector('#pay-contract-amount');
@@ -654,6 +655,7 @@ async function loadInterface() {
 
   const account = ethereum.selectedAddress;
 	showAccountAddress.innerHTML = account;
+  currentWalletAddress.value = account;
 
 	// Get ETH balance of current address
 

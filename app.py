@@ -636,7 +636,7 @@ def create_app(test_config=None):
 
     @app.route('/releases/<int:release_id>/purchase', methods=['POST'])
     @requires_log_in
-    def purchase_release_initial(release_id):
+    def purchase_release(release_id):
 
         print("purchase_release triggered")
 
@@ -657,23 +657,28 @@ def create_app(test_config=None):
         try:
 
             paid = request.form.get('pay-contract-amount')
+            wallet_address = request.form.get('wallet_address')
+
+            print(wallet_address)
 
             print(paid)
 
             purchase = Purchase(
                     user_id = user.id,
                     release_id = release_id,
-                    paid = paid
+                    paid = paid,
+                    wallet_address = wallet_address
                 )
 
             purchase.insert()
 
-            return redirect(url_for('/releases/' + str(release_id)))
+            return redirect(url_for('/releases'))
 
         except Exception as e:
             print(e)
             abort(404)
 
+        return redirect(url_for('/releases'))
 
     ###################################################
 

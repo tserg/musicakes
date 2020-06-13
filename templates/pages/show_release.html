@@ -69,13 +69,16 @@
 
       {% if userinfo %}
 
-      <form action="/purchase" method="post" >
+      <form action="/releases/{{ release.id }}/purchase" method="post" >
+
           <div>
             <label for="pay-contract-amount">Pay DAI to token contract: </label>
-            <input type="number" size=50 id="pay-contract-amount"></input>
+            <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="hidden" name="wallet_address" id="current-wallet-address"/>
           </div>
           <div>
-            <button type="button" id="btn-pay-contract">Pay</button>
+            <button type="button" id="btn-pay-contract"><input type='submit'></button>
           </div>
       </form>
 
@@ -155,16 +158,19 @@
 
           Address to transfer Musicakes: 
           <input type="text" size=50 id="transfer-musicakes-address">
-        <br>
+      </div>
+      <div>
           Number of Musicakes to transfer: 
           <input type="text" size=50 id="transfer-musicakes-amount">
-        <br>
+      </div>
+
+      <div>
         
         <button type="button" id="btn-transfer-musicakes">Transfer</button>
       </div>
 
     </div>
-</div>
+  </div>
 
 
 
