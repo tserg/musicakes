@@ -345,7 +345,15 @@ def create_app(test_config=None):
 
             abort(404)
 
-        artist_name = Artist.query.filter(Artist.user_id==user.id).one_or_none().name
+        artist = Artist.query.filter(Artist.user_id==user.id).one_or_none()
+
+        if artist:
+
+            artist_name = artist.name
+
+        else: 
+
+            artist_name = None
 
         data['artist_name'] = artist_name
 
@@ -541,7 +549,15 @@ def create_app(test_config=None):
 
             data = None
 
-        artist_name = Artist.query.filter(Artist.user_id==user.id).one_or_none().name
+        artist = Artist.query.filter(Artist.user_id==user.id).one_or_none()
+
+        if artist:
+
+            artist_name = artist.name
+
+        else:
+
+            artist_name = None
 
         data['artist_name'] = artist_name
 
