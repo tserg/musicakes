@@ -745,9 +745,12 @@ async function payMusicakes() {
       })
       .then(function(response) {
         console.log(response);
+        if (response.ok) {
+          alert("Your purchase was successful!");
+          location.reload();
+        }
       });
       
-      // location.reload();
 		})
 		.on('error', function(error) {
 			console.log(error);
