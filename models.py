@@ -200,7 +200,7 @@ class Purchase(db.Model):
     release_id = Column(Integer, db.ForeignKey('releases.id'))
     paid = Column(Float, nullable=False)
     purchased_on = Column(DateTime, server_default=db.func.now(), nullable=False)
-    transaction_hash = Column(String, unique=True, nullable=True)
+    transaction_hash = Column(String, unique=True, nullable=False)
     wallet_address = Column(String, nullable=False)
     
     __table_args__ = (UniqueConstraint('user_id', 'release_id', name='unique_release_purchase'), )
