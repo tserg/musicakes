@@ -110,6 +110,12 @@
         <!-- proxy element to store and query release price for window.appConfig --->
         <meta id="price" data-address="{{ release.price }}">
 
+        <!-- proxy element to store and query release id for window.appConfig --->
+        <meta id="release-id" data-address="{{ release.id }}">        
+
+        <!-- proxy element to store and query CSRF token for window.appConfig --->
+        <meta id="csrf-token" data-address="{{ csrf_token() }}">   
+
         <span id = "musicakes-address"></span>
       </div>
 
@@ -179,7 +185,9 @@
 <script type="text/javascript">
   window.appConfig = {
     smart_contract_address: $('#smart_contract_address').data(),
-    price: $('#price').data()
+    price: $('#price').data(),
+    release_id: $('#release-id').data(),
+    csrf_token: $('#csrf-token').data()
   }
 </script>
 

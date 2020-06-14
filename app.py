@@ -680,6 +680,77 @@ def create_app(test_config=None):
 
         return redirect(url_for('/releases'))
 
+    @app.route('/releases/<int:release_id>/transaction_hash', methods=['POST'])
+    def submit_purchase_transaction_hash(release_id):
+
+        print('submit_purchase_transaction_hash triggered')
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+            print(user)
+            if user is None:
+
+                return jsonify({
+                    'success': False,
+                    })
+
+        else:
+
+            return jsonify({
+                'success': False,
+                })
+
+        try:
+
+            transaction_hash = request.get_json()['transaction_hash']
+
+            print("transaction hash")
+            print(transaction_hash)
+
+            purchase = Purchase.query.filter_by(release_id=release_id).one_or_none()
+
+            print(purchase)
+
+            if purchase:
+
+                purchase.transaction_hash=transaction_hash
+                purchase.update()
+
+            return jsonify({
+                'success': True,
+                'transaction_hash': transaction_hash
+            })
+
+        except Exception as e:
+            print(e)
+
+            return jsonify({
+                'success': False,
+                })
+
+    @app.route('/releases/<int:release_id>/purchase/transaction_hash', methods=['GET'])
+    def test_function(release_id):
+
+        print("test_function triggered")
+
+        try: 
+
+            print("try triggered")
+
+            return jsonify({
+                'success': True,
+                'release_id': release_id
+                })
+
+        except Exception as e:
+            print(e)
+            return jsonify({
+                'success': False
+                })
+
     ###################################################
 
     # Releases

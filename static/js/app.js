@@ -26,6 +26,14 @@ var web3 = new Web3(Web3.givenProvider);
 const price = parseFloat(window.appConfig.price.address);
 console.log(price);
 
+const release_id = parseInt(window.appConfig.release_id.address);
+console.log(release_id);
+
+const csrf_token = window.appConfig.csrf_token.address;
+if (csrf_token) {
+  console.log("CSRF Token is: " + csrf_token);
+}
+
 // Initialise buttons
 
 ethereumButton.addEventListener('click', () => {
@@ -694,6 +702,8 @@ async function loadInterface() {
 
 }
 
+/*
+
 async function payMusicakes() {
 
   const account = ethereum.selectedAddress;
@@ -706,8 +716,6 @@ async function payMusicakes() {
 
   else {
 
-    /* add transfer method to ABI */
-
   	var payAmountFormatted = web3.utils.toBN(payAmount).mul(web3.utils.toBN(10**18));
 
 
@@ -719,6 +727,26 @@ async function payMusicakes() {
       console.log('Receipt for purchase');
 			console.log(receipt);
       console.log(receipt.transactionHash);
+
+      var data = JSON.stringify({transaction_hash: receipt.transactionHash});
+
+      console.log(data);
+
+      releaseIdString = release_id.toString();
+
+      console.log(releaseIdString)
+
+      fetch('/releases/' + releaseIdString + '/transaction_hash', {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: data
+      })
+      .then(function(response) {
+        console.log(response);
+      });
       
       // location.reload();
 		})
@@ -728,6 +756,33 @@ async function payMusicakes() {
 
   }
 	
+}
+
+*/
+
+
+
+async function payMusicakes() {
+
+  data = JSON.stringify({"transaction_hash" : "0x12345"});
+  console.log(data);
+
+  fetch('/releases/1/transaction_hash', {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: {
+      'X-CSRFToken': csrf_token,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: data
+  })
+  .then(function(response) {
+    console.log(response);
+    console.log(response.text())
+    console.log(response.json());
+  });
+  
 }
 
 async function claimDividends() {
