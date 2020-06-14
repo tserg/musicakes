@@ -749,6 +749,13 @@ async function payMusicakes() {
           alert("Your purchase was successful!");
           location.reload();
         }
+        else {
+          alert("Your purchase was not successful."
+            + "\nDo not make another transaction."
+            + "\nPlease contact us at musicakes.team@gmail.com with your transaction hash."
+          );
+        }
+
       });
       
 		})

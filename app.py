@@ -648,15 +648,11 @@ def create_app(test_config=None):
             print(user)
             if user is None:
 
-                return jsonify({
-                    'success': False,
-                    })
+                abort(404)
 
         else:
 
-            return jsonify({
-                'success': False,
-                })
+            abort(404)
 
         try:
 
@@ -693,29 +689,7 @@ def create_app(test_config=None):
         except Exception as e:
             print(e)
 
-            return jsonify({
-                'success': False,
-                })
-
-    @app.route('/releases/<int:release_id>/purchase/transaction_hash', methods=['GET'])
-    def test_function(release_id):
-
-        print("test_function triggered")
-
-        try: 
-
-            print("try triggered")
-
-            return jsonify({
-                'success': True,
-                'release_id': release_id
-                })
-
-        except Exception as e:
-            print(e)
-            return jsonify({
-                'success': False
-                })
+            abort(404)
 
     ###################################################
 
