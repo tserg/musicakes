@@ -7,8 +7,6 @@ const showAccountMusicakesBalance = document.querySelector('#user-musicakes-bala
 const showMusicakesPaymentTokenBalance = document.querySelector('#musicakes-payment-token-balance');
 const showAccountUnclaimedDividends = document.querySelector('#account-unclaimed-dividends')
 
-const currentWalletAddress = document.querySelector('#current-wallet-address');
-
 const musicakesPayButton = document.querySelector('#btn-pay-contract');
 const musicakesPayValue = document.querySelector('#pay-contract-amount');
 
@@ -633,9 +631,6 @@ async function loadInterface() {
   const account = ethereum.selectedAddress;
 	showAccountAddress.innerHTML = account;
 
-  if (currentWalletAddress != null) {
-    currentWalletAddress.value = account;
-  }
 	// Get ETH balance of current address
 
 	var accountWeiBalance = web3.eth.getBalance(account, function(error, result) {
@@ -702,8 +697,6 @@ async function loadInterface() {
 
 }
 
-/*
-
 async function payMusicakes() {
 
   const account = ethereum.selectedAddress;
@@ -728,7 +721,11 @@ async function payMusicakes() {
 			console.log(receipt);
       console.log(receipt.transactionHash);
 
-      var data = JSON.stringify({transaction_hash: receipt.transactionHash});
+      var data = JSON.stringify({
+        wallet_address: account,
+        transaction_hash: receipt.transactionHash,
+        paid: payAmount
+      });
 
       console.log(data);
 
@@ -736,11 +733,13 @@ async function payMusicakes() {
 
       console.log(releaseIdString)
 
-      fetch('/releases/' + releaseIdString + '/transaction_hash', {
-        credentials: 'include',
+      fetch('/releases/' + releaseIdString + '/purchase', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json'
+          'X-CSRFToken': csrf_token,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: data
       })
@@ -756,33 +755,6 @@ async function payMusicakes() {
 
   }
 	
-}
-
-*/
-
-
-
-async function payMusicakes() {
-
-  data = JSON.stringify({"transaction_hash" : "0x12345"});
-  console.log(data);
-
-  fetch('/releases/1/transaction_hash', {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: {
-      'X-CSRFToken': csrf_token,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    },
-    body: data
-  })
-  .then(function(response) {
-    console.log(response);
-    console.log(response.text())
-    console.log(response.json());
-  });
-  
 }
 
 async function claimDividends() {

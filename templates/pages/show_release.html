@@ -75,10 +75,9 @@
             <label for="pay-contract-amount">Pay DAI to token contract: </label>
             <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input type="hidden" name="wallet_address" id="current-wallet-address"/>
           </div>
           <div>
-            <button type="button" id="btn-pay-contract"><input type='submit' value="Pay"></button>
+            <button type="button" id="btn-pay-contract">Pay</button>
           </div>
       </form>
 

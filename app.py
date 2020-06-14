@@ -634,6 +634,8 @@ def create_app(test_config=None):
 
         return render_template('pages/show_purchases.html', userinfo=data)
 
+    '''
+
     @app.route('/releases/<int:release_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_release(release_id):
@@ -680,8 +682,11 @@ def create_app(test_config=None):
 
         return redirect(url_for('/releases'))
 
-    @app.route('/releases/<int:release_id>/transaction_hash', methods=['POST'])
-    def submit_purchase_transaction_hash(release_id):
+    '''
+
+    @app.route('/releases/<int:release_id>/purchase', methods=['POST'])
+    @requires_log_in
+    def purchase_release(release_id):
 
         print('submit_purchase_transaction_hash triggered')
 
@@ -706,22 +711,33 @@ def create_app(test_config=None):
         try:
 
             transaction_hash = request.get_json()['transaction_hash']
+            wallet_address = request.get_json()['wallet_address']
+            paid = request.get_json()['paid']
 
             print("transaction hash")
             print(transaction_hash)
+            print("wallet address")
+            print(wallet_address)
+            print("paid")
+            print(paid)
 
-            purchase = Purchase.query.filter_by(release_id=release_id).one_or_none()
 
-            print(purchase)
+            purchase = Purchase(
+                    user_id = user.id,
+                    release_id = release_id,
+                    paid = paid,
+                    wallet_address = wallet_address,
+                    transaction_hash = transaction_hash
+                )
 
-            if purchase:
-
-                purchase.transaction_hash=transaction_hash
-                purchase.update()
+            purchase.insert()
 
             return jsonify({
                 'success': True,
-                'transaction_hash': transaction_hash
+                'release_id': purchase.release_id,
+                'paid': purchase.paid,
+                'wallet_address': purchase.wallet_address,
+                'transaction_hash': purchase.transaction_hash
             })
 
         except Exception as e:
