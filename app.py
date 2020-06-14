@@ -304,7 +304,15 @@ def create_app(test_config=None):
 
             data = None
 
-        return render_template('pages/home.html', userinfo=data)
+        latest_releases = Release.query.order_by(Release.created_on.desc()).limit(5).all()
+
+        print(latest_releases)
+
+        latest_releases_data = [release.short() for release in latest_releases]
+
+        print(latest_releases_data)
+
+        return render_template('pages/home.html', userinfo=data, latest_releases=latest_releases_data)
 
     '''
     @app.route('/users', methods=['GET'])

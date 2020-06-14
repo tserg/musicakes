@@ -9,8 +9,23 @@
 {% block content %}
 
 	<div class="logged-in-box auth0-box logged-in">
-	    <h2>Welcome {{userinfo['username']}}!</h2>
-	    <a class="btn btn-primary btn-lg btn-logout btn-block" href="/logout">Logout</a>
+	    <h2>Welcome back, {{userinfo['username']}}!</h2>
+	</div>
+
+	<div class="w3-container">
+
+		<h3>Latest Releases</h3>
+
+		{% for release in latest_releases %}
+
+		<div class="w3-display-container">
+
+			<a href="/releases/{{ release.id }}">{{ release.release_name }}</a>
+
+		</div>
+
+		{% endfor %}
+
 	</div>
 
 {% endblock %}
