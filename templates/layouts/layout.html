@@ -44,7 +44,11 @@
             <div class="w3-dropdown-content">
               <a href="/account">View Account</a>
               <a href="/account/purchases">Purchases</a>
+              {% if userinfo['artist_id'] is defined %}
+              <a href="#">View Artist Profile</a>
+              {% else %}
               <a href="/artists/create">Create an Artist Profile</a>
+              {% endif %}
             </div>
         </div>
 

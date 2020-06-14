@@ -274,7 +274,7 @@ def create_app(test_config=None):
             user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
             if user:
-                data = user.short_public()
+                data = user.short_private()
 
             else: 
 
@@ -298,7 +298,7 @@ def create_app(test_config=None):
         user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
         if user:
-            data = user.short_public()
+            data = user.short_private()
 
         else:
 
@@ -387,7 +387,7 @@ def create_app(test_config=None):
                 user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
                 if user:
-                    user_data = user.short_public()
+                    user_data = user.short_private()
 
                 else:
 
@@ -401,7 +401,7 @@ def create_app(test_config=None):
             if current_user is None:
                 abort(404)
 
-            data = current_user.short_public()
+            data = current_user.short_private()
 
             purchased = Purchase.query.filter(Purchase.user_id==user_id). \
                         join(Release).all()
@@ -476,7 +476,7 @@ def create_app(test_config=None):
             user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
             if user:
-                data = user.short_public()
+                data = user.short_private()
 
             else: 
 
@@ -510,7 +510,7 @@ def create_app(test_config=None):
             user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
             if user:
-                data = user.short_public()
+                data = user.short_private()
 
             else: 
 
@@ -722,7 +722,7 @@ def create_app(test_config=None):
                 user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
                 if user:
-                    data = user.short_public()
+                    data = user.short_private()
 
                 else: 
 
@@ -748,7 +748,7 @@ def create_app(test_config=None):
             user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
             if user:
-                data = user.short_public()
+                data = user.short_private()
 
             else:
 
@@ -810,7 +810,7 @@ def create_app(test_config=None):
                 user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
                 if user:
-                    data = user.short_public()
+                    data = user.short_private()
 
                 else: 
 
