@@ -332,6 +332,36 @@ def create_app(test_config=None):
             print(e)
             abort(404)
     '''
+
+    ###################################################
+
+    # General
+
+    ###################################################
+    @app.route('/faq', methods=['GET'])
+    def show_faq():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_private()
+
+            else: 
+
+                data = None
+
+        else:
+
+            data = None
+            
+        return render_template('pages/faq.html', userinfo=data)
+
+
+
     ###################################################
 
     # Account
