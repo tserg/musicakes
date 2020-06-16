@@ -6,13 +6,22 @@
 	<div>
 
 		<h4>Purchases: </h4>
-		{% for release in userinfo.purchased_releases %}
-			<ol>
 
-				<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
+		{% if purchases is defined %}
 
-			</ol>
-		{% endfor %}
+			{% for release in userinfo.purchased_releases %}
+				<ol>
+
+					<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
+
+				</ol>
+			{% endfor %}
+
+		{% else %}
+
+			<h4>You have not purchased any music yet.</h4>
+
+		{% endif %}
 
 	</div>
 </div>

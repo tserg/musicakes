@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import Column, String, Integer, Float, create_engine, DateTime, UniqueConstraint
+from sqlalchemy import Column, String, Integer, Float, create_engine, DateTime, UniqueConstraint, CheckConstraint
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import json
@@ -199,13 +199,18 @@ class Purchase(db.Model):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, db.ForeignKey('users.id'))
-    release_id = Column(Integer, db.ForeignKey('releases.id'))
+    release_id = Column(Integer, db.ForeignKey('releases.id'), nullable=True)
+    track_id = Column(Integer, db.ForeignKey('tracks.id'), nullable=True)
     paid = Column(Float, nullable=False)
     purchased_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     transaction_hash = Column(String, unique=True, nullable=False)
     wallet_address = Column(String, nullable=False)
     
-    __table_args__ = (UniqueConstraint('user_id', 'release_id', name='unique_release_purchase'), )
+    __table_args__ = (
+        UniqueConstraint('user_id', 'release_id', name='unique_release_purchase'), 
+        CheckConstraint('NOT(release_id IS NULL and track_id IS NULL)', name ='release_or_track_id_defined'),
+        CheckConstraint('NOT(release_id IS NOT NULL and track_id IS NOT NULL)', name = 'only_release_or_track_id_defined'),
+        )
 
     def insert(self):
         db.session.add(self)
