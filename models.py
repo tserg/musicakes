@@ -189,6 +189,8 @@ class Track(db.Model):
             'release_id': self.release_id,
             'release_name': self.release.name,
             'track_name': self.name,
+            'created_on': self.created_on,
+            'smart_contract_address': self.release.smart_contract_address,
             'price': self.price
         }
 

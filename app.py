@@ -856,9 +856,45 @@ def create_app(test_config=None):
 
             abort(404)
 
+    @app.route('/tracks/<int:track_id>', methods=['GET'])
+    def show_track(track_id):
 
+        try:
 
+            print(123)
 
+            track = Track.query.get(track_id)
+
+            print(track)
+
+            formatted_track_data = track.short()
+
+            print(formatted_track_data)
+
+            if 'jwt_payload' in session:
+
+                auth_id = session['jwt_payload']['sub'][6:]
+
+                user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+                if user:
+                    data = user.short_private()
+
+                else: 
+
+                    data = None
+
+            else:
+
+                data = None
+
+            print(data)
+
+            return render_template('pages/show_track.html', track=formatted_track_data, userinfo=data)
+
+        except:
+
+            abort(404)
 
 
     @app.route('/releases', methods=['POST'])

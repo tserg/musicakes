@@ -26,34 +26,31 @@
 
   	<div>
   		<h4>
-  			Release: {{ release.release_name }}
+  			Track: {{ track.track_name }}
   		</h4>
   		<h4>
-  			Artist: {{ release.artist_name }}
+  			Artist: {{ track.artist_name }}
   		<h4>
   		<h4>
-  			Price: {{ release.price }}
+  			Price: {{ track.price }}
   		<h4>
   		<h4>
-  			Tracks: 
+  			Release: <a href="../releases/{{ track.release_id }}">{{ track.release_name }}</a> 
   		<h4>
-  		<ol>
-  			{% for track in release.tracks %}
-  			<li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
-  			{% endfor %}
-  		</ol>
+
   		<h4>
-  			Created on: {{ release.created_on }}
+  			Created on: {{ track.created_on }}
   		</h4>
 
       <h4>
         Purchasers:
-        {% for purchaser in release.purchasers %}
+        {% for purchaser in track.purchasers %}
         <ol>
           <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
         </ol>
         {% endfor %}
       </h4>
+      <br>
 
   	</div>
   </div>
@@ -101,16 +98,16 @@
     <div id = "musicakes-dashboard" class = "sub-dashboard">
       <h3>Musicakes Dashboard</h3>
       <div id = "musicakes-contract-address-display">
-        <span>Contract address: {{ release.smart_contract_address }}</span>
+        <span>Contract address: {{ track.smart_contract_address }}</span>
 
         <!-- proxy element to store and query smart contract address for window.appConfig --->
-        <meta id="smart_contract_address" data-address="{{ release.smart_contract_address }}">
+        <meta id="smart_contract_address" data-address="{{ track.smart_contract_address }}">
 
         <!-- proxy element to store and query release price for window.appConfig --->
-        <meta id="price" data-address="{{ release.price }}">
+        <meta id="price" data-address="{{ track.price }}">
 
         <!-- proxy element to store and query release id for window.appConfig --->
-        <meta id="release-id" data-address="{{ release.id }}">        
+        <meta id="track-id" data-address="{{ track.id }}">        
 
         <!-- proxy element to store and query CSRF token for window.appConfig --->
         <meta id="csrf-token" data-address="{{ csrf_token() }}">   
@@ -185,7 +182,7 @@
   window.appConfig = {
     smart_contract_address: $('#smart_contract_address').data(),
     price: $('#price').data(),
-    release_id: $('#release-id').data(),
+    release_id: $('#track-id').data(),
     csrf_token: $('#csrf-token').data()
   }
 </script>
