@@ -7,7 +7,11 @@
 
 		<h4>Purchases: </h4>
 
-		{% if purchases is defined %}
+		{% if (userinfo.purchased_releases is defined or userinfo.purchased_tracks is defined) %}
+
+		<div>
+
+			<h5> Releases</h5>
 
 			{% for release in userinfo.purchased_releases %}
 				<ol>
@@ -16,6 +20,22 @@
 
 				</ol>
 			{% endfor %}
+
+		</div>
+
+		<div>
+
+			<h5> Tracks</h5>
+
+			{% for track in userinfo.purchased_tracks %}
+				<ol>
+
+					<a href="../tracks/{{ track.track_id }}">>{{ track.track_name }}</a>
+
+				</ol>
+			{% endfor %}
+
+		</div>
 
 		{% else %}
 

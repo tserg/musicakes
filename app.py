@@ -658,21 +658,41 @@ def create_app(test_config=None):
 
             abort(404)
 
-        purchased = Purchase.query.filter(Purchase.user_id==user.id). \
+        purchased_releases = Purchase.query.filter(Purchase.user_id==user.id). \
                     join(Release).all()
+
+        purchased_tracks = Purchase.query.filter(Purchase.user_id==user.id). \
+                            join(Track).all()
 
         temp=[]
 
-        for purchase in purchased:
-            release_name = Release.query.get(purchase.release_id).name
+        for purchased_release in purchased_releases:
+            release_name = Release.query.get(purchased_release.release_id).name
             temp_dict = {}
 
             if release_name not in temp:
-                temp_dict['release_id'] = purchase.release_id
+                temp_dict['release_id'] = purchased_release.release_id
                 temp_dict['release_name'] = release_name
                 temp.append(temp_dict)
 
+        print("temp")
+        print(temp)
+
         data['purchased_releases'] = temp
+
+        temp = []
+
+        for purchased_track in purchased_tracks:
+            track_name = Track.query.get(purchased_track.track_id).name
+            temp_dict = {}
+
+            if track_name not in temp:
+                temp_dict['track_id'] = purchased_track.track_id
+                temp_dict['track_name'] = track_name
+                temp.append(temp_dict)
+
+
+        data['purchased_tracks'] = temp
 
         return render_template('pages/show_purchases.html', userinfo=data)
 
@@ -949,7 +969,21 @@ def create_app(test_config=None):
 
                 data = None
 
-            print(data)
+            purchases = Purchase.query.filter(Purchase.track_id==track_id). \
+                        join(Track).all()
+
+            temp=[]
+
+            for purchase in purchases:
+                purchaser_name = User.query.get(purchase.user_id).username
+                temp_dict = {}
+
+                if purchaser_name not in temp:
+                    temp_dict['user_id'] = purchase.user_id
+                    temp_dict['username'] = purchaser_name
+                    temp.append(temp_dict)
+
+            formatted_track_data['purchasers'] = temp
 
             return render_template('pages/show_track.html', track=formatted_track_data, userinfo=data)
 
