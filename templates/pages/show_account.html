@@ -13,7 +13,7 @@
 		</h4>
 
 		<h4>
-			Artist profile: {% if userinfo.artist_name is none %} You have not created an artist profile  {% else %} {{ userinfo.artist_name}} {% endif %}
+			Artist profile: {% if userinfo.artist_name is none %} You have not created an artist profile  {% else %} <a href ="../artists/{{ userinfo.artist_id }}">{{ userinfo.artist_name}}</a> {% endif %}
 		</h4>
 
 

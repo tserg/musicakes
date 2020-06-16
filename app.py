@@ -295,6 +295,8 @@ def create_app(test_config=None):
 
         auth_id = session['jwt_payload']['sub'][6:]
 
+        print(auth_id)
+
         user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
         if user:
@@ -303,6 +305,8 @@ def create_app(test_config=None):
         else:
 
             data = None
+
+        print(user.username)
 
         latest_releases = Release.query.order_by(Release.created_on.desc()).limit(5).all()
 
@@ -719,6 +723,63 @@ def create_app(test_config=None):
             return jsonify({
                 'success': True,
                 'release_id': purchase.release_id,
+                'paid': purchase.paid,
+                'wallet_address': purchase.wallet_address,
+                'transaction_hash': purchase.transaction_hash
+            })
+
+        except Exception as e:
+            print(e)
+
+            abort(404)
+
+    @app.route('/tracks/<int:track_id>/purchase', methods=['POST'])
+    @requires_log_in
+    def purchase_track(track_id):
+
+        print('submit_purchase_transaction_hash triggered')
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+            print(user)
+            if user is None:
+
+                abort(404)
+
+        else:
+
+            abort(404)
+
+        try:
+
+            transaction_hash = request.get_json()['transaction_hash']
+            wallet_address = request.get_json()['wallet_address']
+            paid = request.get_json()['paid']
+
+            print("transaction hash")
+            print(transaction_hash)
+            print("wallet address")
+            print(wallet_address)
+            print("paid")
+            print(paid)
+
+
+            purchase = Purchase(
+                    user_id = user.id,
+                    track_id = track_id,
+                    paid = paid,
+                    wallet_address = wallet_address,
+                    transaction_hash = transaction_hash
+                )
+
+            purchase.insert()
+
+            return jsonify({
+                'success': True,
+                'track_id': purchase.track_id,
                 'paid': purchase.paid,
                 'wallet_address': purchase.wallet_address,
                 'transaction_hash': purchase.transaction_hash

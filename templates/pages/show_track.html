@@ -51,7 +51,8 @@
         {% endfor %}
       </h4>
       <br>
-
+      <br>
+      <br>
   	</div>
   </div>
 </div>
@@ -182,7 +183,7 @@
   window.appConfig = {
     smart_contract_address: $('#smart_contract_address').data(),
     price: $('#price').data(),
-    release_id: $('#track-id').data(),
+    track_id: $('#track-id').data(),
     csrf_token: $('#csrf-token').data()
   }
 </script>
@@ -193,6 +194,6 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 
 
-<script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/purchase_track.js') }}"></script>
 
 {% endblock %}
