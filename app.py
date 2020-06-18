@@ -302,7 +302,7 @@ def create_app(test_config=None):
 
         else:
 
-            data = None
+            return redirect(url_for('create_user_form'))
 
         latest_releases = Release.query.order_by(Release.created_on.desc()).limit(5).all()
 

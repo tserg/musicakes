@@ -7,7 +7,7 @@
 
 		<h4>Purchases: </h4>
 
-		{% if (userinfo.purchased_releases is defined or userinfo.purchased_tracks is defined) %}
+		{% if (userinfo.purchased_releases is defined and variable|length) or (userinfo.purchased_tracks is defined and variable|length) %}
 
 		<div>
 
