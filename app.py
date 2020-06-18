@@ -224,7 +224,7 @@ def create_app(test_config=None):
     def requires_log_in(f):
         @wraps(f)
         def decorated(*args, **kwargs):
-            if 'profile' not in session:
+            if 'token' not in session:
                 return redirect('/')
             return f(*args, **kwargs)
         return decorated
@@ -295,8 +295,6 @@ def create_app(test_config=None):
 
         auth_id = session['jwt_payload']['sub'][6:]
 
-        print(auth_id)
-
         user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
         if user:
@@ -306,15 +304,9 @@ def create_app(test_config=None):
 
             data = None
 
-        print(user.username)
-
         latest_releases = Release.query.order_by(Release.created_on.desc()).limit(5).all()
 
-        print(latest_releases)
-
         latest_releases_data = [release.short() for release in latest_releases]
-
-        print(latest_releases_data)
 
         return render_template('pages/home.html', userinfo=data, latest_releases=latest_releases_data)
 
