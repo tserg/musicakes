@@ -1,5 +1,9 @@
 import os
 import json
+
+import boto3
+from botocore.exceptions import ClientError
+
 from functools import wraps
 from flask import Flask, request, abort, jsonify, flash, render_template, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
@@ -9,6 +13,7 @@ from forms import *
 from jose import jwt
 
 from models import setup_db, User, Artist, Release, Track, Purchase
+from s3_main import *
 
 from urllib.request import urlopen
 from authlib.integrations.flask_client import OAuth
@@ -21,6 +26,11 @@ load_dotenv()
 AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN', 'Does not exist')
 ALGORITHMS = os.getenv('ALGORITHMS', 'Does not exist')
 API_AUDIENCE = os.getenv('API_AUDIENCE', 'Does not exist')
+S3_BUCKET = os.getenv('S3_BUCKET_NAME', 'Does not exist')
+S3_KEY = os.getenv('S3_KEY', 'Does not exist')
+S3_SECRET = os.getenv('S3_SECRET', 'Does not exist')
+S3_LOCATION = 'http://{}.s3.amazonaws.com/'.format(S3_BUCKET)
+
 
 class AuthError(Exception):
     def __init__(self, error, status_code):
@@ -55,10 +65,15 @@ def create_app(test_config=None):
     )
 
 
+    ###################################################
+
+    # Auth
+
+    ###################################################
 
     '''
         @INPUTS
-            permission: string permission (i.e. 'post:drink')
+            permission: string permission (i.e. 'create:artist')
             payload: decoded jwt payload
 
         raises an AuthError if permissions are not included in the payload
@@ -66,12 +81,6 @@ def create_app(test_config=None):
         in the payload permissions array
         return true otherwise
     '''
-
-    ###################################################
-
-    # Auth
-
-    ###################################################
 
     def check_permissions(permission, payload):
 
@@ -310,24 +319,68 @@ def create_app(test_config=None):
 
         return render_template('pages/home.html', userinfo=data, latest_releases=latest_releases_data)
 
-    '''
-    @app.route('/users', methods=['GET'])
-    def get_users():
+
+    ###################################################
+
+    # AWS S3
+
+    ###################################################
+
+    def upload_profile_picture(file, file_name):
+        """Upload a file to an S3 bucket
+
+        :param file_name: File to upload
+        :param bucket: Bucket to upload to
+        :return: True if file was uploaded, else False
+        """
+
+        # If S3 object_name was not specified, use file_name
+
+        # Upload the file
+        s3_client = boto3.client('s3',
+                                region_name='us-east-1',
+                                endpoint_url=S3_LOCATION,
+                                aws_access_key_id=S3_KEY,
+                                aws_secret_access_key=S3_SECRET)
+
+
         try:
 
-            all_users = User.query.all()
+            s3_client.put_object(
+                Body=file,
+                Bucket=S3_BUCKET,
+                Key=file_name,
+                Tagging='public=yes'
+            )
 
-            formatted_all_users = [user.short() for user in all_users]
-
-            return jsonify({
-                'success': True,
-                'users': formatted_all_users
-            })
-
-        except Exception as e:
+        except ClientError as e:
             print(e)
-            abort(404)
-    '''
+            return False
+
+        return True
+
+
+    def download_file(file_name, bucket):
+        """
+        Function to download a given file from an S3 bucket
+        """
+        s3 = boto3.resource('s3')
+        output = f"downloads/{file_name}"
+        s3.Bucket(bucket).download_file(file_name, output)
+
+        return output
+
+    def list_files(bucket):
+        """
+        Function to list files in a given S3 bucket
+        """
+        s3 = boto3.client('s3')
+        contents = []
+        for item in s3.list_objects(Bucket=bucket)['Contents']:
+            contents.append(item)
+
+        return contents
+
 
     ###################################################
 
@@ -355,7 +408,6 @@ def create_app(test_config=None):
             data = None
             
         return render_template('pages/faq.html', userinfo=data)
-
 
 
     ###################################################
@@ -392,6 +444,77 @@ def create_app(test_config=None):
         data['artist_name'] = artist_name
 
         return render_template('pages/show_account.html', userinfo=data)
+
+    @app.route('/account/edit', methods=['GET'])
+    @requires_log_in
+    def edit_user_form():
+
+        print(123)
+
+        auth_id = session['jwt_payload']['sub'][6:]
+
+        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+        print(user)
+
+        if user:
+            data = user.short_private()
+
+        else:
+
+            abort(404)
+
+        form = EditUserForm()
+
+        return render_template('forms/edit_user.html', form = form, userinfo=data)
+
+    @app.route('/account/edit', methods=['POST'])
+    @requires_log_in
+    def edit_user_submission():
+
+        auth_id = session['profile']['user_id'][6:]
+
+        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+        form = EditUserForm()
+
+        print("function triggered")
+
+        if not user:
+
+            abort(404)
+
+        try:
+
+            print("try triggered")
+
+            if form.validate():
+
+                print("validated")
+
+                f = form.profile_picture.data
+
+                filename = secure_filename(f.filename)
+
+                print(filename)
+
+                upload_profile_picture(f, filename)
+
+                file_url = 'https://{}.s3amazonaws.com/'.format(S3_BUCKET) + filename
+                print(file_url)
+                user.profile_picture = file_url
+                user.update()
+
+                flash('Your profile has been updated.')
+
+            print(form.errors)
+
+        except Exception as e:
+
+            print(e)
+            flash('Your profile could not be updated.')
+
+        return redirect(url_for('show_account'))
 
 
     ###################################################

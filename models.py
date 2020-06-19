@@ -33,6 +33,7 @@ class User(db.Model):
     auth_id = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
     artist = db.relationship('Artist', uselist=False, back_populates='user')
+    profile_picture = Column(String, unique=True, nullable=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
 

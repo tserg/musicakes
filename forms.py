@@ -1,7 +1,11 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField, IntegerField, FloatField
 from wtforms.validators import DataRequired, AnyOf, URL, Optional
+
+from werkzeug.utils import secure_filename
 import pycountry
 
 class UserForm(FlaskForm):
@@ -16,3 +20,9 @@ class ArtistForm(FlaskForm):
 			'artist_country', validators=[DataRequired()],
 			choices = [(country.name, country.name) for country in pycountry.countries]
 		)
+
+class EditUserForm(FlaskForm):
+	profile_picture = FileField('profile_picture', validators=[
+		FileRequired(),
+		FileAllowed(['jpg', 'png'], 'Image only!')
+	])
