@@ -13,7 +13,6 @@ from forms import *
 from jose import jwt
 
 from models import setup_db, User, Artist, Release, Track, Purchase
-from s3_main import *
 
 from urllib.request import urlopen
 from authlib.integrations.flask_client import OAuth
@@ -496,11 +495,13 @@ def create_app(test_config=None):
 
                 filename = secure_filename(f.filename)
 
-                print(filename)
+                modified_filename = auth_id + "/" + filename
 
-                upload_profile_picture(f, filename)
+                print(modified_filename)
 
-                file_url = 'https://{}.s3amazonaws.com/'.format(S3_BUCKET) + filename
+                upload_profile_picture(f, modified_filename)
+
+                file_url = 'https://{}.s3amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
                 print(file_url)
                 user.profile_picture = file_url
                 user.update()

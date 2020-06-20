@@ -62,6 +62,7 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'artist_id': artist_info,
+            'profile_picture': self.profile_picture,
             'created_on': self.created_on
         }
 
@@ -70,6 +71,7 @@ class User(db.Model):
         return {
             'id': self.id,
             'username': self.username,
+            'profile_picture': self.profile_picture,
             'created_on': self.created_on,
         }
 

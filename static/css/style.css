@@ -400,3 +400,13 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 	border: none !important;
 	font-size:0;
 }
+
+.profile-picture {
+	height:100px;
+	width:100px;
+}
+
+.profile-picture img {
+	max-width: 100%;
+	max-height: 100%;
+}
