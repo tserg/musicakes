@@ -1,8 +1,8 @@
 function validateForm() {
 	var x = document.forms["new_artist"]["artist_name"].value;
 
-	if (x.length < 6 || x.length > 20) {
-		alert("Artist name must be between 6 to 20 characters.");
+	if (x.length < 6 || x.length > 100) {
+		alert("Artist name must be between 6 to 100 characters.");
 		return false;
 	}
 
