@@ -3,22 +3,47 @@
 {% block content %}
 <div>
 
-	<div>
-		<h4>
-			Username: {{ user.username }}
-		</h4>
+	<div class="w3-content">
 
-		<h4>
-			Created on: {{ user.created_on }}
-		</h4>
-		<h4>Purchases: </h4>
-		{% for release in user.purchased_releases %}
-			<ol>
+		<div class = "w3-container"> 
+			<h4>
+				Username: {{ userinfo.username }}
+			</h4>
+		</div>
+		
+		<div class = "w3-container"> 
+			<h4>
 
-				<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
+				Profile Picture
+			</h4>
+		</div>
 
-			</ol>
-		{% endfor %}
+		<div class = "w3-container">
+			<div class = "profile-picture"> 
+			{% if userinfo.profile_picture is none %}
+				<img id="preview" src="/static/img/musicakes.png" />
+			{% else %}
+				<img src="{{ userinfo.profile_picture }}" />
+			{% endif %}
+			</div>
+		</div>
+
+		<div class = "w3-container"> 
+			<h4>
+				Created on: {{ userinfo.created_on }}
+			</h4>
+		</div>
+
+		<div class="w3-container">
+			<h4>Purchases: </h4>
+			{% for release in user.purchased_releases %}
+				<ol>
+
+					<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
+
+				</ol>
+			{% endfor %}
+		</div>
 
 	</div>
 </div>
