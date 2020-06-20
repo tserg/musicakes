@@ -60,6 +60,8 @@ def create_app(test_config=None):
     csrf = CSRFProtect()
     csrf.init_app(app)
 
+    db=SQLAlchemy()
+
     setup_db(app)
 
     CORS(app)
@@ -362,6 +364,38 @@ def create_app(test_config=None):
                 Bucket=S3_BUCKET,
                 Key=file_name,
                 Tagging='public=yes'
+            )
+
+        except ClientError as e:
+            print(e)
+            return False
+
+        return True
+
+    def upload_release_file(file, file_name):
+        """Upload a file to an S3 bucket
+
+        :param file_name: File to upload
+        :param bucket: Bucket to upload to
+        :return: True if file was uploaded, else False
+        """
+
+        # If S3 object_name was not specified, use file_name
+
+        # Upload the file
+        s3_client = boto3.client('s3',
+                                region_name='us-east-1',
+                                endpoint_url=S3_LOCATION,
+                                aws_access_key_id=S3_KEY,
+                                aws_secret_access_key=S3_SECRET)
+
+
+        try:
+
+            s3_client.put_object(
+                Body=file,
+                Bucket=S3_BUCKET,
+                Key=file_name,
             )
 
         except ClientError as e:
@@ -1078,29 +1112,61 @@ def create_app(test_config=None):
 
             if form.validate():
 
+                # Extract information for release
+
                 release_name = form.release_name.data
                 release_price = form.release_price.data
                 release_text = form.release_text.data
+
+                # Upload release cover art 
+
+                f = form.release_cover_art.data
+
+                filename = secure_filename(f.filename)
+
+                modified_filename = auth_id + "/" + filename
+
+                upload_release_file(f, modified_filename)
+
+                file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
+
+                # Create new release in database
 
                 new_release = Release(
                     artist_id = user.artist.id,
                     name=release_name,
                     price=release_price,
-                    release_text=release_text
+                    description=release_text,
+                    cover_art=file_url
                 )
 
                 new_release.insert()
+
+                # Loop over tracks and create ne track in database
 
                 for track in form.tracks.entries:
 
                     track_name = track.data['track_name']
                     track_price = track.data['track_price']
 
+                    f1 = track.data['track_file']
+
+                    filename = secure_filename(f1.filename)
+
+                    modified_track_filename = auth_id + "/" + filename
+
+                    upload_release_file(f1, modified_track_filename)
+
+                    track_file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_track_filename)
+
+
                     new_track = Track(
                         artist_id = user.artist.id,
                         release_id = new_release.id,
                         name = track_name,
-                        price = track_price
+                        price = track_price,
+                        download_url = track_file_url
+
                     )
 
                     new_track.insert()

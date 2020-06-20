@@ -129,8 +129,8 @@ class Release(db.Model):
     price = Column(Integer, nullable=False)
     tracks = db.relationship('Track', backref='release',
                              cascade='all, delete', lazy=True)
-    release_picture = Column(String, unique=True, nullable=True)
-    release_text = Column(String, nullable=True)
+    cover_art = Column(String, unique=True, nullable=True)
+    description = Column(String, nullable=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     smart_contract_address=Column(String, unique=True, nullable=True)
 
@@ -138,6 +138,9 @@ class Release(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
+
+    def insert_without_commit(self):
+        db.session.add(self)
 
     def update(self):
         db.session.commit()
@@ -172,12 +175,16 @@ class Track(db.Model):
     name = Column(String, nullable=False)
     price = Column(Integer, nullable=False)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
+    download_url = Column(String, unique=True, nullable=True)
 
     __table_args__ = (UniqueConstraint('artist_id', 'release_id', 'name', name='unique_track_name'), )
 
     def insert(self):
         db.session.add(self)
         db.session.commit()
+        
+    def insert_without_commit(self):
+        db.session.add(self)
 
     def update(self):
         db.session.commit()
