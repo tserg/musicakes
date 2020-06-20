@@ -1270,40 +1270,6 @@ def create_app(test_config=None):
             abort(404)
 
 
-
-
-    @app.route('/tracks', methods=['POST'])
-    @requires_auth('create:track')
-    def create_track(payload):
-
-        try:
-
-            name = request.get_json()['name']
-            artist_id = request.get_json()['artist_id']
-            release_id = request.get_json()['release_id']
-            price = request.get_json()['price']
-
-            new_track = Track(
-                name=name,
-                artist_id=artist_id,
-                release_id=release_id,
-                price=price
-            )
-
-            new_track.insert()
-
-            return jsonify({
-                'success': True,
-                'name': new_track.name,
-                'artist_id': new_track.artist_id,
-                'release_id': new_track.release_id,
-                'price': new_track.price
-            })
-
-        except:
-
-            abort(422)
-
     @app.route('/artists/<int:id>', methods=['PATCH'])
     @requires_auth('update:artist')
     def update_artist(payload, id):

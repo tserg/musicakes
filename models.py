@@ -139,9 +139,6 @@ class Release(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def insert_without_commit(self):
-        db.session.add(self)
-
     def update(self):
         db.session.commit()
 
@@ -182,9 +179,6 @@ class Track(db.Model):
     def insert(self):
         db.session.add(self)
         db.session.commit()
-        
-    def insert_without_commit(self):
-        db.session.add(self)
 
     def update(self):
         db.session.commit()
