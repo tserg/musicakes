@@ -24,7 +24,10 @@ class UserForm(FlaskForm):
 
 class ArtistForm(FlaskForm):
 
-	artist_name = StringField('artist_name', validators=[DataRequired()])
+	artist_name = StringField('artist_name', validators=[DataRequired(),
+		Length(6, 20, "Username must be between %(min)d to %(max)d characters."),
+		check_punctuation]
+	)
 
 	artist_country = SelectField(
 			'artist_country', validators=[DataRequired()],

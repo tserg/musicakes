@@ -501,7 +501,7 @@ def create_app(test_config=None):
 
                 upload_profile_picture(f, modified_filename)
 
-                file_url = 'https://{}.s3amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
+                file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
                 print(file_url)
                 user.profile_picture = file_url
                 user.update()
