@@ -3,7 +3,7 @@
 {% block content %}
 
   <div class="form-wrapper">
-    <form method="post" class="form">
+    <form method="post" class="form" onsubmit="return validateForm()" name="new_user">
       {{ form.hidden_tag() }}
       <h3 class="form-heading">Create a user</h3>
 
@@ -15,5 +15,8 @@
       <input type="submit" value="Create an account" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/new_user.js') }}"></script>
+
 
 {% endblock %}
