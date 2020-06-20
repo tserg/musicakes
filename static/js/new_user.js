@@ -10,4 +10,10 @@ function validateForm() {
 		alert("Username cannot contain special characters.");
 		return false;
 	}
+
+	if (x.indexOf(' ') >= 0) {
+		alert("Username cannot contain a space.");
+		return false;
+	}
+
 }
