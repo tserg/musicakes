@@ -129,6 +129,8 @@ class Release(db.Model):
     price = Column(Integer, nullable=False)
     tracks = db.relationship('Track', backref='release',
                              cascade='all, delete', lazy=True)
+    release_picture = Column(String, unique=True, nullable=True)
+    release_text = Column(String, nullable=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     smart_contract_address=Column(String, unique=True, nullable=True)
 

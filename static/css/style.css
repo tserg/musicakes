@@ -410,3 +410,8 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 	max-width: 100%;
 	max-height: 100%;
 }
+
+#release-textbox {
+	height: 200px;
+	width: 500px;
+}

@@ -5,10 +5,25 @@ import boto3
 from botocore.exceptions import ClientError
 
 from functools import wraps
-from flask import Flask, request, abort, jsonify, flash, render_template, redirect, url_for, session
+from flask import (
+    Flask,
+    request,
+    abort,
+    jsonify,
+    flash,
+    render_template,
+    redirect,
+    url_for,
+    session
+)
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_wtf import Form, CSRFProtect
+from wtforms import (
+    FormField,
+    FieldList
+)
 from forms import *
 from jose import jwt
 
@@ -211,9 +226,6 @@ def create_app(test_config=None):
             def wrapper(*args, **kwargs):
 
                 token = session['token']['access_token']
-
-                print("requires_auth printing for access token")
-                print(token)
 
                 try:
                     payload = verify_decode_jwt(token)
@@ -448,13 +460,9 @@ def create_app(test_config=None):
     @requires_log_in
     def edit_user_form():
 
-        print(123)
-
         auth_id = session['jwt_payload']['sub'][6:]
 
         user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        print(user)
 
         if user:
             data = user.short_private()
@@ -477,19 +485,13 @@ def create_app(test_config=None):
 
         form = EditUserForm()
 
-        print("function triggered")
-
         if not user:
 
             abort(404)
 
         try:
 
-            print("try triggered")
-
             if form.validate():
-
-                print("validated")
 
                 f = form.profile_picture.data
 
@@ -497,18 +499,14 @@ def create_app(test_config=None):
 
                 modified_filename = auth_id + "/" + filename
 
-                print(modified_filename)
-
                 upload_profile_picture(f, modified_filename)
 
                 file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
-                print(file_url)
+
                 user.profile_picture = file_url
                 user.update()
 
                 flash('Your profile has been updated.')
-
-            print(form.errors)
 
         except Exception as e:
 
@@ -593,8 +591,6 @@ def create_app(test_config=None):
         try:
 
             if form.validate():
-
-                print(form.username.data)
 
                 new_user = User(
                     auth_id = auth_id,
@@ -728,8 +724,8 @@ def create_app(test_config=None):
         return render_template('forms/new_artist.html', form=form, userinfo=data)
 
     @app.route('/artists/create', methods=['POST'])
-    @requires_auth('create:artist')
-    def create_artist(payload):
+    @requires_log_in
+    def create_artist():
 
         form = ArtistForm(request.form)
 
@@ -795,9 +791,6 @@ def create_app(test_config=None):
                 temp_dict['release_name'] = release_name
                 temp.append(temp_dict)
 
-        print("temp")
-        print(temp)
-
         data['purchased_releases'] = temp
 
         temp = []
@@ -820,14 +813,12 @@ def create_app(test_config=None):
     @requires_log_in
     def purchase_release(release_id):
 
-        print('submit_purchase_transaction_hash triggered')
-
         if 'jwt_payload' in session:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
             user = User.query.filter(User.auth_id==auth_id).one_or_none()
-            print(user)
+
             if user is None:
 
                 abort(404)
@@ -841,13 +832,6 @@ def create_app(test_config=None):
             transaction_hash = request.get_json()['transaction_hash']
             wallet_address = request.get_json()['wallet_address']
             paid = request.get_json()['paid']
-
-            print("transaction hash")
-            print(transaction_hash)
-            print("wallet address")
-            print(wallet_address)
-            print("paid")
-            print(paid)
 
 
             purchase = Purchase(
@@ -877,14 +861,11 @@ def create_app(test_config=None):
     @requires_log_in
     def purchase_track(track_id):
 
-        print('submit_purchase_transaction_hash triggered')
-
         if 'jwt_payload' in session:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
             user = User.query.filter(User.auth_id==auth_id).one_or_none()
-            print(user)
             if user is None:
 
                 abort(404)
@@ -898,14 +879,6 @@ def create_app(test_config=None):
             transaction_hash = request.get_json()['transaction_hash']
             wallet_address = request.get_json()['wallet_address']
             paid = request.get_json()['paid']
-
-            print("transaction hash")
-            print(transaction_hash)
-            print("wallet address")
-            print(wallet_address)
-            print("paid")
-            print(paid)
-
 
             purchase = Purchase(
                     user_id = user.id,
@@ -1019,6 +992,131 @@ def create_app(test_config=None):
 
         return redirect('/')
 
+    @app.route('/releases/create', methods=['GET'])
+    @requires_log_in
+    def create_release_presubmission_form():
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user.artist is None:
+
+                abort(404)
+
+            if user:
+                data = user.short_private()
+
+            else:
+
+                data = None
+
+        else:
+
+            data = None
+
+        form = ReleasePresubmissionForm()
+
+        return render_template('forms/new_release_presubmission.html', form=form, userinfo=data)
+
+    @app.route('/releases/create', methods=['POST'])
+    @requires_log_in
+    def create_release_presubmission():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user.artist is None:
+
+                abort(404)
+
+            if user:
+                data = user.short_private()
+
+            else:
+
+                data = None
+
+        else:
+
+            data = None
+
+
+        presubmission_form = ReleasePresubmissionForm(request.form)
+
+        track_count = presubmission_form.track_count.data
+
+        # workaround to dynamically generate number of tracks
+
+        class LocalForm(ReleaseForm):pass
+        LocalForm.tracks = FieldList(FormField(TrackForm), min_entries=track_count)
+        form = LocalForm()
+
+        return render_template('forms/new_release.html', form=form, userinfo=data)
+
+    @app.route('/releases/create_2', methods=['POST'])
+    @requires_log_in
+    def create_release_submission():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user.artist is None:
+
+                abort(404)
+
+        form = ReleaseForm()
+
+        try:
+
+            if form.validate():
+
+                release_name = form.release_name.data
+                release_price = form.release_price.data
+                release_text = form.release_text.data
+
+                new_release = Release(
+                    artist_id = user.artist.id,
+                    name=release_name,
+                    price=release_price,
+                    release_text=release_text
+                )
+
+                new_release.insert()
+
+                for track in form.tracks.entries:
+
+                    track_name = track.data['track_name']
+                    track_price = track.data['track_price']
+
+                    new_track = Track(
+                        artist_id = user.artist.id,
+                        release_id = new_release.id,
+                        name = track_name,
+                        price = track_price
+                    )
+
+                    new_track.insert()
+
+                flash('Your release has been successfully created.')
+
+            print(form.errors)
+        
+        except Exception as e:
+
+            print(e)
+            flash('Your release could not be created.')
+
+        return redirect(url_for('get_releases'))
+
+
     ###################################################
 
     # Tracks
@@ -1062,15 +1160,9 @@ def create_app(test_config=None):
 
         try:
 
-            print(123)
-
             track = Track.query.get(track_id)
 
-            print(track)
-
             formatted_track_data = track.short()
-
-            print(formatted_track_data)
 
             if 'jwt_payload' in session:
 
@@ -1112,34 +1204,7 @@ def create_app(test_config=None):
             abort(404)
 
 
-    @app.route('/releases', methods=['POST'])
-    @requires_auth('create:release')
-    def create_release(payload):
 
-        try:
-
-            name = request.get_json()['name']
-            artist_id = request.get_json()['artist_id']
-            price = request.get_json()['price']
-
-            new_release = Release(
-                name=name,
-                artist_id=artist_id,
-                price=price
-            )
-
-            new_release.insert()
-
-            return jsonify({
-                'success': True,
-                'name': new_release.name,
-                'artist_id': new_release.artist_id,
-                'price': new_release.price
-            })
-
-        except:
-
-            abort(422)
 
     @app.route('/tracks', methods=['POST'])
     @requires_auth('create:track')
@@ -1479,14 +1544,6 @@ def create_app(test_config=None):
             'message': 'bad request'
         }), 400
 
-    @app.errorhandler(404)
-    def not_found(error):
-        return jsonify({
-            'success': False,
-            'error': 404,
-            'message': 'resource not found'
-        }), 404
-
     @app.errorhandler(405)
     def method_not_allowed(error):
         return jsonify({
@@ -1502,14 +1559,6 @@ def create_app(test_config=None):
             'error': 422,
             'message': 'unprocessable'
         }), 422
-
-    @app.errorhandler(500)
-    def internal_server_error(error):
-        return jsonify({
-            'success': False,
-            'error': 500,
-            'message': 'internal server error'
-        }), 500
 
     """
 

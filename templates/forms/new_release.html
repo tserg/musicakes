@@ -1,0 +1,55 @@
+{% extends 'layouts/layout.html' %}
+{% block title %}Create a new release{% endblock %}
+{% block content %}
+{% if userinfo.artist_name is none %} 
+<h4> You have not created an artist profile yet.</h4> 
+
+{% else %} 
+  <div class="form-wrapper">
+    <form action="{{ url_for('create_release_submission') }}"method="post" class="form" name="new_release" enctype="multipart/form-data">
+      {{ form.hidden_tag() }}
+      <h3 class="form-heading">Create a new release</h3>
+
+      <div class="form-group">
+          <label for="release_name">Release name</label>
+          {{ form.release_name(class_ = 'form-control', autofocus = true) }}
+
+      </div>
+
+      <div class="form-group">
+          <label for="release_cover_art">Cover Art</label>
+          {{ form.release_cover_art(class = 'form-control-file') }}
+
+      </div>
+
+      <div class="form-group">
+          <label for="release_text">Description of release</label>
+          {{ form.release_text(class_ = 'form-control', autofocus = true) }}
+
+      </div>
+
+      <div class="form-group">
+          <label for="release_price">Price of release</label>
+          {{ form.release_price(class_ = 'form-control', autofocus = true) }}
+
+      </div>
+
+      <div>
+          <h4>Tracks</h4>
+
+      </div>
+
+      <div class="form-group">
+        <fieldset class ="form-group">
+          <label for="track-name-1">Track name</label>
+          {{ form.tracks(class_ = 'track-field', autofocus = true) }}
+        </fieldset>
+      </div>
+
+      <input type="submit" value="Create release" class="btn btn-primary btn-lg btn-block">
+    </form>
+    <input type="submit" value="Back" class="btn btn-primary btn-lg btn-block" onclick="window.location='/releases/create';" />
+  </div>
+{% endif %}
+
+{% endblock %}
