@@ -1515,11 +1515,11 @@ def create_app(test_config=None):
 
     @app.errorhandler(AuthError)
     def auth_error(AuthError):
-        return jsonify({
-            'success': False,
-            'error': AuthError.status_code,
-            'message': AuthError.error['description']
-        }), 401
+        return render_template('errors/401.html'), 401
+
+    @app.errorhandler(401)
+    def not_found_error(error):
+        return render_template('errors/401.html'), 401
 
 
     @app.errorhandler(404)
