@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 import pycountry
 
 def check_punctuation(form, field):
-	for i in field:
+	for i in field.data:
 		if i in string.punctuation:
 			raise ValidationError("Username cannot contain special characters")
 

@@ -594,6 +594,8 @@ def create_app(test_config=None):
 
             if form.validate():
 
+                print(form.username.data)
+
                 new_user = User(
                     auth_id = auth_id,
                     username = form.username.data
@@ -603,12 +605,14 @@ def create_app(test_config=None):
 
                 flash('Your account has been successfully created.')
 
+                return redirect(url_for('show_account'))
+
         except Exception as e:
 
             print(e)
             flash('Your account could not be created.')
-
-        return redirect(url_for('index'))
+                                        
+            return redirect(url_for('create_user_form'))
 
     ###################################################
 
