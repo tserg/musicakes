@@ -19,7 +19,12 @@ from flask import (
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_wtf import Form, CSRFProtect
+from flask_wtf import (
+    Form, 
+    CSRFProtect,
+    CSRFError
+)
+
 from wtforms import (
     FormField,
     FieldList
@@ -27,7 +32,14 @@ from wtforms import (
 from forms import *
 from jose import jwt
 
-from models import setup_db, User, Artist, Release, Track, Purchase
+from models import (
+    setup_db,
+    User,
+    Artist,
+    Release,
+    Track,
+    Purchase
+)
 
 from urllib.request import urlopen
 from authlib.integrations.flask_client import OAuth
@@ -1596,6 +1608,10 @@ def create_app(test_config=None):
 
     @app.errorhandler(AuthError)
     def auth_error(AuthError):
+        return render_template('errors/401.html'), 401
+
+    @app.errorhandler(CSRFError)
+    def csrf_error(CSRFError)
         return render_template('errors/401.html'), 401
 
     @app.errorhandler(401)
