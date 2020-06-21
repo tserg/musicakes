@@ -21,8 +21,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_wtf import (
     Form, 
-    CSRFProtect,
-    CSRFError
+    CSRFProtect
 )
 
 from wtforms import (
@@ -1608,10 +1607,6 @@ def create_app(test_config=None):
 
     @app.errorhandler(AuthError)
     def auth_error(AuthError):
-        return render_template('errors/401.html'), 401
-
-    @app.errorhandler(CSRFError)
-    def csrf_error(CSRFError)
         return render_template('errors/401.html'), 401
 
     @app.errorhandler(401)
