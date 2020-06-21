@@ -7,34 +7,40 @@
 
 		<h4>Purchases: </h4>
 
-		{% if (userinfo.purchased_releases is defined and variable|length) or (userinfo.purchased_tracks is defined and variable|length) %}
+		{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) or (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
 
-		<div>
 
-			<h5> Releases</h5>
+			{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) %}
+				<div>
 
-			{% for release in userinfo.purchased_releases %}
-				<ol>
+					<h5> Releases</h5>
 
-					<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
+					{% for release in userinfo.purchased_releases %}
+						<ol>
 
-				</ol>
-			{% endfor %}
+							<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
 
-		</div>
+						</ol>
+					{% endfor %}
 
-		<div>
+				</div>
 
-			<h5> Tracks</h5>
+				<div>
 
-			{% for track in userinfo.purchased_tracks %}
-				<ol>
+			{% endif %}
 
-					<a href="../tracks/{{ track.track_id }}">>{{ track.track_name }}</a>
+			{% if (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
 
-				</ol>
-			{% endfor %}
+				<h5> Tracks</h5>
 
+				{% for track in userinfo.purchased_tracks %}
+					<ol>
+
+						<a href="../tracks/{{ track.track_id }}">>{{ track.track_name }}</a> / <a href="/tracks/{{ track.track_id }}/download">Download</a>
+
+					</ol>
+				{% endfor %}
+			{% endif %}
 		</div>
 
 		{% else %}

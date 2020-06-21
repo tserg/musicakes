@@ -14,7 +14,8 @@ from flask import (
     render_template,
     redirect,
     url_for,
-    session
+    session,
+    send_file
 )
 
 from flask_sqlalchemy import SQLAlchemy
@@ -351,11 +352,11 @@ def create_app(test_config=None):
 
     ###################################################
 
-    def upload_profile_picture(file, file_name):
+    def upload_profile_picture(file, key):
         """Upload a user's profile picture to an S3 bucket with public access
 
-        :param file_name: File to upload
-        :param bucket: Bucket to upload to
+        :param file: File to upload
+        :param key: Path name for the file
         :return: True if file was uploaded, else False
         """
 
@@ -374,7 +375,7 @@ def create_app(test_config=None):
             s3_client.put_object(
                 Body=file,
                 Bucket=S3_BUCKET,
-                Key=file_name,
+                Key=key,
                 Tagging='public=yes'
             )
 
@@ -384,11 +385,11 @@ def create_app(test_config=None):
 
         return True
 
-    def upload_release_picture(file, file_name):
-        """Upload a user's profile picture to an S3 bucket with public access
+    def upload_release_picture(file, key):
+        """Upload a release's cover art to an S3 bucket with public access
 
-        :param file_name: File to upload
-        :param bucket: Bucket to upload to
+        :param file: File to upload
+        :param key: Path name for the file
         :return: True if file was uploaded, else False
         """
 
@@ -407,7 +408,7 @@ def create_app(test_config=None):
             s3_client.put_object(
                 Body=file,
                 Bucket=S3_BUCKET,
-                Key=file_name,
+                Key=key,
                 Tagging='public=yes'
             )
 
@@ -417,15 +418,13 @@ def create_app(test_config=None):
 
         return True
 
-    def upload_release_file(file, file_name):
+    def upload_release_file(file, key):
         """Upload a track file to an S3 bucket
 
-        :param file_name: File to upload
-        :param bucket: Bucket to upload to
+        :param file: File to upload
+        :param key: Path name for the file
         :return: True if file was uploaded, else False
         """
-
-        # If S3 object_name was not specified, use file_name
 
         # Upload the file
         s3_client = boto3.client('s3',
@@ -440,7 +439,7 @@ def create_app(test_config=None):
             s3_client.put_object(
                 Body=file,
                 Bucket=S3_BUCKET,
-                Key=file_name,
+                Key=key,
             )
 
         except ClientError as e:
@@ -450,13 +449,30 @@ def create_app(test_config=None):
         return True
 
 
-    def download_file(file_name, bucket):
+    def download_track(key, file_name):
         """
-        Function to download a given file from an S3 bucket
+        Function to download a given track from an S3 bucket
         """
-        s3 = boto3.resource('s3')
-        output = f"downloads/{file_name}"
-        s3.Bucket(bucket).download_file(file_name, output)
+        s3_client = boto3.client('s3',
+                                region_name='us-east-1',
+                                endpoint_url=S3_LOCATION,
+                                aws_access_key_id=S3_KEY,
+                                aws_secret_access_key=S3_SECRET)
+
+        output = file_name
+
+        try:
+
+            s3_client.download_file(
+                Bucket=S3_BUCKET,
+                Key=key,
+                Filename=output
+            )
+
+        except ClientError as e:
+
+            print(e)
+            return False
 
         return output
 
@@ -875,16 +891,19 @@ def create_app(test_config=None):
         temp = []
 
         for purchased_track in purchased_tracks:
-            track_name = Track.query.get(purchased_track.track_id).name
+            track = Track.query.get(purchased_track.track_id)
+            track_name = track.name
             temp_dict = {}
 
             if track_name not in temp:
-                temp_dict['track_id'] = purchased_track.track_id
+                temp_dict['track_id'] = track.id
                 temp_dict['track_name'] = track_name
+                temp_dict['track_download_url'] = track.download_url
                 temp.append(temp_dict)
 
-
         data['purchased_tracks'] = temp
+
+        print(data)
 
         return render_template('pages/show_purchases.html', userinfo=data)
 
@@ -981,6 +1000,70 @@ def create_app(test_config=None):
             print(e)
 
             abort(404)
+
+    @app.route('/tracks/<int:track_id>/download', methods=['GET'])
+    @requires_log_in
+    def download_purchased_track(track_id):
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user is None:
+
+                abort(404)
+
+        else:
+
+            abort(404)
+
+        # checks if user has purchased the current track
+
+        track = Track.query.filter(Track.id==track_id).one_or_none()
+        release = Release.query.filter(Release.id==track.release_id).one_or_none()
+
+        if track is None or release is None:
+
+            abort(404)
+
+        track_purchase = Purchase.query.filter(Purchase.track_id==track.id). \
+                            filter(Purchase.user_id==user.id). \
+                            join(Track).all()
+
+        release_purchase = Purchase.query.filter(Purchase.release_id==track.release_id). \
+                            filter(Purchase.user_id==user.id). \
+                            join(Release).all()
+
+        print(track_purchase, release_purchase)
+
+        if track_purchase is None and release_purchase is None:
+
+            abort(404)
+
+        # download file
+
+        artist_user = Artist.query.filter(Artist.id==release.artist_id).one_or_none()
+
+        print(artist_user)
+
+        key = artist_user.user.auth_id + "/" + track.download_url
+
+        print(key)
+
+        try:
+
+            output = download_track(key, track.download_url)
+
+            return send_file(output, as_attachment=True)
+
+        except Exception as e:
+
+            print(e)
+            flash('Unable to download file.')
+
+        return redirect(url_for('show_purchases'))
 
     ###################################################
 
