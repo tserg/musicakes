@@ -1,7 +1,72 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div id = "release-and-user-dashboard" class = "w3-third">
+<div class="w3-container-holder">
+<div id = "release-and-user-dashboard" class = "dashboard">
+
+
+  <div id = "release-dashboard" class="w3-container">
+
+  	<div class = "w3-content">
+  		<h4>
+  			Release: {{ release.release_name }}
+  		</h4>
+
+  		<h4>
+  			Artist: {{ release.artist_name }}
+  		</h4>
+  		<h4>
+  			Price: {{ release.price }}
+  		</h4>
+  		<h4>
+  			Tracks: 
+  		</h4>
+  
+  		<ol>
+  			{% for track in release.tracks %}
+  			<li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
+  			{% endfor %}
+  		</ol>
+  		
+
+
+      <div>
+  			<span>Created on: {{ release.created_on }}</span>
+  		</div>
+
+  	</div>
+  </div>
+</div>
+
+<div class = "dashboard">
+
+  <div class = "w3-container">
+
+    <h4>Cover Art</h4>
+
+    <div class = "release-cover-art">
+      <img src={{ release.cover_art }} />
+    </div>
+
+  <h4>
+    Description: {{ release.description }}
+  </h4>
+
+  </div>
+  <div class="w3-container">
+    <h4>
+      Purchasers:
+      {% for purchaser in release.purchasers %}
+      <ol>
+        <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
+      </ol>
+      {% endfor %}
+    </h4>
+  </div>
+
+</div>
+
+<div class = "dashboard">
   <div id = "user-dashboard" class="sub-dashboard">
 
     <span><h3>User Dashboard</h3></span>
@@ -17,48 +82,8 @@
     </div>
 
     <br>
-
-  </div>
-
-  <div id = "release-dashboard" class="sub-dashboard">
-
     <button id="enable-ethereum-button">Enable Ethereum</button>
-
-  	<div>
-  		<h4>
-  			Release: {{ release.release_name }}
-  		</h4>
-  		<h4>
-  			Artist: {{ release.artist_name }}
-  		<h4>
-  		<h4>
-  			Price: {{ release.price }}
-  		<h4>
-  		<h4>
-  			Tracks: 
-  		<h4>
-  		<ol>
-  			{% for track in release.tracks %}
-  			<li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
-  			{% endfor %}
-  		</ol>
-  		<h4>
-  			Created on: {{ release.created_on }}
-  		</h4>
-
-      <h4>
-        Purchasers:
-        {% for purchaser in release.purchasers %}
-        <ol>
-          <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
-        </ol>
-        {% endfor %}
-      </h4>
-
-  	</div>
   </div>
-</div>
-<div class = "w3-two-third">
     <div id ="payment-token-dashboard" class="sub-dashboard">
 
       <h3>DAI Dashboard</h3>
@@ -177,7 +202,7 @@
     </div>
   </div>
 
-
+</div>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 

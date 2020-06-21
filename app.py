@@ -339,7 +339,7 @@ def create_app(test_config=None):
 
         latest_releases = Release.query.order_by(Release.created_on.desc()).limit(5).all()
 
-        latest_releases_data = [release.short() for release in latest_releases]
+        latest_releases_data = [release.short_public() for release in latest_releases]
 
         return render_template('pages/home.html', userinfo=data, latest_releases=latest_releases_data)
 
@@ -351,7 +351,40 @@ def create_app(test_config=None):
     ###################################################
 
     def upload_profile_picture(file, file_name):
-        """Upload a file to an S3 bucket
+        """Upload a user's profile picture to an S3 bucket with public access
+
+        :param file_name: File to upload
+        :param bucket: Bucket to upload to
+        :return: True if file was uploaded, else False
+        """
+
+        # If S3 object_name was not specified, use file_name
+
+        # Upload the file
+        s3_client = boto3.client('s3',
+                                region_name='us-east-1',
+                                endpoint_url=S3_LOCATION,
+                                aws_access_key_id=S3_KEY,
+                                aws_secret_access_key=S3_SECRET)
+
+
+        try:
+
+            s3_client.put_object(
+                Body=file,
+                Bucket=S3_BUCKET,
+                Key=file_name,
+                Tagging='public=yes'
+            )
+
+        except ClientError as e:
+            print(e)
+            return False
+
+        return True
+
+    def upload_release_picture(file, file_name):
+        """Upload a user's profile picture to an S3 bucket with public access
 
         :param file_name: File to upload
         :param bucket: Bucket to upload to
@@ -384,7 +417,7 @@ def create_app(test_config=None):
         return True
 
     def upload_release_file(file, file_name):
-        """Upload a file to an S3 bucket
+        """Upload a track file to an S3 bucket
 
         :param file_name: File to upload
         :param bucket: Bucket to upload to
@@ -961,7 +994,7 @@ def create_app(test_config=None):
 
             all_releases = Release.query.all()
 
-            formatted_all_releases = [release.short()
+            formatted_all_releases = [release.short_public()
                                       for release in all_releases]
 
             if 'jwt_payload' in session:
@@ -1011,7 +1044,7 @@ def create_app(test_config=None):
             if current_release is None:
                 abort(404)
 
-            release_data = current_release.short()
+            release_data = current_release.short_public()
 
             purchases = Purchase.query.filter(Purchase.release_id==release_id). \
                         join(Release).all()
@@ -1137,7 +1170,7 @@ def create_app(test_config=None):
 
                 modified_filename = auth_id + "/" + filename
 
-                upload_release_file(f, modified_filename)
+                upload_release_pictur(ezf, modified_filename)
 
                 file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
 
@@ -1207,7 +1240,7 @@ def create_app(test_config=None):
 
             all_tracks = Track.query.all()
 
-            formatted_all_tracks = [track.short() for track in all_tracks]
+            formatted_all_tracks = [track.short_public() for track in all_tracks]
 
             if 'jwt_payload' in session:
 
@@ -1239,7 +1272,7 @@ def create_app(test_config=None):
 
             track = Track.query.get(track_id)
 
-            formatted_track_data = track.short()
+            formatted_track_data = track.short_public()
 
             if 'jwt_payload' in session:
 

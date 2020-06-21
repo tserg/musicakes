@@ -821,3 +821,5 @@ async function transferMusicakes() {
     console.log(error);
   });
 }
+
+console.log("js loaded");

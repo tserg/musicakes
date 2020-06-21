@@ -1,7 +1,60 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div id = "release-and-user-dashboard" class = "w3-third">
+<div class="w3-container-holder">
+<div id = "track-and-user-dashboard" class = "dashboard">
+
+
+  <div id = "track-dashboard" class="w3-container">
+
+    <div class = "w3-content">
+      <h4>
+        Track: {{ track.track_name }}
+      </h4>
+
+      <h4>
+        Artist: {{ track.artist_name }}
+      </h4>
+      <h4>
+        Price: {{ track.price }}
+      </h4>
+      <h4>
+        Release: {{ track.release_name }} 
+      </h4>
+ 
+      <div>
+        <span>Created on: {{ track.created_on }}</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class = "dashboard">
+
+  <div class = "w3-container">
+
+    <h4>Cover Art</h4>
+
+    <div class = "release-cover-art">
+      <img src={{ track.release_cover_art }} />
+    </div>
+
+  </div>
+  <div class="w3-container">
+    <h4>
+      Purchasers:
+      {% for purchaser in track.purchasers %}
+      <ol>
+        <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
+      </ol>
+      {% endfor %}
+    </h4>
+  </div>
+
+</div>
+
+<div class = "dashboard">
   <div id = "user-dashboard" class="sub-dashboard">
 
     <span><h3>User Dashboard</h3></span>
@@ -17,46 +70,8 @@
     </div>
 
     <br>
-
-  </div>
-
-  <div id = "release-dashboard" class="sub-dashboard">
-
     <button id="enable-ethereum-button">Enable Ethereum</button>
-
-  	<div>
-  		<h4>
-  			Track: {{ track.track_name }}
-  		</h4>
-  		<h4>
-  			Artist: {{ track.artist_name }}
-  		<h4>
-  		<h4>
-  			Price: {{ track.price }}
-  		<h4>
-  		<h4>
-  			Release: <a href="../releases/{{ track.release_id }}">{{ track.release_name }}</a> 
-  		<h4>
-
-  		<h4>
-  			Created on: {{ track.created_on }}
-  		</h4>
-
-      <h4>
-        Purchasers:
-        {% for purchaser in track.purchasers %}
-        <ol>
-          <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
-        </ol>
-        {% endfor %}
-      </h4>
-      <br>
-      <br>
-      <br>
-  	</div>
   </div>
-</div>
-<div class = "w3-two-third">
     <div id ="payment-token-dashboard" class="sub-dashboard">
 
       <h3>DAI Dashboard</h3>
@@ -104,10 +119,10 @@
         <!-- proxy element to store and query smart contract address for window.appConfig --->
         <meta id="smart_contract_address" data-address="{{ track.smart_contract_address }}">
 
-        <!-- proxy element to store and query release price for window.appConfig --->
+        <!-- proxy element to store and query track price for window.appConfig --->
         <meta id="price" data-address="{{ track.price }}">
 
-        <!-- proxy element to store and query release id for window.appConfig --->
+        <!-- proxy element to store and query track id for window.appConfig --->
         <meta id="track-id" data-address="{{ track.id }}">        
 
         <!-- proxy element to store and query CSRF token for window.appConfig --->
@@ -175,7 +190,7 @@
     </div>
   </div>
 
-
+</div>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 

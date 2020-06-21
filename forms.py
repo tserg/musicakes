@@ -13,6 +13,7 @@ from wtforms import (
 	FloatField,
 	FormField,
 	FieldList,
+	TextAreaField
 )
 
 from wtforms.widgets import html5
@@ -96,7 +97,7 @@ class ReleaseForm(FlaskForm):
 		widget=html5.NumberInput(min=1,max=100)
 	)
 
-	release_text = StringField('release_text', render_kw=dict(id="release-textbox"))
+	release_text = TextAreaField('release_text', render_kw=dict(id="release-textbox"))
 
 	tracks = FieldList(FormField(TrackForm), min_entries=1)
 

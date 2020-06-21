@@ -146,7 +146,7 @@ class Release(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def short(self):
+    def short_public(self):
 
         formatted_tracks = [{"name": track.name,
                              "track_id": track.id} for track in self.tracks]
@@ -156,6 +156,27 @@ class Release(db.Model):
             'artist_id': self.artist_id,
             'artist_name': self.artist.name,
             'release_name': self.name,
+            'cover_art': self.cover_art,
+            'description': self.description,
+            'price': self.price,
+            'tracks': formatted_tracks,
+            'created_on': self.created_on,
+            'smart_contract_address': self.smart_contract_address
+        }
+
+    def short_private(self):
+
+        formatted_tracks = [{"name": track.name,
+                             "track_id": track.id,
+                             "track_download_url": track.download_url} for track in self.tracks]
+
+        return {
+            'id': self.id,
+            'artist_id': self.artist_id,
+            'artist_name': self.artist.name,
+            'release_name': self.name,
+            'cover_art': self.cover_art,
+            'description': self.description,
             'price': self.price,
             'tracks': formatted_tracks,
             'created_on': self.created_on,
@@ -187,13 +208,14 @@ class Track(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def short(self):
+    def short_public(self):
         return {
             'id': self.id,
             'artist_id': self.artist_id,
             'artist_name': self.artist.name,
             'release_id': self.release_id,
             'release_name': self.release.name,
+            'release_cover_art': self.release.cover_art,
             'track_name': self.name,
             'created_on': self.created_on,
             'smart_contract_address': self.release.smart_contract_address,
