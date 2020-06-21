@@ -51,13 +51,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN', 'Does not exist')
+AUTH0_ACCESS_TOKEN_URL = os.getenv('AUTH0_ACCESS_TOKEN_URL', 'Does not exist')
+AUTH0_AUTHORIZE_URL = os.getenv('AUTH0_AUTHORIZE_URL', 'Does not exist')
+AUTH0_CLIENT_ID = os.getenv('CLIENT_ID', 'Does not exist')
+AUTH0_CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'Does not exist')
 ALGORITHMS = os.getenv('ALGORITHMS', 'Does not exist')
 API_AUDIENCE = os.getenv('API_AUDIENCE', 'Does not exist')
 S3_BUCKET = os.getenv('S3_BUCKET_NAME', 'Does not exist')
 S3_KEY = os.getenv('S3_KEY', 'Does not exist')
 S3_SECRET = os.getenv('S3_SECRET', 'Does not exist')
-S3_LOCATION = 'http://{}.s3.amazonaws.com/'.format(S3_BUCKET)
-
+S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
+REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
 
 class AuthError(Exception):
     def __init__(self, error, status_code):
@@ -83,11 +87,11 @@ def create_app(test_config=None):
 
     auth0 = oauth.register(
         'auth0',
-        client_id='TYNrPQ3cGpX0P16gl9Q8zyEVUxxVlTkh',
-        client_secret='8oYk_9RSrFUuqZ-6IhpiRG5irPLypPECaMMDT-qg0PQ7WWW4D9gfYwV5bDvmxIGk',
-        api_base_url='https://musicakes.auth0.com',
-        access_token_url='https://musicakes.auth0.com/oauth/token',
-        authorize_url='https://musicakes.auth0.com/authorize',
+        client_id=AUTH0_CLIENT_ID,
+        client_secret=AUTH0_CLIENT_SECRET,
+        api_base_url=AUTH0_DOMAIN,
+        access_token_url=AUTH0_ACCESS_TOKEN_URL,
+        authorize_url=AUTH0_AUTHORIZE_URL,
         client_kwargs={
             'scope': 'openid profile email',
         },
@@ -288,7 +292,7 @@ def create_app(test_config=None):
 
     @app.route('/login')
     def login():
-        return auth0.authorize_redirect(redirect_uri='http://localhost:5000/callback',
+        return auth0.authorize_redirect(redirect_uri=REDIRECT_URL,
                                         audience=API_AUDIENCE)
 
     @app.route('/logout')
@@ -521,19 +525,6 @@ def create_app(test_config=None):
             os.remove(filename)
 
         return str(zip_file_name + ".zip")
-
-
-    def list_files(bucket):
-        """
-        Function to list files in a given S3 bucket
-        """
-        s3 = boto3.client('s3')
-        contents = []
-        for item in s3.list_objects(Bucket=bucket)['Contents']:
-            contents.append(item)
-
-        return contents
-
 
     ###################################################
 
@@ -1147,8 +1138,6 @@ def create_app(test_config=None):
         keys = [] 
         filenames = []
 
-        print(release.tracks)
-
         for track in release.tracks:
 
             key = artist_user.user.auth_id + "/" + track.download_url
@@ -1156,9 +1145,6 @@ def create_app(test_config=None):
 
             keys.append(key)
             filenames.append(filename)
-
-        print(keys)
-        print(filenames)
 
         zip_file_name = str(release.artist.name) + "_" + str(release.name)
 
