@@ -18,7 +18,7 @@
 					{% for release in userinfo.purchased_releases %}
 						<ol>
 
-							<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
+							<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a> / <a href="/releases/{{ release.release_id }}/download">Download</a>
 
 						</ol>
 					{% endfor %}

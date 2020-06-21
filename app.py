@@ -3,6 +3,7 @@ import json
 
 import boto3
 from botocore.exceptions import ClientError
+import zipfile
 
 from functools import wraps
 from flask import (
@@ -475,6 +476,52 @@ def create_app(test_config=None):
             return False
 
         return output
+
+    def download_release(keys, filenames, zip_file_name):
+        """
+        Function to download multiple tracks as zip from an S3 bucket
+        """
+
+        if len(keys) != len(filenames):
+            return False
+
+        s3_client = boto3.client('s3',
+                                region_name='us-east-1',
+                                endpoint_url=S3_LOCATION,
+                                aws_access_key_id=S3_KEY,
+                                aws_secret_access_key=S3_SECRET)
+
+        for i in range(len(keys)):
+
+
+            output = filenames[i]
+
+            print(output)
+
+            try:
+
+                s3_client.download_file(
+                    Bucket=S3_BUCKET,
+                    Key=keys[i],
+                    Filename=output
+                )
+
+            except ClientError as e:
+
+                print(e)
+
+        zf = zipfile.ZipFile(os.path.join(os.getcwd(), str(zip_file_name+".zip")), "w")
+
+        for filename in filenames:
+            zf.write(filename)
+
+        zf.close()
+
+        for filename in filenames:
+            os.remove(filename)
+
+        return str(zip_file_name + ".zip")
+
 
     def list_files(bucket):
         """
@@ -1036,8 +1083,6 @@ def create_app(test_config=None):
                             filter(Purchase.user_id==user.id). \
                             join(Release).all()
 
-        print(track_purchase, release_purchase)
-
         if track_purchase is None and release_purchase is None:
 
             abort(404)
@@ -1046,15 +1091,80 @@ def create_app(test_config=None):
 
         artist_user = Artist.query.filter(Artist.id==release.artist_id).one_or_none()
 
-        print(artist_user)
-
         key = artist_user.user.auth_id + "/" + track.download_url
-
-        print(key)
 
         try:
 
             output = download_track(key, track.download_url)
+
+            return send_file(output, as_attachment=True)
+
+        except Exception as e:
+
+            print(e)
+            flash('Unable to download file.')
+
+        return redirect(url_for('show_purchases'))
+
+    @app.route('/releases/<int:release_id>/download', methods=['GET'])
+    @requires_log_in
+    def download_purchased_release(release_id):
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user is None:
+
+                abort(404)
+
+        else:
+
+            abort(404)
+
+        # checks if user has purchased the current release
+
+        release = Release.query.filter(Release.id==release_id).one_or_none()
+
+        if release is None:
+
+            abort(404)
+
+        release_purchase = Purchase.query.filter(Purchase.release_id==release_id). \
+                            filter(Purchase.user_id==user.id). \
+                            join(Release).all()
+
+        if release_purchase is None:
+
+            abort(404)
+
+        # download files
+
+        artist_user = Artist.query.filter(Artist.id==release.artist_id).one_or_none()
+
+        keys = [] 
+        filenames = []
+
+        print(release.tracks)
+
+        for track in release.tracks:
+
+            key = artist_user.user.auth_id + "/" + track.download_url
+            filename = track.download_url
+
+            keys.append(key)
+            filenames.append(filename)
+
+        print(keys)
+        print(filenames)
+
+        zip_file_name = str(release.artist.name) + "_" + str(release.name)
+
+        try:
+
+            output = download_release(keys, filenames, zip_file_name)
 
             return send_file(output, as_attachment=True)
 
