@@ -278,7 +278,7 @@ def create_app(test_config=None):
         token = auth0.authorize_access_token()
         print(token)
         print(token['access_token'])
-        resp = auth0.get('userinfo')
+        resp = auth0.get(AUTH0_USER_INFO_URL)
         print(resp)
         userinfo = resp.json()
         print(userinfo)
