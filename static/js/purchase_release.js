@@ -22,14 +22,12 @@ const enableEthereumButton = document.querySelector('#enable-ethereum-button');
 var web3 = new Web3(Web3.givenProvider);
 
 const price = parseFloat(window.appConfig.price.address);
-console.log(price);
 
 const release_id = parseInt(window.appConfig.release_id.address);
-console.log(release_id);
 
 const csrf_token = window.appConfig.csrf_token.address;
 if (csrf_token) {
-  console.log("CSRF Token is: " + csrf_token);
+  console.log("CSRF Token loaded");
 }
 
 // Initialise buttons
@@ -58,8 +56,7 @@ musicakesTransferButton.addEventListener('click', () => {
 
 const paymentTokenAddress = "0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa";
 const musicakesAddress = window.appConfig.smart_contract_address.address;
-console.log(window.appConfig.smart_contract_address);
-console.log(window.appConfig.smart_contract_address.address);
+
 var _paymentTokenAbi = [
   {
     "constant": true,
@@ -729,11 +726,7 @@ async function payMusicakes() {
         paid: payAmount
       });
 
-      console.log(data);
-
       releaseIdString = release_id.toString();
-
-      console.log(releaseIdString)
 
       fetch('/releases/' + releaseIdString + '/purchase', {
         method: 'POST',

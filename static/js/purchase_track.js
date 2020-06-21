@@ -22,14 +22,12 @@ const enableEthereumButton = document.querySelector('#enable-ethereum-button');
 var web3 = new Web3(Web3.givenProvider);
 
 const price = parseFloat(window.appConfig.price.address);
-console.log(price);
 
 const track_id = parseInt(window.appConfig.track_id.address);
-console.log(track_id);
 
 const csrf_token = window.appConfig.csrf_token.address;
 if (csrf_token) {
-  console.log("CSRF Token is: " + csrf_token);
+  console.log("CSRF Token is loaded");
 }
 
 // Initialise buttons
@@ -58,8 +56,7 @@ musicakesTransferButton.addEventListener('click', () => {
 
 const paymentTokenAddress = "0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa";
 const musicakesAddress = window.appConfig.smart_contract_address.address;
-console.log(window.appConfig.smart_contract_address);
-console.log(window.appConfig.smart_contract_address.address);
+
 var _paymentTokenAbi = [
   {
     "constant": true,
@@ -727,11 +724,7 @@ async function payMusicakes() {
         paid: payAmount
       });
 
-      console.log(data);
-
       trackIdString = track_id.toString();
-
-      console.log(trackIdString)
 
       fetch('/tracks/' + trackIdString + '/purchase', {
         method: 'POST',
