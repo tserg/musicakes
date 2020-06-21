@@ -55,6 +55,7 @@ AUTH0_ACCESS_TOKEN_URL = os.getenv('AUTH0_ACCESS_TOKEN_URL', 'Does not exist')
 AUTH0_AUTHORIZE_URL = os.getenv('AUTH0_AUTHORIZE_URL', 'Does not exist')
 AUTH0_CLIENT_ID = os.getenv('CLIENT_ID', 'Does not exist')
 AUTH0_CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'Does not exist')
+AUTH0_USER_INFO_URL = os.getenv('AUTH0_USER_INFO_URL', 'Does not exist')
 ALGORITHMS = os.getenv('ALGORITHMS', 'Does not exist')
 API_AUDIENCE = os.getenv('API_AUDIENCE', 'Does not exist')
 S3_BUCKET = os.getenv('S3_BUCKET_NAME', 'Does not exist')
@@ -278,7 +279,9 @@ def create_app(test_config=None):
         print(token)
         print(token['access_token'])
         resp = auth0.get('userinfo')
+        print(resp)
         userinfo = resp.json()
+        print(userinfo)
 
         # Store the user information in flask session.
         session['token'] = token
@@ -300,7 +303,7 @@ def create_app(test_config=None):
         # Clear session stored data
         session.clear()
         # Redirect user to logout endpoint
-        params = {'returnTo': url_for('index', _external=True), 'client_id': 'TYNrPQ3cGpX0P16gl9Q8zyEVUxxVlTkh'}
+        params = {'returnTo': url_for('index', _external=True), 'client_id': AUTH0_CLIENT_ID}
         return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
 
     @app.route('/')
