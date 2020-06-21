@@ -32,14 +32,14 @@ class UserForm(FlaskForm):
 
 	username = StringField('username', validators=[
 		DataRequired(),
-		Length(6, 100, "Username must be between %(min)d to %(max)d characters."),
+		Length(1, 100, "Username must be between %(min)d to %(max)d characters."),
 		check_punctuation]
 	)
 
 class ArtistForm(FlaskForm):
 
 	artist_name = StringField('artist_name', validators=[DataRequired(),
-		Length(6, 100, "Username must be between %(min)d to %(max)d characters."),
+		Length(1, 100, "Username must be between %(min)d to %(max)d characters."),
 		check_punctuation]
 	)
 
