@@ -808,7 +808,11 @@ async function transferMusicakes() {
   const account = ethereum.selectedAddress;
 
   var musicakesTransferAddressValue = musicakesTransferAddress.value;
-  var musicakesTransferAmountValue = musicakesTransferAmount.value;
+  var musicakesTransferAmountValue = Number(musicakesTransferAmount.value);
+
+  if (Number.isInteger(musicakesTransferAmountValue) == false) {
+    alert("The amount must be an integer.");
+  }
 
   musicakesContract.methods.transfer(musicakesTransferAddressValue,
     musicakesTransferAmountValue).send({from: account})
