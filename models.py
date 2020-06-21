@@ -11,7 +11,7 @@ db = SQLAlchemy()
 
 load_dotenv()
 
-database_path = os.getenv('DATABASE_PATH', 'Does not exist')
+database_path = os.getenv('DATABASE_URL', 'Does not exist')
 
 
 def setup_db(app, database_path=database_path):
