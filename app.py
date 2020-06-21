@@ -1224,7 +1224,14 @@ def create_app(test_config=None):
             user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
             if user:
+
                 data = user.short_private()
+
+                purchased_current_release = Purchase.query.filter(Purchase.release_id==release_id). \
+                        filter(Purchase.user_id==user.id). \
+                        join(Release).one_or_none()
+
+                data['purchased'] = purchased_current_release
 
             else:
 
@@ -1364,7 +1371,7 @@ def create_app(test_config=None):
 
                 modified_filename = auth_id + "/" + filename
 
-                upload_release_pictur(ezf, modified_filename)
+                upload_release_picture(f, modified_filename)
 
                 file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
 
@@ -1395,15 +1402,12 @@ def create_app(test_config=None):
 
                     upload_release_file(f1, modified_track_filename)
 
-                    track_file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_track_filename)
-
-
                     new_track = Track(
                         artist_id = user.artist.id,
                         release_id = new_release.id,
                         name = track_name,
                         price = track_price,
-                        download_url = track_file_url
+                        download_url = filename
 
                     )
 

@@ -92,19 +92,34 @@
         <span id ="payment-token-balance"></span>
       </div>
 
-      {% if userinfo %}
+      {% if userinfo and userinfo.purchased is none %}
 
       <form action="" method="post" >
 
           <div>
-            <label for="pay-contract-amount">Pay DAI to token contract: </label>
+            <label for="pay-contract-amount">Amount of DAI to pay: </label>
             <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           </div>
           <div>
-            <button type="button" id="btn-pay-contract">Pay</button>
+            <button type="button" id="btn-pay-contract">Buy Release</button>
           </div>
       </form>
+
+      {% elif userinfo and userinfo.purchased is not none %}
+
+      <form action="/purchase" method="post" hidden>
+          <div>
+
+        
+          <label for="pay-contract-amount">Pay DAI to token contract: </label>
+          <input type="number" size=50 id="pay-contract-amount">
+          <br>
+          <button type="button" id="btn-pay-contract">Pay</button></input>
+          </div>
+      </form>
+
+      <span>You have already purchased this release.</span>
 
       {% else %}
 
