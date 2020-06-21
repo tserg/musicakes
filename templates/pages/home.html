@@ -7,7 +7,7 @@
   </style>
 {% endblock %}
 {% block content %}
-
+<div class = "w3-container">
 	<div class="logged-in-box auth0-box logged-in">
 	    <h2>Welcome back, {{ userinfo.username }}!</h2>
 	</div>
@@ -20,12 +20,12 @@
 
 		<div class="w3-block">
 
-			<a href="/releases/{{ release.id }}">{{ release.release_name }}</a>
+			<a href="/releases/{{ release.id }}">{{ release.artist_name}} - {{ release.release_name }}</a>
 
 		</div>
 
 		{% endfor %}
 
 	</div>
-
+</div>
 {% endblock %}

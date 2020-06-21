@@ -1,20 +1,22 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Musicakes | Releases{% endblock %}
 {% block content %}
+<div class = "w3-container">
+	<h3>Releases</h3>
+	<ul class="items">
 
-<ul class="items">
-
-	{% if not releases %}
-		<h2>There are no releases currently listed.</h2>
-	{% endif %}
-	{% for release in releases %}
-	<li>
-		<a href="/releases/{{ release.id }}">
-			<div class="item">
-				<h5>{{ release.release_name }} - {{ release.artist_name }}</h5>
-			</div>
-		</a>
-	</li>
-	{% endfor %}
-</ul>
+		{% if not releases %}
+			<h2>There are no releases currently listed.</h2>
+		{% endif %}
+		{% for release in releases %}
+		<li>
+			<a href="/releases/{{ release.id }}">
+				<div class="item">
+					<h5>{{ release.artist_name }} - {{ release.release_name }}</h5>
+				</div>
+			</a>
+		</li>
+		{% endfor %}
+	</ul>
+</div>
 {% endblock %}

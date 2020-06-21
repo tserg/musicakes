@@ -2,23 +2,22 @@
 {% block title %}Musicakes | Artists{% endblock %}
 {% block content %}
 
-{% if userinfo.artist_name is defined %} You have an existing artist profile tied to this account. {% else %} 
+<div class="w3-container">
+	<h3>Artists</h3>
+	<ul class="items">
+		{% if not artists %}
+			<h2>There are no artists currently listed.</h2>
+		{% endif %}
+		{% for artist in artists %}
+		<li>
+			<a href="/artists/{{ artist.id }}">
 
-<ul class="items">
-	{% if not artists %}
-		<h2>There are no artists currently listed.</h2>
-	{% endif %}
-	{% for artist in artists %}
-	<li>
-		<a href="/artists/{{ artist.id }}">
-
-			<div class="item">
-				<h5>{{ artist.name }}</h5>
-			</div>
-		</a>
-	</li>
-	{% endfor %}
-</ul>
-
-{% endif %}
+				<div class="item">
+					<h5>{{ artist.name }}</h5>
+				</div>
+			</a>
+		</li>
+		{% endfor %}
+	</ul>
+</div>
 {% endblock %}

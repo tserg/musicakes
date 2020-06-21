@@ -707,9 +707,11 @@ async function payMusicakes() {
     alert("The minimum price to pay is " + price.toString() + ".");
   }
 
+
+
   else {
 
-  	var payAmountFormatted = web3.utils.toBN(payAmount).mul(web3.utils.toBN(10**18));
+  	var payAmountFormatted = web3.utils.toWei(payAmount);
 
 
 		paymentTokenContract.methods.transfer(musicakesAddress, payAmountFormatted).send({from: account})
@@ -822,4 +824,3 @@ async function transferMusicakes() {
   });
 }
 
-console.log("js loaded");

@@ -313,6 +313,7 @@ def create_app(test_config=None):
 
                 data = None
 
+            return redirect(url_for('home'))
         else:
 
             data = None

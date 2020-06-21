@@ -2,18 +2,21 @@
 {% block title %}Musicakes | Tracks{% endblock %}
 {% block content %}
 
-<ul class="items">
-	{% if not tracks %}
-		<h2>There are no tracks currently listed.</h2>
-	{% endif %}
-	{% for track in tracks %}
-	<li>
-		
-		<div class="item">
-				<a href="../tracks/{{ track.id }}"><h5>{{ track.track_name }} - {{ track.artist_name }}</h5></a>
-		</div>
-		
-	</li>
-	{% endfor %}
-</ul>
+<div class="w3-container">
+	<h3>Tracks</h3>
+	<ul class="items">
+		{% if not tracks %}
+			<h2>There are no tracks currently listed.</h2>
+		{% endif %}
+		{% for track in tracks %}
+		<li>
+			
+			<div class="item">
+					<a href="../tracks/{{ track.id }}"><h5>{{ track.artist_name }} - {{ track.track_name }}</h5></a>
+			</div>
+			
+		</li>
+		{% endfor %}
+	</ul>
+</div>
 {% endblock %}
