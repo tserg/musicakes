@@ -534,6 +534,30 @@ def create_app(test_config=None):
     # General
 
     ###################################################
+
+    @app.route('/about', methods=['GET'])
+    def show_about_us():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_private()
+
+            else: 
+
+                data = None
+
+        else:
+
+            data = None
+            
+        return render_template('pages/about.html', userinfo=data)
+
+
     @app.route('/faq', methods=['GET'])
     def show_faq():
 
@@ -555,6 +579,50 @@ def create_app(test_config=None):
             data = None
             
         return render_template('pages/faq.html', userinfo=data)
+
+    @app.route('/terms', methods=['GET'])
+    def show_terms_of_use():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_private()
+
+            else: 
+
+                data = None
+
+        else:
+
+            data = None
+            
+        return render_template('pages/terms.html', userinfo=data)
+
+    @app.route('/privacy', methods=['GET'])
+    def show_privacy_policy():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_private()
+
+            else: 
+
+                data = None
+
+        else:
+
+            data = None
+            
+        return render_template('pages/privacy.html', userinfo=data)
 
 
     ###################################################
