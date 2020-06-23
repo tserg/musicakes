@@ -103,8 +103,9 @@
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           </div>
           <div>
-            <button type="button" id="btn-pay-contract">Buy Release</button>
+            <button type="button" id="btn-pay-contract">Buy Release with DAI</button>
           </div>
+
       </form>
 
       {% elif userinfo and userinfo.purchased is not none %}
@@ -171,7 +172,7 @@
 
 
       <div id = "musicakes-payment-token-display">
-        <span>Payment token balance in Musicakes contract: </span>
+        <span>DAI balance in Musicakes contract: </span>
         <span id = "musicakes-payment-token-balance"></span>
       </div>
 
@@ -220,6 +221,18 @@
 
 </div>
 
+<div>
+
+<h1>Steps to get DAI token on Kovan testnet</h1>
+<ol>
+  <li>Download <a href='https://metamask.io/' target='_blank'>Metamask</a>.</li>
+  <li>Navigate to the <a href='https://faucet.ropsten.be/' target='_blank'>Ropsten ETH faucet</a> and enter your wallet address. Click on "Send me test Ether".</li>
+  <li>Navigate to the <a href='https://app.compound.finance/' target='_blank'>Compound app</a> and connect your Metamask wallet. Select DAI in under the 'Supply' section and then click on 'FAUCET'. Approve the transaction.</li>
+  <li>Once the transaction is confirmed, you should have DAI tokens in your wallet address!</li>
+</ol>
+
+</div>
+
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 
 <script type="text/javascript">
@@ -238,5 +251,6 @@
 
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/purchase_release.js') }}"></script>
+
 
 {% endblock %}

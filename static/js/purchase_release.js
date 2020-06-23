@@ -54,7 +54,7 @@ musicakesTransferButton.addEventListener('click', () => {
 
 /* Payment token contract */
 
-const paymentTokenAddress = "0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa";
+const paymentTokenAddress = "0xc2118d4d90b274016cB7a54c03EF52E6c537D957";
 const musicakesAddress = window.appConfig.smart_contract_address.address;
 
 var _paymentTokenAbi = [
@@ -529,6 +529,37 @@ var _musicakesAbi = [
         }
       ],
       "name": "transfer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
       "outputs": [
         {
           "internalType": "bool",
