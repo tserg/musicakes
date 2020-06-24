@@ -62,8 +62,10 @@ class TrackForm(FlaskForm):
 
 	track_file = FileField('Track WAV file', validators=[
 		FileRequired(),
-		FileAllowed(['wav'], 'WAV files only!')
-	])
+		FileAllowed(['wav'], 'WAV files only!'),
+		],
+		render_kw={'class': "track-file-fields"}
+	)
 
 	track_price = IntegerField('Price of track',
 		default=1, 
