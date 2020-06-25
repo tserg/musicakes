@@ -297,8 +297,10 @@ function addReleaseToServer(file_name, release_name, release_price, release_text
   xhr.onreadystatechange = function(error, result) {
     if(xhr.readyState === 4){
       if(xhr.status === 200){
-        console.log(result);
-        console.log(result['release_id']);
+
+        response = JSON.parse(xhr.response);
+        console.log(response);
+        console.log(response['release_id']);
       }
       else{
         console.log(error);
