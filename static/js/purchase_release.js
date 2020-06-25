@@ -778,7 +778,7 @@ async function payMusicakes() {
         else {
           alert("Your purchase was not successful."
             + "\nDo not make another transaction."
-            + "\nPlease contact us at musicakes.team@gmail.com with your transaction hash."
+            + "\nPlease contact us at musicakes [dot] team [at] gmail [dot] com with your transaction hash."
           );
         }
 

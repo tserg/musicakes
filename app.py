@@ -82,7 +82,7 @@ def create_app(test_config=None):
 
     setup_db(app)
 
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "http://localhost:5000"}})
 
     oauth = OAuth(app)
 
@@ -528,6 +528,53 @@ def create_app(test_config=None):
             os.remove(filename)
 
         return str(zip_file_name + ".zip")
+
+    @app.route('/sign_s3/')
+    @requires_log_in
+    def sign_s3():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user is None:
+
+                abort(404)
+
+        else:
+
+            abort(404)
+
+
+        print("sign_s3 triggered")
+        S3_BUCKET = os.environ.get('S3_BUCKET')
+
+        file_name = secure_filename(request.args.get('file_name'))
+        file_type = request.args.get('file_type')
+
+        s3_client = boto3.client('s3')
+
+        key = user.auth_id + "/" + file_name
+
+        presigned_post = s3_client.generate_presigned_post(
+            Bucket = S3_BUCKET,
+            Key = key,
+            Fields = {"Content-Type": file_type},
+            Conditions = [
+            {"Content-Type": file_type}
+            ],
+            ExpiresIn = 3600
+        )
+
+        print(presigned_post)
+        print(S3_LOCATION + "/" + S3_BUCKET + "/" + key)
+
+        return json.dumps({
+            'data': presigned_post,
+            'url': S3_LOCATION + "/" + S3_BUCKET + "/" + key
+        })
 
     ###################################################
 
@@ -1384,15 +1431,74 @@ def create_app(test_config=None):
 
         presubmission_form = ReleasePresubmissionForm(request.form)
 
-        track_count = presubmission_form.track_count.data
+        track_count = presubmission_form.track_count.data 
 
-        # workaround to dynamically generate number of tracks
+        if track_count >= 2:
 
-        class LocalForm(ReleaseForm):pass
-        LocalForm.tracks = FieldList(FormField(TrackForm), min_entries=track_count)
-        form = LocalForm()
+            track_count_list = [n for n in range(2, track_count+1)]
 
-        return render_template('forms/new_release.html', form=form, userinfo=data)
+        else:
+
+            track_count_list = []
+
+        print(track_count_list)
+
+        return render_template('forms/new_release.html', track_count=track_count_list, userinfo=data)
+
+    @app.route('/releases/create_2', methods=['POST'])
+    @requires_log_in
+    def create_release_submission():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user.artist is None:
+
+                abort(404)
+
+        print("create_release_submission")
+
+        try:
+
+            release_name = request.get_json()['release_name']
+            release_price = request.get_json()['release_price']
+            release_cover_art_file_name = request.get_json()['file_name']
+            release_text = request.get_json()['release_text']
+
+            print(release_name)
+            print(release_price)
+            print(release_cover_art_file_name)
+            print(release_text)
+
+            # Create new release in database
+
+            new_release = Release(
+                artist_id = user.artist.id,
+                name=release_name,
+                price=release_price,
+                description=release_text,
+                cover_art=release_cover_art_file_name
+            )
+
+            new_release.insert()
+
+            return jsonify({
+                'success': True,
+                'release_id': new_release.id
+            })
+
+        except Exception as e:
+            print(e)
+            return jsonify({
+                'success': False
+            })
+
+
+
+    '''
 
     @app.route('/releases/create_2', methods=['POST'])
     @requires_log_in
@@ -1480,6 +1586,8 @@ def create_app(test_config=None):
             flash('Your release could not be created.')
 
         return redirect(url_for('get_releases'))
+
+    '''
 
 
     ###################################################
@@ -1917,4 +2025,5 @@ def create_app(test_config=None):
 app = create_app()
 
 if __name__ == '__main__':
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)

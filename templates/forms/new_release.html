@@ -6,8 +6,7 @@
 
 {% else %} 
   <div class="form-wrapper">
-    <form action="{{ url_for('create_release_submission') }}"method="post" class="form" name="new_release">
-      {{ form.hidden_tag() }}
+    <form class="form" name="new_release" onsubmit="return false">
 
       <div class="w3-container">
         <h3 class="form-heading">Create a new release</h3>
@@ -24,27 +23,29 @@
 
         <div class="form-group">
             <label for="release_name">Release name</label>
-            {{ form.release_name(class_ = 'form-control', autofocus = true) }}
+            <input type="text" id="release-name-input" minlength="1" maxlength="100">
+            <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
 
         </div>
 
         <div class="form-group">
             <label for="release_cover_art">Cover Art</label>
-            {{ form.release_cover_art(class = 'form-control-file') }}
+            <input type="file" id="release-cover-art-input" accept="image/png, image/jpg, image/jpeg">
 
         </div>
 
         <div class="form-group">
             <label for="release_text">Description of release</label>
-            {{ form.release_text(class_ = 'form-control', autofocus = true) }}
+            <textarea id="release-text-input" rows="4" cols="50"></textarea>
 
         </div>
 
         <div class="form-group">
             <label for="release_price">Price of release</label>
-            {{ form.release_price(class_ = 'form-control', autofocus = true) }}
+            <input type="number" id="release-price-input" value="1" min="1" max="100">
 
         </div>
+
       </fieldset>
 
       </div>
@@ -54,24 +55,150 @@
 
       </div>
 
-      <div class="w3-container">
-        <fieldset class ="form-group">
-          <label for="track-name-1">Track name</label>
-          {{ form.tracks(class_ = 'track-field', autofocus = true) }}
+      <div class="w3-container" id="track-form-container">
+        <fieldset class ="track-form-group">
+          <label for="track-name-input-1">Track name</label>
+          <input type="text" id="track-name-input-1" minlength="1" maxlength="100">
+          <br><br>
+          <label for="track-file-1">Track WAV file</label>
+          <input type="file" id="track-file-input-1" accept="audo/wav">
+          <br><br>
+          <label for="track_price-1">Track price</label>
+          <input type="number" id="track-price-input-1" value="1" min="1" max="100">
+
         </fieldset>
+        {% for track_number in track_count %}
+        <fieldset class ="track-form-group">
+          <label for="track-name-input-{{track_number}}">Track name</label>
+          <input type="text" id="track-name-input-{{track_number}}" minlength="1" maxlength="100">
+          <br><br>
+          <label for="track-file-input-{{track_number}}">Track WAV file</label>
+          <input type="file" id="track-file-input-{{track_number}}" accept="audo/wav">
+          <br><br>
+          <label for="track_price-input-{{track_number}}">Track price</label>
+          <input type="number" id="track-price-input-{{track_number}}" value="1" min="1" max="100">
+
+        </fieldset>
+        {% endfor %}
       </div>
+      <br>
 
       <div class="w3-container">
-        <input type="submit" value="Create release" class="btn btn-primary btn-lg btn-block">
+        <button type="submit" value="Create release" class="btn btn-primary btn-lg btn-block" id="create-release-btn">Create release</button>
       </div>
     </form>
+    <br>
     <div class="w3-container">
-      <input type="submit" value="Back" class="btn btn-primary btn-lg btn-block" onclick="window.location='/releases/create';" />
+      <button type="button" value="Back" class="btn btn-primary btn-lg btn-block" onclick="window.location='/releases/create';">Back</button>
     </div>
   </div>
 {% endif %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 <script type="text/javascript">
+
+
+tracks_count = $('.track-form-group').length;
+
+
+console.log(tracks_count);
+
+/* sanity check */
+
+const createReleaseButton = document.querySelector('#create-release-btn');
+
+createReleaseButton.addEventListener('click', () => {
+  validateForm().then(function(response) {
+    if (response) {
+      var release_name = document.getElementById('release-name-input').value;
+      var release_price = document.getElementById('release-price-input').value;
+      var release_cover_art = document.getElementById('release-cover-art-input').files[0];
+      var release_text = document.getElementById('release-text-input').value;
+
+      addRelease(release_name, release_price, release_cover_art, release_text);
+
+    }
+
+    else {
+
+      return false;
+
+    }
+
+  })
+
+
+});
+
+async function validateForm() {
+  
+  // validate release
+
+  var release_name = document.getElementById('release-name-input');
+  var release_cover_art = document.getElementById('release-cover-art-input').files[0];
+
+  if (!release_cover_art) {
+    alert("You have not uploaded a cover art.");
+    return false;
+  }
+
+  release_cover_art_extension = release_cover_art.name.split('.').pop();
+
+  if (release_name[0] == ' ') {
+      alert("Release name cannot start with a space.");
+      return false;
+  }
+
+  // validate tracks
+
+  const track_name_placeholder = "track-name-input"
+  const track_file_placeholder = "track-file-input"
+  const track_price_placeholder = "track-price-input"  
+
+  for (i=1; i<=tracks_count; i++) {
+
+    var track_name_id = track_name_placeholder + "-" + i.toString();
+    console.log(track_name_id);
+
+    var track_name = document.getElementById(track_name_id).value;
+    console.log(track_name);
+
+    if (track_name[0] == ' ') {
+      alert("Track name cannot start with a space.");
+      return false;
+    }
+
+    var track_file_id = track_file_placeholder + "-" + i.toString();
+    console.log(track_file_id);
+
+    var track_file_element = document.getElementById(track_file_id);
+    var track_file = track_file_element.files[0];
+    var track_file_type = track_file.type;
+    var track_file_name = track_file.name;
+
+    console.log(track_file.type);
+    console.log(track_file.name);
+
+    if (!track_file) {
+      alert("You have not uploaded all the track files.");
+      return false;
+    }
+
+    if (track_file_name.split('.').pop() != 'wav') {
+      alert("You have uploaded files which are not in .WAV format.");
+      return false;
+    }
+
+  }
+
+  return true;
+
+}
+
+function addRelease(release_name, release_price, release_cover_art, release_text) {
+
+  getSignedRequestCoverArt(release_cover_art, release_name, release_price, release_text);
+}
+/*
 
 $('.track-file-fields').change(function() {
 
@@ -89,8 +216,9 @@ $('.track-file-fields').change(function() {
   }
 
 });
+*/
 
-function getSignedRequest(file){
+function getSignedRequestCoverArt(file, release_name, release_price, release_text){
   console.log("getSignedRequest triggered");
   var xhr = new XMLHttpRequest();
   xhr.open("GET", "/sign_s3?file_name="+file.name+"&file_type="+file.type);
@@ -103,7 +231,7 @@ function getSignedRequest(file){
         console.log(response.data);
         console.log(response.url);
         console.log(file);
-        uploadFile(file, response.data, response.url);
+        uploadFileCoverArt(file, response.data, response.url, file.name, release_name, release_price, release_text);
       }
       else{
         alert("Could not get signed URL.");
@@ -113,7 +241,7 @@ function getSignedRequest(file){
   xhr.send();
 }
 
-function uploadFile(file, s3Data, url){
+function uploadFileCoverArt(file, s3Data, url, file_name, release_name, release_price, release_text){
   console.log("uploadFile triggered");
   var xhr = new XMLHttpRequest();
   xhr.open("POST", s3Data.url);
@@ -133,6 +261,7 @@ function uploadFile(file, s3Data, url){
     if(xhr.readyState === 4){
       if(xhr.status === 200 || xhr.status === 204){
         alert("File uploaded")
+        addReleaseToServer(file_name, release_name, release_price, release_text);
       }
       else{
         console.log(error);
@@ -141,6 +270,44 @@ function uploadFile(file, s3Data, url){
    }
   };
   xhr.send(postData);
+}
+
+function addReleaseToServer(file_name, release_name, release_price, release_text) {
+
+  var csrf_token = document.getElementById('csrf_token').value;
+
+  console.log("CSRF token: " + csrf_token);
+
+  var data = JSON.stringify({
+    file_name: file_name,
+    release_name: release_name,
+    release_price: release_price,
+    release_text: release_text
+  });
+
+  console.log(data);
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", '/releases/create_2');
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("Accept", "application/json");
+  xhr.setRequestHeader('X-CSRFToken', csrf_token)
+
+  xhr.onreadystatechange = function(error, result) {
+    if(xhr.readyState === 4){
+      if(xhr.status === 200){
+        console.log(result);
+        console.log(result['release_id']);
+      }
+      else{
+        console.log(error);
+        alert("Your release could not be created.");
+      }
+   }
+  };
+  xhr.send(data);
+
 }
 
 

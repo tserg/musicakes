@@ -85,21 +85,24 @@ class ReleaseForm(FlaskForm):
 
 	release_name = StringField('Release Name', validators=[
 		DataRequired(),
-		Length(1, 100, "Release name must be between %(min)d to %(max)d characters.")
-	])
+		Length(1, 100, "Release name must be between %(min)d to %(max)d characters.")],
+		render_kw={'id': "release-name-field"}
+	)
 
 	release_cover_art = FileField('Cover Art', validators=[
 		FileRequired(),
-		FileAllowed(['jpg', 'png'], 'Image only!')
-	])
+		FileAllowed(['jpg', 'png'], 'Image only!')],
+		render_kw={'id': "release-cover-art-field"}
+	)
 
 	release_price = IntegerField('Price of release',
 		default=1, 
 		validators=[DataRequired()],
-		widget=html5.NumberInput(min=1,max=100)
+		widget=html5.NumberInput(min=1,max=100),
+		render_kw={'id': "release-price-field"}
 	)
 
-	release_text = TextAreaField('release_text', render_kw=dict(id="release-textbox"))
+	release_text = TextAreaField('release_text', render_kw=dict(id="release-text-field"))
 
 	tracks = FieldList(FormField(TrackForm), min_entries=1)
 
