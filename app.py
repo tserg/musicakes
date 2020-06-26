@@ -1441,8 +1441,6 @@ def create_app(test_config=None):
 
             track_count_list = []
 
-        print(track_count_list)
-
         return render_template('forms/new_release.html', track_count=track_count_list, userinfo=data)
 
     @app.route('/releases/create_2', methods=['POST'])
@@ -1459,19 +1457,12 @@ def create_app(test_config=None):
 
                 abort(404)
 
-        print("create_release_submission")
-
         try:
 
             release_name = request.get_json()['release_name']
             release_price = request.get_json()['release_price']
             release_cover_art_file_name = request.get_json()['file_name']
             release_text = request.get_json()['release_text']
-
-            print(release_name)
-            print(release_price)
-            print(release_cover_art_file_name)
-            print(release_text)
 
             # Create new release in database
 
@@ -1495,99 +1486,6 @@ def create_app(test_config=None):
             return jsonify({
                 'success': False
             })
-
-
-
-    '''
-
-    @app.route('/releases/create_2', methods=['POST'])
-    @requires_log_in
-    def create_release_submission():
-
-        if 'jwt_payload' in session:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user.artist is None:
-
-                abort(404)
-
-        form = ReleaseForm()
-
-        try:
-
-            if form.validate():
-
-                # Extract information for release
-
-                release_name = form.release_name.data
-                release_price = form.release_price.data
-                release_text = form.release_text.data
-
-                # Upload release cover art 
-
-                f = form.release_cover_art.data
-
-                filename = secure_filename(f.filename)
-
-                modified_filename = auth_id + "/" + filename
-
-                upload_release_picture(f, modified_filename)
-
-                file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
-
-                # Create new release in database
-
-                new_release = Release(
-                    artist_id = user.artist.id,
-                    name=release_name,
-                    price=release_price,
-                    description=release_text,
-                    cover_art=file_url
-                )
-
-                new_release.insert()
-
-                # Loop over tracks and create ne track in database
-
-                for track in form.tracks.entries:
-
-                    track_name = track.data['track_name']
-                    track_price = track.data['track_price']
-
-                    f1 = track.data['track_file']
-
-                    filename = secure_filename(f1.filename)
-
-                    modified_track_filename = auth_id + "/" + filename
-
-                    upload_release_file(f1, modified_track_filename)
-
-                    new_track = Track(
-                        artist_id = user.artist.id,
-                        release_id = new_release.id,
-                        name = track_name,
-                        price = track_price,
-                        download_url = filename
-
-                    )
-
-                    new_track.insert()
-
-                flash('Your release has been successfully created.')
-
-            print(form.errors)
-        
-        except Exception as e:
-
-            print(e)
-            flash('Your release could not be created.')
-
-        return redirect(url_for('get_releases'))
-
-    '''
 
 
     ###################################################
@@ -1690,19 +1588,12 @@ def create_app(test_config=None):
 
                 abort(404)
 
-        print("create_track")
-
         try:
 
             track_name = request.get_json()['track_name']
             track_price = request.get_json()['track_price']
             track_file_name = request.get_json()['file_name']
             track_release_id = request.get_json()['release_id']
-
-            print(track_name)
-            print(track_price)
-            print(track_file_name)
-            print(track_release_id)
 
             # Create new release in database
 
@@ -1728,330 +1619,8 @@ def create_app(test_config=None):
                 'success': False
             })
 
-    
-
-    @app.route('/artists/<int:id>', methods=['PATCH'])
-    @requires_auth('update:artist')
-    def update_artist(payload, id):
-
-        try:
-
-            current_artist = Artist.query.get(id)
-
-            if current_artist is None:
-
-                abort(404)
-
-            # authenticates if the artist corresponds to the user
-
-            auth_id = current_artist.user.auth_id
-
-            if auth_id is None:
-
-                abort(401)
-
-            elif check_auth_id(auth_id, payload) is not True:
-
-                abort(401)
-
-            # actual function continues here
-
-            if 'name' in request.get_json():
-                name = request.get_json()['name']
-                current_artist.name = name
-
-            if 'country' in request.get_json():
-                country = request.get_json()['country']
-                current_artist.country = country
-
-            current_artist.update()
-
-            return jsonify({
-                'success': True,
-                'name': current_artist.name,
-                'country': current_artist.country
-            })
-
-        except:
-
-            abort(400)
-
-    @app.route('/releases/<int:id>', methods=['PATCH'])
-    @requires_auth('update:release')
-    def update_release(payload, id):
-
-        try:
-
-            current_release = Release.query.get(id)
-
-            if current_release is None:
-
-                abort(404)
-
-            # authenticates if the artist corresponds to the user
-            
-            current_artist = Artist.query.get(current_release.artist_id)
-            auth_id = current_artist.user.auth_id
-
-            if auth_id is None:
-
-                abort(401)
-
-            elif check_auth_id(auth_id, payload) is not True:
-
-                abort(401)
-
-            # actual function continues here
-
-            if 'name' in request.get_json():
-                name = request.get_json()['name']
-                current_release.name = name
-
-            if 'artist_id' in request.get_json():
-                artist_id = request.get_json()['artist_id']
-                current_release.artist_id = artist_id
-
-            if 'price' in request.get_json():
-                price = request.get_json()['price']
-                current_release.price = price
-
-            current_release.update()
-
-            return jsonify({
-                'success': True,
-                'name': current_release.name,
-                'artist_id': current_release.artist_id,
-                'price': current_release.price
-            })
-
-        except:
-
-            abort(400)
-
-    @app.route('/tracks/<int:id>', methods=['PATCH'])
-    @requires_auth('update:track')
-    def update_track(payload, id):
-
-        try:
-
-            current_track = Track.query.get(id)
-
-            if current_track is None:
-
-                abort(404)
-
-            # authenticates if the artist corresponds to the user
-
-            current_artist = Artist.query.get(current_track.release.artist_id)
-            auth_id = current_artist.user.auth_id
-
-            if auth_id is None:
-
-                abort(401)
-
-            elif check_auth_id(auth_id, payload) is not True:
-
-                abort(401)
-
-            # actual function continues here
-            current_track = Track.query.get(id)
-
-            if current_track is None:
-
-                abort(404)
-
-            if 'name' in request.get_json():
-                name = request.get_json()['name']
-                current_track.name = name
-
-            if 'artist_id' in request.get_json():
-                artist_id = request.get_json()['artist_id']
-                current_track.artist_id = artist_id
-
-            if 'release_id' in request.get_json():
-                release_id = request.get_json()['release_id']
-                current_track.release_id = release_id
-
-            if 'price' in request.get_json():
-                price = request.get_json()['price']
-                current_track.price = price
-
-            current_track.update()
-
-            return jsonify({
-                'success': True,
-                'name': current_track.name,
-                'artist_id': current_track.artist_id,
-                'release_id': current_track.release_id,
-                'price': current_track.price
-            })
-
-        except:
-
-            abort(400)
-
-    @app.route('/users/<int:id>', methods=['DELETE'])
-    def delete_user(id):
-
-        try:
-
-            user = User.query.get(id)
-
-            if user is None:
-
-                abort(404)
-
-            user.delete()
-
-            return jsonify({
-                'success': True
-            })
-
-        except Exception as e:
-            print(e)
-
-            abort(422)
-
-    @app.route('/artists/<int:id>', methods=['DELETE'])
-    @requires_auth('delete:artist')
-    def delete_artist(payload, id):
-
-        try:
-
-            artist = Artist.query.get(id)
-
-            if artist is None:
-
-                abort(404)
-
-            # authenticates if the artist corresponds to the user
-
-            auth_id = artist.user.auth_id
-
-            if auth_id is None:
-
-                abort(401)
-
-            elif check_auth_id(auth_id, payload) is not True:
-
-                abort(401)
-
-            # actual function continues here
-
-            artist.delete()
-
-            return jsonify({
-                'success': True
-            })
-
-        except Exception as e:
-            print(e)
-
-            abort(422)
-
-    @app.route('/releases/<int:id>', methods=['DELETE'])
-    @requires_auth('delete:release')
-    def delete_release(payload, id):
-
-        try:
-
-            release = Release.query.get(id)
-
-            if release is None:
-
-                abort(404)
-
-            # authenticates if the artist corresponds to the user
-            
-            current_artist = Artist.query.get(release.artist_id)
-            auth_id = current_artist.user.auth_id
-
-            if auth_id is None:
-
-                abort(401)
-
-            elif check_auth_id(auth_id, payload) is not True:
-
-                abort(401)
-
-            # actual function continues here
-
-            release.delete()
-
-            return jsonify({
-                'success': True
-            })
-
-        except:
-
-            abort(422)
-
-    @app.route('/tracks/<int:id>', methods=['DELETE'])
-    @requires_auth('delete:track')
-    def delete_track(payload, id):
-
-        try:
-
-            track = Track.query.get(id)
-
-            if track is None:
-
-                abort(404)
-
-            # authenticates if the artist corresponds to the user
-
-            current_artist = Artist.query.get(track.release.artist_id)
-            auth_id = current_artist.user.auth_id
-
-            if auth_id is None:
-
-                abort(401)
-
-            elif check_auth_id(auth_id, payload) is not True:
-
-                abort(401)
-
-            # function continues here
-
-            track.delete()
-
-            return jsonify({
-                'success': True
-            })
-
-        except:
-
-            abort(422)
-
     """
         Errors handling
-    """
-
-    """
-    @app.errorhandler(400)
-    def bad_request(error):
-        return jsonify({
-            'success': False,
-            'error': 400,
-            'message': 'bad request'
-        }), 400
-
-    @app.errorhandler(405)
-    def method_not_allowed(error):
-        return jsonify({
-            'success': False,
-            'error': 405,
-            'message': 'method not allowed'
-        }), 405
-
-    @app.errorhandler(422)
-    def unprocessable(error):
-        return jsonify({
-            'success': False,
-            'error': 422,
-            'message': 'unprocessable'
-        }), 422
-
     """
 
     @app.errorhandler(AuthError)
