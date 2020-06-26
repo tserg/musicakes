@@ -1676,6 +1676,59 @@ def create_app(test_config=None):
 
             abort(404)
 
+    @app.route('/tracks/create', methods=['POST'])
+    @requires_log_in
+    def create_track():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user.artist is None:
+
+                abort(404)
+
+        print("create_track")
+
+        try:
+
+            track_name = request.get_json()['track_name']
+            track_price = request.get_json()['track_price']
+            track_file_name = request.get_json()['file_name']
+            track_release_id = request.get_json()['release_id']
+
+            print(track_name)
+            print(track_price)
+            print(track_file_name)
+            print(track_release_id)
+
+            # Create new release in database
+
+            new_track = Track(
+                artist_id = user.artist.id,
+                release_id = track_release_id,
+                name = track_name,
+                price = track_price,
+                download_url = track_file_name
+
+            )
+
+            new_track.insert()
+
+            return jsonify({
+                'success': True,
+                'track_id': new_track.id
+            })
+
+        except Exception as e:
+            print(e)
+            return jsonify({
+                'success': False
+            })
+
+    
 
     @app.route('/artists/<int:id>', methods=['PATCH'])
     @requires_auth('update:artist')
