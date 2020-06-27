@@ -554,15 +554,31 @@ def create_app(test_config=None):
 
         key = user.auth_id + "/" + file_name
 
-        presigned_post = s3_client.generate_presigned_post(
-            Bucket = S3_BUCKET,
-            Key = key,
-            Fields = {"Content-Type": file_type},
-            Conditions = [
-            {"Content-Type": file_type}
-            ],
-            ExpiresIn = 3600
-        )
+        if "image" in file_type:
+
+            presigned_post = s3_client.generate_presigned_post(
+                Bucket = S3_BUCKET,
+                Key = key,
+                Fields = {"Content-Type": file_type,
+                        "x-amz-tagging": "public=yes"},
+                Conditions = [
+                {"Content-Type": file_type},
+                {"x-amz-tagging": "public=yes"}
+                ],
+                ExpiresIn = 3600
+            )
+
+        else:
+
+            presigned_post = s3_client.generate_presigned_post(
+                Bucket = S3_BUCKET,
+                Key = key,
+                Fields = {"Content-Type": file_type},
+                Conditions = [
+                {"Content-Type": file_type}
+                ],
+                ExpiresIn = 3600
+            )
 
         print(presigned_post)
         print(S3_LOCATION + "/" + S3_BUCKET + "/" + key)
