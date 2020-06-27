@@ -82,7 +82,7 @@ def create_app(test_config=None):
 
     setup_db(app)
 
-    CORS(app, resources={r"/*": {"origins": "http://localhost:5000"}})
+    CORS(app, resources={r"/*": {"origins": "*"}})
 
     oauth = OAuth(app)
 
@@ -393,88 +393,21 @@ def create_app(test_config=None):
 
         return True
 
-    def upload_release_picture(file, key):
-        """Upload a release's cover art to an S3 bucket with public access
-
-        :param file: File to upload
-        :param key: Path name for the file
-        :return: True if file was uploaded, else False
-        """
-
-        # If S3 object_name was not specified, use file_name
-
-        # Upload the file
-        s3_client = boto3.client('s3',
-                                region_name='us-east-1',
-                                endpoint_url=S3_LOCATION,
-                                aws_access_key_id=S3_KEY,
-                                aws_secret_access_key=S3_SECRET)
-
-
-        try:
-
-            s3_client.put_object(
-                Body=file,
-                Bucket=S3_BUCKET,
-                Key=key,
-                Tagging='public=yes'
-            )
-
-        except ClientError as e:
-            print(e)
-            return False
-
-        return True
-
-    def upload_release_file(file, key):
-        """Upload a track file to an S3 bucket
-
-        :param file: File to upload
-        :param key: Path name for the file
-        :return: True if file was uploaded, else False
-        """
-
-        # Upload the file
-        s3_client = boto3.client('s3',
-                                region_name='us-east-1',
-                                endpoint_url=S3_LOCATION,
-                                aws_access_key_id=S3_KEY,
-                                aws_secret_access_key=S3_SECRET)
-
-
-        try:
-
-            s3_client.put_object(
-                Body=file,
-                Bucket=S3_BUCKET,
-                Key=key,
-            )
-
-        except ClientError as e:
-            print(e)
-            return False
-
-        return True
-
-
     def download_track(key, file_name):
         """
         Function to download a given track from an S3 bucket
         """
         s3_client = boto3.client('s3',
                                 region_name='us-east-1',
-                                endpoint_url=S3_LOCATION,
                                 aws_access_key_id=S3_KEY,
                                 aws_secret_access_key=S3_SECRET)
-
-        output = file_name
 
         try:
 
             s3_client.download_file(
                 Bucket=S3_BUCKET,
                 Key=key,
-                Filename=output
+                Filename=file_name
             )
 
         except ClientError as e:
@@ -494,7 +427,6 @@ def create_app(test_config=None):
 
         s3_client = boto3.client('s3',
                                 region_name='us-east-1',
-                                endpoint_url=S3_LOCATION,
                                 aws_access_key_id=S3_KEY,
                                 aws_secret_access_key=S3_SECRET)
 
@@ -529,9 +461,9 @@ def create_app(test_config=None):
 
         return str(zip_file_name + ".zip")
 
-    @app.route('/sign_s3/')
+    @app.route('/sign_s3_upload/', methods=['GET'])
     @requires_log_in
-    def sign_s3():
+    def sign_s3_upload():
 
         if 'jwt_payload' in session:
 
@@ -1072,8 +1004,6 @@ def create_app(test_config=None):
 
         data['purchased_tracks'] = temp
 
-        print(data)
-
         return render_template('pages/show_purchases.html', userinfo=data)
 
     @app.route('/releases/<int:release_id>/purchase', methods=['POST'])
@@ -1213,11 +1143,15 @@ def create_app(test_config=None):
 
         artist_user = Artist.query.filter(Artist.id==release.artist_id).one_or_none()
 
-        key = artist_user.user.auth_id + "/" + track.download_url
+        url_components = track.download_url.rsplit('/')
+
+        filename = secure_filename(url_components[-1])
+
+        key = url_components[-2] + "/" + filename
 
         try:
 
-            output = download_track(key, track.download_url)
+            output = download_track(key, filename)
 
             return send_file(output, as_attachment=True)
 
@@ -1271,8 +1205,10 @@ def create_app(test_config=None):
 
         for track in release.tracks:
 
-            key = artist_user.user.auth_id + "/" + track.download_url
-            filename = track.download_url
+            filename = track.download_url.rsplit('/', 1)[-1]
+            print(filename)
+
+            key = artist_user.user.auth_id + "/" + filename
 
             keys.append(key)
             filenames.append(filename)
@@ -1559,6 +1495,25 @@ def create_app(test_config=None):
 
                 if user:
                     data = user.short_private()
+
+                    track = Track.query.filter(Track.id==track_id).one_or_none()
+                    release = Release.query.filter(Release.id==track.release_id).one_or_none()
+
+                    if track is None or release is None:
+
+                        abort(404)
+
+                    track_purchase = Purchase.query.filter(Purchase.track_id==track.id). \
+                                        filter(Purchase.user_id==user.id). \
+                                        join(Track).all()
+
+                    release_purchase = Purchase.query.filter(Purchase.release_id==track.release_id). \
+                                        filter(Purchase.user_id==user.id). \
+                                        join(Release).all()
+
+                    if track_purchase is None and release_purchase is None:
+
+                        abort(404)
 
                 else: 
 
