@@ -547,10 +547,6 @@ def create_app(test_config=None):
 
             abort(404)
 
-
-        print("sign_s3 triggered")
-        S3_BUCKET = os.environ.get('S3_BUCKET')
-
         file_name = secure_filename(request.args.get('file_name'))
         file_type = request.args.get('file_type')
 
