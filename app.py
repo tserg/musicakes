@@ -524,6 +524,68 @@ def create_app(test_config=None):
             'url': S3_LOCATION + key
         })
 
+    @app.route('/sign_s3_download/', methods=['GET'])
+    @requires_log_in
+    def sign_s3_upload():
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user is None:
+
+                abort(404)
+
+        else:
+
+            abort(404)
+
+        track_id = secure_filename(request.args.get('track_id'))
+
+        s3_client = boto3.client('s3',
+                                region_name='us-east-1',
+                                aws_access_key_id=S3_KEY,
+                                aws_secret_access_key=S3_SECRET)
+
+        key = user.auth_id + "/" + file_name
+
+        if "image" in file_type:
+
+            print("image detected")
+
+            presigned_post = s3_client.generate_presigned_post(
+                Bucket = S3_BUCKET,
+                Key = key,
+                Fields = {"Content-Type": file_type,
+                        "tagging": "<Tagging><TagSet><Tag><Key>public</Key><Value>yes</Value></Tag></TagSet></Tagging>"},
+                Conditions = [
+                {"Content-Type": file_type},
+                {"tagging": "<Tagging><TagSet><Tag><Key>public</Key><Value>yes</Value></Tag></TagSet></Tagging>"}
+                ],
+                ExpiresIn = 3600
+            )
+
+        else:
+
+            presigned_post = s3_client.generate_presigned_post(
+                Bucket = S3_BUCKET,
+                Key = key,
+                Fields = {"Content-Type": file_type},
+                Conditions = [
+                {"Content-Type": file_type}
+                ],
+                ExpiresIn = 3600
+            )
+
+        print(presigned_post)
+
+        return json.dumps({
+            'data': presigned_post,
+            'url': S3_LOCATION + key
+        })
+
     ###################################################
 
     # General
@@ -1169,6 +1231,8 @@ def create_app(test_config=None):
     @requires_log_in
     def download_purchased_release(release_id):
 
+        print("download_purchased_release triggered")
+
         if 'jwt_payload' in session:
 
             auth_id = session['jwt_payload']['sub'][6:]
@@ -1186,6 +1250,8 @@ def create_app(test_config=None):
         # checks if user has purchased the current release
 
         release = Release.query.filter(Release.id==release_id).one_or_none()
+
+        print(release)
 
         if release is None:
 
@@ -1216,11 +1282,18 @@ def create_app(test_config=None):
             keys.append(key)
             filenames.append(filename)
 
+
+        print(keys, filenames)
+
         zip_file_name = str(release.artist.name) + "_" + str(release.name)
 
         try:
 
+            print("try loop triggered")
+
             output = download_release(keys, filenames, zip_file_name)
+
+            print("output obtained")
 
             return send_file(output, as_attachment=True)
 
