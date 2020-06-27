@@ -482,7 +482,10 @@ def create_app(test_config=None):
         file_name = secure_filename(request.args.get('file_name'))
         file_type = request.args.get('file_type')
 
-        s3_client = boto3.client('s3')
+        s3_client = boto3.client('s3',
+                                region_name='us-east-1',
+                                aws_access_key_id=S3_KEY,
+                                aws_secret_access_key=S3_SECRET)
 
         key = user.auth_id + "/" + file_name
 
