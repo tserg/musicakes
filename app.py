@@ -58,7 +58,7 @@ AUTH0_CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'Does not exist')
 AUTH0_USER_INFO_URL = os.getenv('AUTH0_USER_INFO_URL', 'Does not exist')
 ALGORITHMS = os.getenv('ALGORITHMS', 'Does not exist')
 API_AUDIENCE = os.getenv('API_AUDIENCE', 'Does not exist')
-S3_BUCKET = os.getenv('S3_BUCKET_NAME', 'Does not exist')
+S3_BUCKET = os.getenv('S3_BUCKET', 'Does not exist')
 S3_KEY = os.getenv('S3_KEY', 'Does not exist')
 S3_SECRET = os.getenv('S3_SECRET', 'Does not exist')
 S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
@@ -556,14 +556,16 @@ def create_app(test_config=None):
 
         if "image" in file_type:
 
+            print("image detected")
+
             presigned_post = s3_client.generate_presigned_post(
                 Bucket = S3_BUCKET,
                 Key = key,
                 Fields = {"Content-Type": file_type,
-                        "x-amz-tagging": "public=yes"},
+                        "tagging": "<Tagging><TagSet><Tag><Key>public</Key><Value>yes</Value></Tag></TagSet></Tagging>"},
                 Conditions = [
                 {"Content-Type": file_type},
-                {"x-amz-tagging": "public=yes"}
+                {"tagging": "<Tagging><TagSet><Tag><Key>public</Key><Value>yes</Value></Tag></TagSet></Tagging>"}
                 ],
                 ExpiresIn = 3600
             )
@@ -581,11 +583,10 @@ def create_app(test_config=None):
             )
 
         print(presigned_post)
-        print(S3_LOCATION + "/" + S3_BUCKET + "/" + key)
 
         return json.dumps({
             'data': presigned_post,
-            'url': S3_LOCATION + "/" + S3_BUCKET + "/" + key
+            'url': S3_LOCATION + key
         })
 
     ###################################################
@@ -1473,8 +1474,11 @@ def create_app(test_config=None):
 
             release_name = request.get_json()['release_name']
             release_price = request.get_json()['release_price']
-            release_cover_art_file_name = S3_LOCATION + "/" + auth_id + "/" + request.get_json()['file_name']
+            release_cover_art_file_name = S3_LOCATION + auth_id + "/" + request.get_json()['file_name']
             release_text = request.get_json()['release_text']
+
+            print("release cover art URL: ")
+            print(release_cover_art_file_name)
 
             # Create new release in database
 
@@ -1604,7 +1608,7 @@ def create_app(test_config=None):
 
             track_name = request.get_json()['track_name']
             track_price = request.get_json()['track_price']
-            track_file_name = S3_LOCATION + "/" + auth_id + "/" + request.get_json()['file_name']
+            track_file_name = S3_LOCATION + auth_id + "/" + request.get_json()['file_name']
             track_release_id = request.get_json()['release_id']
 
             # Create new release in database
