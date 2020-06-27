@@ -1,7 +1,7 @@
 {% extends 'layouts/bare.html' %}
 {% block title %}Create an account{% endblock %}
 {% block content %}
-
+<div class="w3-container">
   <div class="form-wrapper">
     <form method="post" class="form" onsubmit="return validateForm()" name="new_user">
       {{ form.hidden_tag() }}
@@ -15,6 +15,7 @@
       <input type="submit" value="Create an account" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>
+</div>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/new_user.js') }}"></script>
 
