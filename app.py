@@ -82,7 +82,7 @@ def create_app(test_config=None):
 
     setup_db(app)
 
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app, resources={r"/*": {"origins": "http://localhost:5000"}})
 
     oauth = OAuth(app)
 
@@ -1496,8 +1496,7 @@ def create_app(test_config=None):
                 if user:
                     data = user.short_private()
 
-                    track = Track.query.filter(Track.id==track_id).one_or_none()
-                    release = Release.query.filter(Release.id==track.release_id).one_or_none()
+                    release = Release.query.filter(Release.id==track_id).one_or_none()
 
                     if track is None or release is None:
 
@@ -1511,9 +1510,13 @@ def create_app(test_config=None):
                                         filter(Purchase.user_id==user.id). \
                                         join(Release).all()
 
-                    if track_purchase is None and release_purchase is None:
+                    if track_purchase or release_purchase:
 
-                        abort(404)
+                        data['purchased'] = True
+
+                    else:
+
+                        data['purchased'] = None
 
                 else: 
 
