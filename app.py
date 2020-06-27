@@ -510,9 +510,11 @@ def create_app(test_config=None):
             presigned_post = s3_client.generate_presigned_post(
                 Bucket = S3_BUCKET,
                 Key = key,
-                Fields = {"Content-Type": file_type},
+                Fields = {"Content-Type": file_type,
+                        "Content-Disposition": 'attachments; filename="%s"' %file_name},
                 Conditions = [
-                {"Content-Type": file_type}
+                {"Content-Type": file_type},
+                {"Content-Disposition": 'attachments; filename="%s"' %file_name}
                 ],
                 ExpiresIn = 3600
             )
@@ -526,7 +528,7 @@ def create_app(test_config=None):
 
     @app.route('/sign_s3_download/', methods=['GET'])
     @requires_log_in
-    def sign_s3_download():
+    def sign_s3_download_track():
 
         if 'jwt_payload' in session:
 
@@ -542,48 +544,55 @@ def create_app(test_config=None):
 
             abort(404)
 
-        track_id = secure_filename(request.args.get('track_id'))
+        track_id = request.args.get('track_id')
+
+        track = Track.query.filter(Track.id==track_id).one_or_none()
+
+        if track is None:
+
+            abort(404)
 
         s3_client = boto3.client('s3',
                                 region_name='us-east-1',
                                 aws_access_key_id=S3_KEY,
                                 aws_secret_access_key=S3_SECRET)
 
-        key = user.auth_id + "/" + file_name
+        url_components = track.download_url.rsplit('/')
 
-        if "image" in file_type:
+        filename = secure_filename(url_components[-1])
 
-            print("image detected")
+        key = url_components[-2] + "/" + filename
 
-            presigned_post = s3_client.generate_presigned_post(
-                Bucket = S3_BUCKET,
-                Key = key,
-                Fields = {"Content-Type": file_type,
-                        "tagging": "<Tagging><TagSet><Tag><Key>public</Key><Value>yes</Value></Tag></TagSet></Tagging>"},
-                Conditions = [
-                {"Content-Type": file_type},
-                {"tagging": "<Tagging><TagSet><Tag><Key>public</Key><Value>yes</Value></Tag></TagSet></Tagging>"}
-                ],
-                ExpiresIn = 3600
-            )
-
-        else:
-
-            presigned_post = s3_client.generate_presigned_post(
-                Bucket = S3_BUCKET,
-                Key = key,
-                Fields = {"Content-Type": file_type},
-                Conditions = [
-                {"Content-Type": file_type}
-                ],
-                ExpiresIn = 3600
-            )
-
-        print(presigned_post)
+        presigned_url = s3_client.generate_presigned_url(
+            'get_object',
+            Params = {
+                'Bucket': S3_BUCKET,
+                'Key': key
+            },
+            ExpiresIn=300
+        )
 
         return json.dumps({
-            'data': presigned_post,
-            'url': S3_LOCATION + key
+            'data': presigned_url,
+            'file_name': filename
+        })
+
+    @app.route('/releases/<int:release_id>/download', methods=['GET'])
+    @requires_log_in
+    def download_release(release_id):
+
+        release = Release.query.filter(Release.id==release_id).one_or_none()
+
+        if release is None:
+
+            abort(404)
+
+        track_ids = [track.id for track in release.tracks]
+
+        print(track_ids)
+
+        return json.dumps({
+            'track_ids': track_ids
         })
 
     ###################################################
@@ -1251,8 +1260,6 @@ def create_app(test_config=None):
 
         release = Release.query.filter(Release.id==release_id).one_or_none()
 
-        print(release)
-
         if release is None:
 
             abort(404)
@@ -1275,25 +1282,17 @@ def create_app(test_config=None):
         for track in release.tracks:
 
             filename = track.download_url.rsplit('/', 1)[-1]
-            print(filename)
 
             key = artist_user.user.auth_id + "/" + filename
 
             keys.append(key)
             filenames.append(filename)
 
-
-        print(keys, filenames)
-
         zip_file_name = str(release.artist.name) + "_" + str(release.name)
 
         try:
 
-            print("try loop triggered")
-
             output = download_release(keys, filenames, zip_file_name)
-
-            print("output obtained")
 
             return send_file(output, as_attachment=True)
 
@@ -1557,50 +1556,59 @@ def create_app(test_config=None):
     @app.route('/tracks/<int:track_id>', methods=['GET'])
     def show_track(track_id):
 
-        try:
+        print("show track triggered")
 
-            track = Track.query.get(track_id)
+        track = Track.query.get(track_id)
 
-            formatted_track_data = track.short_public()
+        if track is None:
 
-            if 'jwt_payload' in session:
+            abort(404)
 
-                auth_id = session['jwt_payload']['sub'][6:]
 
-                user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        if 'jwt_payload' in session:
 
-                if user:
-                    data = user.short_private()
+            auth_id = session['jwt_payload']['sub'][6:]
 
-                    release = Release.query.filter(Release.id==track_id).one_or_none()
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
-                    if track is None or release is None:
+            if user:
+                data = user.short_private()
 
-                        abort(404)
+                release = Release.query.filter(Release.id==track.release_id).one_or_none()
 
-                    track_purchase = Purchase.query.filter(Purchase.track_id==track.id). \
-                                        filter(Purchase.user_id==user.id). \
-                                        join(Track).all()
+                if release is None:
 
-                    release_purchase = Purchase.query.filter(Purchase.release_id==track.release_id). \
-                                        filter(Purchase.user_id==user.id). \
-                                        join(Release).all()
+                    abort(404)
 
-                    if track_purchase or release_purchase:
+                track_purchase = Purchase.query.filter(Purchase.track_id==track.id). \
+                                    filter(Purchase.user_id==user.id). \
+                                    join(Track).all()
 
-                        data['purchased'] = True
+                release_purchase = Purchase.query.filter(Purchase.release_id==track.release_id). \
+                                    filter(Purchase.user_id==user.id). \
+                                    join(Release).all()
 
-                    else:
+                if track_purchase or release_purchase:
 
-                        data['purchased'] = None
+                    data['purchased'] = True
 
-                else: 
+                else:
 
-                    data = None
+                    data['purchased'] = None
 
-            else:
+            else: 
 
                 data = None
+
+        else:
+
+            data = None
+
+        print(data)
+
+        try:
+
+            formatted_track_data = track.short_public()
 
             purchases = Purchase.query.filter(Purchase.track_id==track_id). \
                         join(Track).all()

@@ -18,7 +18,9 @@
 					{% for release in userinfo.purchased_releases %}
 						<ol>
 
-							<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a> / <a href="/releases/{{ release.release_id }}/download">Download</a>
+							<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
+							 / 
+							<button type="button" class="download-release-btn" id="{{ release.release_id }}">Download</button>
 
 						</ol>
 					{% endfor %}
@@ -36,7 +38,9 @@
 				{% for track in userinfo.purchased_tracks %}
 					<ol>
 
-						<a href="../tracks/{{ track.track_id }}">>{{ track.track_name }}</a> / <a href="/tracks/{{ track.track_id }}/download">Download</a>
+						<a href="../tracks/{{ track.track_id }}">>{{ track.track_name }}</a>
+						 / 
+						<button type="button" class="download-track-btn" id="{{ track.track_id }}">Download</button>
 
 					</ol>
 				{% endfor %}
@@ -52,5 +56,7 @@
 	</div>
 </div>
 
+<script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/download_purchase.js') }}"></script>
 
 {% endblock %}
