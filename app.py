@@ -1350,6 +1350,8 @@ def create_app(test_config=None):
             purchases = Purchase.query.filter(Purchase.release_id==release_id). \
                         join(Release).all()
 
+            release_cover_art_url = S3_LOCATION + "/" + 
+
             temp=[]
 
             for purchase in purchases:
@@ -1457,7 +1459,7 @@ def create_app(test_config=None):
 
             release_name = request.get_json()['release_name']
             release_price = request.get_json()['release_price']
-            release_cover_art_file_name = request.get_json()['file_name']
+            release_cover_art_file_name = S3_LOCATION + "/" + auth_id + "/" + request.get_json()['file_name']
             release_text = request.get_json()['release_text']
 
             # Create new release in database
@@ -1588,7 +1590,7 @@ def create_app(test_config=None):
 
             track_name = request.get_json()['track_name']
             track_price = request.get_json()['track_price']
-            track_file_name = request.get_json()['file_name']
+            track_file_name = S3_LOCATION + "/" + auth_id + "/" + request.get_json()['file_name']
             track_release_id = request.get_json()['release_id']
 
             # Create new release in database
