@@ -526,7 +526,7 @@ def create_app(test_config=None):
 
     @app.route('/sign_s3_download/', methods=['GET'])
     @requires_log_in
-    def sign_s3_upload():
+    def sign_s3_download():
 
         if 'jwt_payload' in session:
 
