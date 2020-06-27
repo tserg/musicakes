@@ -1350,8 +1350,6 @@ def create_app(test_config=None):
             purchases = Purchase.query.filter(Purchase.release_id==release_id). \
                         join(Release).all()
 
-            release_cover_art_url = S3_LOCATION + "/" + 
-
             temp=[]
 
             for purchase in purchases:
