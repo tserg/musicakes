@@ -89,7 +89,7 @@ function addRelease(release_name, release_price, release_cover_art, release_text
 
 function getSignedRequestCoverArt(file, release_name, release_price, release_text){
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/sign_s3?file_name="+file.name+"&file_type="+file.type);
+  xhr.open("GET", "/sign_s3_upload?file_name="+file.name+"&file_type="+file.type);
   xhr.onreadystatechange = function(){
     if(xhr.readyState === 4){
       if(xhr.status === 200){
@@ -198,7 +198,7 @@ function addTracks(release_id) {
 
 function getSignedRequestTrack(file, track_name, track_price, release_id){
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/sign_s3?file_name="+file.name+"&file_type="+file.type);
+  xhr.open("GET", "/sign_s3_upload?file_name="+file.name+"&file_type="+file.type);
   xhr.onreadystatechange = function(){
     if(xhr.readyState === 4){
       if(xhr.status === 200){
