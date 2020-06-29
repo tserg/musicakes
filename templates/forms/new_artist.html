@@ -1,11 +1,15 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Create an artist profile{% endblock %}
 {% block content %}
-{% if userinfo.artist_name is none %} 
+{% if userinfo.artist_name is none %}
+<div class ="w3-container">
   <div class="form-wrapper">
     <form method="post" class="form" onsubmit="return validateForm()" name="new_artist">
+
       {{ form.hidden_tag() }}
       <h3 class="form-heading">Create an artist profile</h3>
+
+      <fieldset>
 
       <div class="form-group">
           <label for="artist_name">Artist name</label>
@@ -16,9 +20,13 @@
         <label for="artist_country">Country</label>
           {{ form.artist_country(class_ = 'form-control', autofocus = true) }}
         </div>
+      </fieldset>
+      <br>
       <input type="submit" value="Create artist profile" class="btn btn-primary btn-lg btn-block">
+
     </form>
   </div>
+</div>
 {% else %} 
   <h4> You have an existing artist profile tied to this account.</h4> 
 {% endif %}

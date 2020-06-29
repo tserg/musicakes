@@ -51,8 +51,10 @@ class ArtistForm(FlaskForm):
 class EditUserForm(FlaskForm):
 	profile_picture = FileField('Profile Picture', validators=[
 		FileRequired(),
-		FileAllowed(['jpg', 'png'], 'Image only!')
+		FileAllowed(['jpg', 'jpeg', 'png'], 'Image only!')
 	])
+
+'''
 
 class TrackForm(FlaskForm):
 
@@ -72,6 +74,7 @@ class TrackForm(FlaskForm):
 		validators=[DataRequired()],
 		widget=html5.NumberInput(min=1,max=100)
 	)
+'''
 
 class ReleasePresubmissionForm(FlaskForm):
 
@@ -81,6 +84,8 @@ class ReleasePresubmissionForm(FlaskForm):
 		widget=html5.NumberInput(min=1,max=100)
 	)
 
+
+'''
 class ReleaseForm(FlaskForm):
 
 	release_name = StringField('Release Name', validators=[
@@ -105,4 +110,4 @@ class ReleaseForm(FlaskForm):
 	release_text = TextAreaField('release_text', render_kw=dict(id="release-text-field"))
 
 	tracks = FieldList(FormField(TrackForm), min_entries=1)
-
+'''

@@ -1023,6 +1023,89 @@ def create_app(test_config=None):
 
         return redirect(url_for('index'))
 
+    @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
+    @requires_log_in
+    def edit_artist(artist_id):
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_private()
+
+            else: 
+
+                data = None
+
+        else:
+
+            data = None
+
+        try:
+
+            current_artist = Artist.query.filter(Artist.id==artist_id).one_or_none()
+            if current_artist is None:
+                abort(404)
+
+            artist_data = current_artist.short()
+
+            return render_template('forms/edit_artist.html', artist=artist_data, userinfo=data)
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
+        return redirect('/')
+
+    @app.route('/artists/<int:artist_id>/edit', methods=['PUT'])
+    @requires_log_in
+    def edit_artist_submission(artist_id):
+
+        print("put triggered")
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user.artist is None:
+
+                abort(404)
+
+        try:
+
+            current_artist = Artist.query.filter(Artist.id==artist_id).one_or_none()
+            if current_artist is None:
+                abort(404)
+
+            artist_picture_file_name = S3_LOCATION + auth_id + "/" + request.get_json()['file_name']
+
+
+            print("artist picture URL: ")
+            print(artist_picture_file_name)
+
+            # Create new release in database
+
+            current_artist.artist_picture = artist_picture_file_name
+            current_artist.update()
+
+            return jsonify({
+                'success': True,
+            })
+
+        except Exception as e:
+            print(e)
+            return jsonify({
+                'success': False
+            })
+
+
+
+
     ###################################################
 
     # Purchases

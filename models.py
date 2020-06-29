@@ -33,7 +33,7 @@ class User(db.Model):
     auth_id = Column(String, unique=True, nullable=False)
     username = Column(String, unique=True, nullable=False)
     artist = db.relationship('Artist', uselist=False, back_populates='user')
-    profile_picture = Column(String, unique=True, nullable=True)
+    profile_picture = Column(String, unique=False, nullable=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
 
@@ -81,6 +81,7 @@ class Artist(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     country = Column(String, nullable=False)
+    artist_picture = Column(String, unique=False, nullable=True)
     releases = db.relationship(
         'Release', backref='artist', cascade='all, delete', lazy=True)
     tracks = db.relationship('Track', backref='artist',
@@ -116,6 +117,7 @@ class Artist(db.Model):
             'user': self.user_id,
             'name': self.name,
             'country': self.country,
+            'artist_picture': self.artist_picture,
             'releases': formatted_releases
         }
 
