@@ -3,6 +3,8 @@
 {% block content %}
 <div class="w3-container">
 
+
+
 	<div>
 		<h4>
 			Artist: {{ artist.name }}
@@ -11,6 +13,18 @@
 		<h4>
 			Country: {{ artist.country }}
 		</h4>
+	</div>
+
+
+    <div class="display-picture">
+        {% if artist.artist_picture is none %}
+          <img id="preview" src="/static/img/musicakes.png" />
+        {% else %}
+          <img src="{{ artist.artist_picture }}" />
+        {% endif %}
+    </div>
+
+	<div>
 		<h4>Releases: </h4>
 		{% for release in artist.releases %}
 			<ol>

@@ -12,9 +12,19 @@
 		<li>
 			<a href="/artists/{{ artist.id }}">
 
+
+			    <div class="display-picture">
+			        {% if artist.artist_picture is none %}
+			          <img id="preview" src="/static/img/musicakes.png" />
+			        {% else %}
+			          <img src="{{ artist.artist_picture }}" />
+			        {% endif %}
+			    </div>
+
 				<div class="item">
 					<h5>{{ artist.name }}</h5>
 				</div>
+
 			</a>
 		</li>
 		{% endfor %}
