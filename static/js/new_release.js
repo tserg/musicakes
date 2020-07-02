@@ -190,13 +190,13 @@ function addTracks(release_id) {
     var track_price_id = track_price_placeholder + "-" + i.toString();
     var track_price = document.getElementById(track_price_id).value;
 
-    getSignedRequestTrack(track_file, track_name, track_price, release_id);
+    getSignedRequestTrack(track_file, track_name, track_price, release_id, i);
 
   }
   
 }
 
-function getSignedRequestTrack(file, track_name, track_price, release_id){
+function getSignedRequestTrack(file, track_name, track_price, release_id, html_id){
   var xhr = new XMLHttpRequest();
   xhr.open("GET", "/sign_s3_upload?file_name="+file.name+"&file_type="+file.type);
   xhr.onreadystatechange = function(){
@@ -204,7 +204,7 @@ function getSignedRequestTrack(file, track_name, track_price, release_id){
       if(xhr.status === 200){
         var response = JSON.parse(xhr.responseText);
 
-        uploadFileTrack(file, response.data, response.url, file.name, track_name, track_price, release_id);
+        uploadFileTrack(file, response.data, response.url, file.name, track_name, track_price, release_id, html_id);
       }
       else{
         alert("Could not get signed URL.");
@@ -214,7 +214,7 @@ function getSignedRequestTrack(file, track_name, track_price, release_id){
   xhr.send();
 }
 
-function uploadFileTrack(file, s3Data, url, file_name, track_name, track_price, release_id) {
+function uploadFileTrack(file, s3Data, url, file_name, track_name, track_price, release_id, html_id) {
   var xhr = new XMLHttpRequest();
   xhr.open("POST", s3Data.url);
 
@@ -223,6 +223,16 @@ function uploadFileTrack(file, s3Data, url, file_name, track_name, track_price, 
     postData.append(key, s3Data.fields[key]);
   }
   postData.append('file', file);
+
+  xhr.upload.onprogress = function(event) {
+    const progressBar = document.getElementById('upload-progress-' + html_id.toString());
+    let percent = Math.round(100 * event.loaded / event.total);
+
+    progressBar.value=percent;
+    progressBar.innerHTML=percent.toString()+"%";
+
+    console.log(`File is ${percent} uploaded.`);
+  };
 
   xhr.onreadystatechange = function(error, result) {
     if(xhr.readyState === 4){
