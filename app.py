@@ -64,6 +64,8 @@ S3_SECRET = os.getenv('S3_SECRET', 'Does not exist')
 S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
 REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
 
+RELEASES_PER_PAGE = 5
+
 class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
@@ -1397,6 +1399,13 @@ def create_app(test_config=None):
 
         try:
 
+            # page count
+
+            page = request.args.get('page', 1, type=int)
+
+            start = (page-1)*RELEASES_PER_PAGE
+            end = start + RELEASES_PER_PAGE
+
             all_releases = Release.query.all()
 
             formatted_all_releases = [release.short_public()
@@ -1419,7 +1428,14 @@ def create_app(test_config=None):
 
                 data = None
 
-            return render_template('pages/releases.html', releases=formatted_all_releases, userinfo=data)
+            releases_count = len(formatted_all_releases)
+
+            if start + 1 <= releases_count:
+
+                return render_template('pages/releases.html', releases=formatted_all_releases[start:end], userinfo=data)
+
+            else:
+                abort(404)
 
         except Exception as e:
             print(e)
