@@ -68,6 +68,14 @@
 </div>
 
 <div class = "dashboard">
+
+  {% if userinfo and creator is true and release.smart_contract_address is none %}
+
+  <form action="{{ url_for('show_release_for_deployment', release_id=release.id) }}">
+      <input type="submit" value="Deploy Smart Contract" />
+  </form>
+  {% endif %}
+
   <div id = "user-dashboard" class="sub-dashboard">
 
     <span><h3>User Dashboard</h3></span>

@@ -325,6 +325,7 @@ def create_app(test_config=None):
                 data = None
 
             return redirect(url_for('home'))
+
         else:
 
             data = None
@@ -1490,7 +1491,16 @@ def create_app(test_config=None):
 
             release_data['purchasers'] = temp
 
-            return render_template('pages/show_release.html', release=release_data, userinfo=data)
+            if current_release.artist.user.id == user.id:
+                creator = True
+
+            else:
+                creator=False 
+
+            print(creator)
+            print(current_release.smart_contract_address)
+
+            return render_template('pages/show_release.html', release=release_data, userinfo=data, creator=creator)
 
         except Exception as e:
             print(e)
@@ -1584,7 +1594,7 @@ def create_app(test_config=None):
 
             release_name = request.get_json()['release_name']
             release_price = request.get_json()['release_price']
-            release_cover_art_file_name = S3_LOCATION + auth_id + "/" + request.get_json()['file_name']
+            release_cover_art_file_name = S3_LOCATION + auth_id + "/" + secure_filename(request.get_json()['file_name'])
             release_text = request.get_json()['release_text']
 
             print("release cover art URL: ")
@@ -1613,6 +1623,86 @@ def create_app(test_config=None):
                 'success': False
             })
 
+    @app.route('/releases/<int:release_id>/deploy', methods=['GET'])
+    @requires_log_in
+    def show_release_for_deployment(release_id):
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+
+                data = user.short_private()
+
+            else:
+
+                data = None
+        else:
+            data = None
+
+        try:
+
+            current_release = Release.query.get(release_id)
+            if current_release is None:
+                abort(404)
+
+            if current_release.smart_contract_address is None:
+
+                release_data = current_release.short_public()
+
+                return render_template('pages/deploy_release.html', release=release_data, userinfo=data)
+
+            else:
+
+                abort(404)
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
+        return redirect('/')
+
+
+    @app.route('/releases/<int:release_id>/deploy', methods=['POST'])
+    @requires_log_in
+    def deploy_release_smart_contract(release_id):
+
+        if 'jwt_payload' in session:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user.artist is None:
+
+                abort(404)
+
+        try:
+
+            smart_contract_address = request.get_json()['smart_contract_address']
+
+            release = Release.query.filter(Release.id==release_id).one_or_none()
+
+            if release is None:
+
+                abort(404)
+
+            release.smart_contract_address = smart_contract_address
+            release.update()
+
+            return jsonify({
+                'success': True,
+                'release_id': release.id,
+                'smart_contract_address': release.smart_contract_address
+            })
+
+        except Exception as e:
+            print(e)
+            return jsonify({
+                'success': False
+            })
 
     ###################################################
 
