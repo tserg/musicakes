@@ -1,8 +1,10 @@
-tracks_count = $('.track-form-group').length;
+var tracks_count = $('.track-form-group').length;
 
 /* sanity check */
 
 const createReleaseButton = document.querySelector('#create-release-btn');
+
+var created_track_count = 0
 
 createReleaseButton.addEventListener('click', () => {
   validateForm().then(function(response) {
@@ -193,6 +195,8 @@ function addTracks(release_id) {
     getSignedRequestTrack(track_file, track_name, track_price, release_id, i);
 
   }
+
+
   
 }
 
@@ -273,10 +277,19 @@ function addTrackToServer(file_name, track_name, track_price, release_id) {
 
         response = JSON.parse(xhr.response);
 
+        created_track_count += 1;
+        console.log(created_track_count);
+        console.log(tracks_count);
+        if (created_track_count == tracks_count) {
+          alert("All tracks have been successfully uploaded");
+          window.location.replace('/releases/' + release_id.toString() + '/deploy');
+
+        }
+
       }
       else{
         console.log(error);
-        alert("Your track could not be created.");
+
       }
    }
   };
