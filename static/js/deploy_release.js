@@ -93,11 +93,6 @@ var _abi = [
 const musicakesFactoryContractAddress = "0xec67abe36b67afB03228101b7110A0a6155fdCdD";
 const musicakesFactoryContract = new web3.eth.Contract(_abi, musicakesFactoryContractAddress);
 
-ethereum.on('accountsChanged', function(accounts) {
-  window.location.reload();
-});
-
-
 async function deployMusicakesContract() {
   await ethereum.enable();
 
@@ -141,7 +136,7 @@ function addSmartContractToRelease(release_id, smart_contract_address) {
     if(xhr.readyState === 4){
       if(xhr.status === 200){
 
-        console.log(result);
+        console.log("Smart contract address added to database.");
 
       }
       else{
