@@ -64,7 +64,7 @@ S3_SECRET = os.getenv('S3_SECRET', 'Does not exist')
 S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
 REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
 
-RELEASES_PER_PAGE = 5
+RELEASES_PER_PAGE = 10
 
 class AuthError(Exception):
     def __init__(self, error, status_code):

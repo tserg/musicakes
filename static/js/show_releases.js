@@ -3,20 +3,23 @@ const page = parseInt(window.appConfig.page.page);
 const previousPageButton = document.querySelector('#previous-page-btn');
 const nextPageButton = document.querySelector('#next-page-btn');
 
-nextPageButton.addEventListener('click', () => {
+if (nextPageButton) {
 
-	if (page == 0) {
+	nextPageButton.addEventListener('click', () => {
 
-		var next_page = 2;
-	}
+		if (page == 0) {
 
-	else {
+			var next_page = 2;
+		}
 
-		var next_page = page+1;
-	}
+		else {
 
-	window.location.href = "/releases?page=" + next_page.toString();
-});
+			var next_page = page+1;
+		}
+
+		window.location.href = "/releases?page=" + next_page.toString();
+	});
+}
 
 if (page>1) {
 
