@@ -65,6 +65,7 @@ S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
 REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
 
 RELEASES_PER_PAGE = 10
+TRACKS_PER_PAGE = 10
 
 class AuthError(Exception):
     def __init__(self, error, status_code):
@@ -1715,9 +1716,18 @@ def create_app(test_config=None):
 
         try:
 
+            # page count
+
+            page = request.args.get('page', 1, type=int)
+
+            start = (page-1)*TRACKS_PER_PAGE
+            end = start + TRACKS_PER_PAGE
+
             all_tracks = Track.query.all()
 
             formatted_all_tracks = [track.short_public() for track in all_tracks]
+
+            tracks_count = len(formatted_all_tracks)
 
             if 'jwt_payload' in session:
 
@@ -1736,7 +1746,12 @@ def create_app(test_config=None):
 
                 data = None
 
-            return render_template('/pages/tracks.html', tracks=formatted_all_tracks, userinfo=data)
+            if start + 1 <= tracks_count:
+
+                return render_template('/pages/tracks.html', tracks=formatted_all_tracks[start:end], userinfo=data)
+
+            else:
+                abort(404)
 
         except:
 
