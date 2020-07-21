@@ -66,6 +66,7 @@ REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
 
 RELEASES_PER_PAGE = 10
 TRACKS_PER_PAGE = 10
+ARTISTS_PER_PAGE = 10
 
 class AuthError(Exception):
     def __init__(self, error, status_code):
@@ -912,11 +913,26 @@ def create_app(test_config=None):
 
         try:
 
+            # page count
+
+            page = request.args.get('page', 1, type=int)
+
+            start = (page-1)*ARTISTS_PER_PAGE
+            end = start + ARTISTS_PER_PAGE
+
             all_artists = Artist.query.all()
 
             formatted_all_artists = [artist.short() for artist in all_artists]
 
-            return render_template('pages/artists.html', artists=formatted_all_artists, userinfo=data)
+            artists_count = len(formatted_all_artists)
+
+            if start + 1 <= artists_count:
+
+                return render_template('pages/artists.html', artists=formatted_all_artists[start:end], userinfo=data)
+
+            else:
+
+                abort(404)
 
         except Exception as e:
             print(e)
