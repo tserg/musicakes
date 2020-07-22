@@ -11,6 +11,14 @@
 		{% endif %}
 		{% for release in releases %}
 		<li>
+
+		    <div class="display-picture">
+		        {% if release.cover_art is none %}
+		          <img id="preview" src="/static/img/musicakes.png" />
+		        {% else %}
+		          <img src="{{ release.cover_art }}" />
+		        {% endif %}
+		    </div>
 			<a href="/releases/{{ release.id }}">
 				<div class="item">
 					<h5>{{ release.artist_name }} - {{ release.release_name }}</h5>
