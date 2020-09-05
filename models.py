@@ -261,3 +261,16 @@ class Purchase(db.Model):
             'paid': self.paid,
             'purchased_on': self.purchased_on
         }
+
+class MusicakesContractFactory(db.Model):
+
+    id = Column(Integer, primary_key=True)
+    smart_contract_address=Column(String, unique=True, nullable=False)
+    description=Column(String, nullable=True)
+
+    def short(self):
+        return {
+            'id': self.id,
+            'smart_contract_address': self.smart_contract_address,
+            'description': self.description
+        }

@@ -1,4 +1,8 @@
 const release_id = parseInt(window.appConfig.release_id.address);
+const contract_factory_address = window.appConfig.contract_factory_address.address;
+console.log(contract_factory_address);
+
+
 console.log(release_id);
 const deployContractButton = document.querySelector('#deploy-contract-btn');
 
@@ -90,7 +94,9 @@ var _abi = [
     }
 ]
 
-const musicakesFactoryContractAddress = "0xec67abe36b67afB03228101b7110A0a6155fdCdD";
+
+const musicakesFactoryContractAddress = contract_factory_address;
+// const musicakesFactoryContractAddress = "0xec67abe36b67afB03228101b7110A0a6155fdCdD";
 const musicakesFactoryContract = new web3.eth.Contract(_abi, musicakesFactoryContractAddress);
 
 async function deployMusicakesContract() {
@@ -137,6 +143,8 @@ function addSmartContractToRelease(release_id, smart_contract_address) {
       if(xhr.status === 200){
 
         console.log("Smart contract address added to database.");
+        alert("Your Musicakes smart contract has been deployed.");
+        window.location.replace('/home');
 
       }
       else{

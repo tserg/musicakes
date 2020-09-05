@@ -45,7 +45,8 @@
       <h3 class="form-heading">Create a new release</h3>
 
       <!-- proxy element to store and query release id for window.appConfig --->
-      <meta id="release-id" data-address="{{ release.id }}">        
+      <meta id="release-id" data-address="{{ release.id }}">
+      <meta id="contract-factory-address" data-address="{{ contract_factory_address }}">      
       <h3>Step 3: Deploy your Musicakes smart contract</h3>
 
       <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
@@ -59,7 +60,8 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 <script type="text/javascript">
   window.appConfig = {
-    release_id: $('#release-id').data()
+    release_id: $('#release-id').data(),
+    contract_factory_address: $('#contract-factory-address').data()
   }
 </script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>

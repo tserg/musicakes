@@ -39,7 +39,8 @@ from models import (
     Artist,
     Release,
     Track,
-    Purchase
+    Purchase,
+    MusicakesContractFactory
 )
 
 from urllib.request import urlopen
@@ -1669,7 +1670,18 @@ def create_app(test_config=None):
 
                 release_data = current_release.short_public()
 
-                return render_template('pages/deploy_release.html', release=release_data, userinfo=data)
+                user_track_count = len(Track.query.filter(Track.artist_id==user.artist.id).all())
+
+                if user_track_count > 5:
+
+                    contract_factory_address = MusicakesContractFactory.query.get(2).smart_contract_address
+
+                else:
+
+                    contract_factory_address = MusicakesContractFactory.query.get(1).smart_contract_address
+
+                return render_template('pages/deploy_release.html', release=release_data, userinfo=data,
+                                        contract_factory_address=contract_factory_address)
 
             else:
 
