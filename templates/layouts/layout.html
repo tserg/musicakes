@@ -23,24 +23,19 @@
   <body>
 
     <!-- Navbar -->
-    <div class="w3-top">
+    <div class="topnav">
 
-        
+        <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='img/musicakes.png') }}" /></a>
 
-      <div class="w3-bar w3-red w3-card w3-left-align w3-large">
-
-
-        <a href="{{ url_for('index') }}" class="w3-bar-item w3-button w3-padding-large w3-white w3-hover-white"><img src="{{ url_for('static', filename='img/musicakes.png') }}" /></a>
-
-        <a href="{{ url_for('get_artists') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Artists</a>
-        <a href="{{ url_for('get_releases') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Releases</a>
-        <a href="{{ url_for('get_tracks') }}" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Tracks</a>
+        <a href="{{ url_for('get_artists') }}" class="topnav-main-item">Artists</a>
+        <a href="{{ url_for('get_releases') }}" class="topnav-main-item">Releases</a>
+        <a href="{{ url_for('get_tracks') }}" class="topnav-main-item">Tracks</a>
         {% if userinfo %}
 
-        <div class="w3-dropdown-hover">
+        <div class="topnav-dropdown">
           
-            <button class="w3-padding-large w3-hover-white w3-button">{{userinfo['username']}}</button>
-            <div class="w3-dropdown-content">
+            <a class="topnav-main-item">{{userinfo['username']}}</a>
+            <div class="topnav-dropdown-content">
               <a href="/account">View Account</a>
               <a href="/account/purchases">Purchases</a>
 
@@ -57,14 +52,13 @@
             </div>
         </div>
 
-            <a class="w3-bar-item w3-button w3-padding-large w3-hover-white" href="/logout">Logout</a>
+        <a class="topnav-main-item" href="/logout">Logout</a>
         
         {% else %}
 
-            <a href='/login' class="w3-bar-item w3-button w3-padding-large w3-hover-white">Log In/Sign up</a>
+        <a href='/login' class="topnav-main-item">Log In/Sign up</a>
 
         {% endif %}
-      </div>
 
 
     </div>
@@ -91,20 +85,16 @@
 
     {% block footer %}
     <!-- Footer -->
-    <footer class="w3-container w3-padding-64 w3-center w3-opacity">  
-      <div class="w3-xlarge w3-padding-32">
-        <a href="{{ url_for('show_about_us') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">About Us</a>
-        <a href="{{ url_for('show_faq') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">FAQ</a>
-        <a href="{{ url_for('show_terms_of_use') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Terms of Use</a>
-        <a href="{{ url_for('show_privacy_policy') }}" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Privacy Policy</a>
+    <div class="footer">  
 
-     </div>
+        <a href="{{ url_for('show_about_us') }}">About Us</a>
+        <a href="{{ url_for('show_faq') }}">FAQ</a>
+        <a href="{{ url_for('show_terms_of_use') }}">Terms of Use</a>
+        <a href="{{ url_for('show_privacy_policy') }}">Privacy Policy</a>
 
-      <div class="w3-xlarge w3-padding-32">
+    </div>
 
-      &copy; Copyright 2020.
 
-      </div>
 
     </footer>
 
