@@ -1,3 +1,11 @@
+body {
+	font-family: "Calibri", sans-serif;
+}
+
+button {
+	font-family: "Montserrat", sans-serif;
+}
+
 .topnav {
 	background-colour: white;
 	vertical-align: top;
