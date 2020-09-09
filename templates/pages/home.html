@@ -7,33 +7,36 @@
   </style>
 {% endblock %}
 {% block content %}
-<div class = "w3-container">
-	<div class="logged-in-box auth0-box logged-in">
-	    <h2>Welcome back, {{ userinfo.username }}!</h2>
-	</div>
+<div class="page-content-wrap">
+	<div class = "page-content-container">
+		<div>
+		    <h2>Welcome back, {{ userinfo.username }}!</h2>
+		</div>
 
-	<div class="w3-container">
+		<div>
 
-		<h3>Latest Releases</h3>
-
-		{% for release in latest_releases %}
-
-		<div class="w3-block">
-
-			<a href="/releases/{{ release.id }}">{{ release.artist_name}} - {{ release.release_name }}</a>
+			<h3>Latest Releases</h3>
 
 		</div>
 
-	    <div class="display-picture">
-	        {% if release.cover_art is none %}
-	          <img id="preview" src="/static/img/musicakes.png" />
-	        {% else %}
-	          <img src="{{ release.cover_art }}" />
-	        {% endif %}
-	    </div>
+		<div class="list-grid-container">
 
+		{% for release in latest_releases %}
+
+			<div class ="list-grid-item">>
+
+			    <div class="display-picture">
+			        {% if release.cover_art is none %}
+			          <img id="preview" src="/static/img/musicakes.png" />
+			        {% else %}
+			          <img src="{{ release.cover_art }}" />
+			        {% endif %}
+			    </div>
+			    <a href="/releases/{{ release.id }}"><h5>{{ release.artist_name}} - {{ release.release_name }}</h5></a>
+			</div>
 		{% endfor %}
 
+		</div>
 	</div>
 </div>
 {% endblock %}

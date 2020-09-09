@@ -73,7 +73,49 @@ button {
 }
 
 /* Show the dropdown menu on hover */
-.topnav-dropdown:hover .topnav-dropdown-content {display: block;}
+.topnav-dropdown:hover .topnav-dropdown-content {
+	display: block;
+}
+
+
+/* Styles for page */
+
+.page-container {
+	position: relative;
+	min-height: 70vh;
+}
+
+.page-content-wrap {
+	padding-bottom: 1 rem;
+}
+
+.page-content-container {
+	padding: 20px;
+}
+
+/* Styles for grids */
+
+.list-grid-container {
+	display: grid;
+	grid-template-rows: repeat(2, 250px);
+	grid-template-columns: repeat(5, 1fr);
+}
+
+.list-grid-item {
+
+}
+
+.display-picture {
+	height:200px;
+	width:200px;
+}
+
+.display-picture img {
+	height: 100%;
+	width: 100%;
+}
+
+/* Styles for footer */
 
 .footer {
 	left: 0;
@@ -81,6 +123,7 @@ button {
 	width: 100%;
 	text-align:center;
 	clear:both;
+	height: 1 rem;
 
 }
 
