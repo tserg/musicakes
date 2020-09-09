@@ -1,23 +1,24 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div>
+<div class = "page-content-wrap">
 
-	<div class="w3-content">
+	<div class="page-content-container">
 
-		<div class = "w3-container"> 
+		<div> 
 			<h4>
 				Username: {{ userinfo.username }}
 			</h4>
 		</div>
 
-		<div class = "w3-container"> 
+		<div> 
 			<h4>
 
 				Profile Picture
 			</h4>
 		</div>
-		<div class = "w3-container">
+
+		<div>
 			<div class = "display-picture"> 
 			{% if userinfo.profile_picture is none %}
 				<img id="preview" src="/static/img/musicakes.png" />
@@ -26,17 +27,18 @@
 			{% endif %}
 			</div>
 		</div>
-		<div class="w3-container">
+
+		<div>
 			<a href="/account/edit">Change profile picture</a>
 		</div>
 
-		<div class = "w3-container"> 
+		<div> 
 			<h4>
 				Created on: {{ userinfo.created_on }}
 			</h4>
 		</div>
 
-		<div class = "w3-container"> 
+		<div> 
 			<h4>
 				Artist profile: {% if userinfo.artist_name is none %} You have not created an artist profile  {% else %} <a href ="../artists/{{ userinfo.artist_id }}">{{ userinfo.artist_name}}</a> {% endif %}
 			</h4>

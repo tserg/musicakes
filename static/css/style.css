@@ -1,3 +1,7 @@
+:root {
+	--gridRowNum: 2;
+}
+
 body {
 	font-family: "Calibri", sans-serif;
 }
@@ -93,21 +97,32 @@ button {
 	padding: 20px;
 }
 
+.page-content-flex-container {
+	display: flex;
+	flex-direction: row;
+}
+
+.page-content-flex-subcontainer {
+	padding: 25px;
+}
+
 /* Styles for grids */
 
 .list-grid-container {
 	display: grid;
-	grid-template-rows: repeat(2, 250px);
+	grid-template-rows: repeat(var(--gridRowNum), 300px);
 	grid-template-columns: repeat(5, 1fr);
 }
 
 .list-grid-item {
+	padding-right: 25px;
 
 }
 
 .display-picture {
 	height:200px;
 	width:200px;
+	padding-bottom: 20px;
 }
 
 .display-picture img {

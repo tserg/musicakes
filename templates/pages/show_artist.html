@@ -1,41 +1,68 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div class="w3-container">
+<div class="page-content-wrap">
+
+	<div class="page-content-flex-container">
+
+		<div class="page-content-flex-subcontainer">
+			<div class = "page-content-container">
+				<h4>
+					Artist: {{ artist.name }}
+				</h4>
+
+				<h4>
+					Country: {{ artist.country }}
+				</h4>
+
+			    <div class="display-picture">
+			        {% if artist.artist_picture is none %}
+			          <img id="preview" src="/static/img/musicakes.png" />
+			        {% else %}
+			          <img src="{{ artist.artist_picture }}" />
+			        {% endif %}
+			    </div>
+			</div>
+		</div>
+
+	    <div class="page-content-flex-subcontainer">
+	    	<div class="page-content-container">
+				<h4>Releases: </h4>
+				{% if not artist.releases %}
+					There are no releases currently listed.
+				{% endif %}
+
+			</div>
+			<div class="page-content-container">
+				<meta id="release-count" data-count="{{ artist.releases|length }}">
+				<div class = "list-grid-container">
 
 
+					{% for release in artist.releases %}
+					<div class="list-grid-item">
+					    <div class="display-picture">
+					        {% if release.cover_art is none %}
+					          <img id="preview" src="/static/img/musicakes.png" />
+					        {% else %}
+					          <img src="{{ release.cover_art }}" />
+					        {% endif %}
+					    </div>
+						<a href="../releases/{{ release.release_id }}">{{ release.release_name }}</a>
+					</div>
+					{% endfor %}
 
-	<div>
-		<h4>
-			Artist: {{ artist.name }}
-		</h4>
-
-		<h4>
-			Country: {{ artist.country }}
-		</h4>
-	</div>
-
-
-    <div class="display-picture">
-        {% if artist.artist_picture is none %}
-          <img id="preview" src="/static/img/musicakes.png" />
-        {% else %}
-          <img src="{{ artist.artist_picture }}" />
-        {% endif %}
-    </div>
-
-	<div>
-		<h4>Releases: </h4>
-		{% for release in artist.releases %}
-			<ol>
-
-				<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
-
-			</ol>
-		{% endfor %}
-
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
+<script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
+<script type="text/javascript">
+  window.appConfig = {
+    release_count: $('#release-count').data(),
+  }
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/show_artist.js') }}"></script>
 
 {% endblock %}
