@@ -1,59 +1,84 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div class = "w3-container">
+<div class = "page-content-wrap">
 
-	<div>
+	<div class="page-content-container">
 
 		<h4>Purchases: </h4>
 
-		{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) or (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
+	</div>
 
 
-			{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) %}
-				<div>
+	{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) or (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
 
-					<h5> Releases</h5>
 
-					{% for release in userinfo.purchased_releases %}
-						<ol>
 
-							<a href="../releases/{{ release.release_id }}">>{{ release.release_name }}</a>
-							 / 
-							<button type="button" class="download-release-btn" id="{{ release.release_id }}">Download</button>
+	{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) %}
+	<div class="page-content-container">
+		<div>
 
-						</ol>
-					{% endfor %}
+			<h5> Releases</h5>
 
-				</div>
+		</div>
+		<div class="list-grid-container">
 
-				<div>
+			{% for release in userinfo.purchased_releases %}
+			<div class="list-grid-item">
 
-			{% endif %}
+			    <div class="display-picture">
+			        {% if release.cover_art is none %}
+			          <img id="preview" src="/static/img/musicakes.png" />
+			        {% else %}
+			          <img src="{{ release.cover_art }}" />
+			        {% endif %}
+			    </div>
 
-			{% if (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
+				<a href="../releases/{{ release.release_id }}">{{ release.release_name }}</a>
+				 / 
+				<button type="button" class="download-release-btn" id="{{ release.release_id }}">Download</button>
+			</div>
+			{% endfor %}
 
-				<h5> Tracks</h5>
+		</div>
+	</div>
 
-				{% for track in userinfo.purchased_tracks %}
-					<ol>
+	{% endif %}
 
-						<a href="../tracks/{{ track.track_id }}">>{{ track.track_name }}</a>
-						 / 
-						<button type="button" class="download-track-btn" id="{{ track.track_id }}">Download</button>
 
-					</ol>
-				{% endfor %}
-			{% endif %}
+	{% if (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
+	<div class="page-content-container">
+		<div>
+			<h5> Tracks</h5>
 		</div>
 
-		{% else %}
+		<div class="list-grid-container">
+			{% for track in userinfo.purchased_tracks %}
+			<div class="list-grid-item">
 
-			<h4>You have not purchased any music yet.</h4>
+			    <div class="display-picture">
+			        {% if track.release_cover_art is none %}
+			          <img id="preview" src="/static/img/musicakes.png" />
+			        {% else %}
+			          <img src="{{ track.release_cover_art }}" />
+			        {% endif %}
+			    </div>
 
+				<a href="../tracks/{{ track.track_id }}">>{{ track.track_name }}</a>
+				 / 
+				<button type="button" class="download-track-btn" id="{{ track.track_id }}">Download</button>
+
+			</div>
+			{% endfor %}
 		{% endif %}
-
 	</div>
+
+	{% else %}
+
+		<h4>You have not purchased any music yet.</h4>
+
+	{% endif %}
+
 </div>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
