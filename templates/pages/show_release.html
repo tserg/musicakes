@@ -1,247 +1,230 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div class="w3-container-holder">
-  <h1>If you have submitted a transaction, do not refresh your page until the transaction is confirmed.</h1>
-  <div>
 
-<h1>Steps to get this release for free</h1>
-<h5>Note: All testnet tokens are free and do not have any value; you do not need to spend any real money.</h5>
-<ol>
-  <li>Download <a href='https://metamask.io/' target='_blank'>Metamask</a>.</li>
-  <li>Create a wallet address at <a href="https://www.myetherwallet.com/ ">MyEtherWallet</a> and unlock your Metamask with your newly created wallet address.</li>
-  <li>Change your network from Ethereum mainnet to Kovan testnet.</li>
-   <li>Navigate to the <a href='https://faucet.ropsten.be/' target='_blank'>Ropsten ETH faucet</a> and enter your wallet address. Click on "Send me test Ether".</li>
-  <li>Navigate to the <a href='https://app.compound.finance/' target='_blank'>Compound app</a> and connect your Metamask wallet. Select DAI in under the 'Supply' section and then click on 'FAUCET'. Approve the transaction.</li>
-  <li>Once the transaction is confirmed, you should have DAI tokens in your wallet address!</li>
-</ol>
+<div class="page-content-wrap">
 
-</div>
+  <div class="page-content-flex-container">
 
-<div id = "release-and-user-dashboard" class = "dashboard">
-
-
-  <div id = "release-dashboard" class="w3-container">
-
-  	<div class = "w3-content">
-  		<h4>
-  			Release: {{ release.release_name }}
-  		</h4>
-
-  		<h4>
-  			Artist: {{ release.artist_name }}
-  		</h4>
-  		<h4>
-  			Price: {{ release.price }}
-  		</h4>
-  		<h4>
-  			Tracks: 
-  		</h4>
-  
-  		<ol>
-  			{% for track in release.tracks %}
-  			<li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
-  			{% endfor %}
-  		</ol>
-  		
-
+    <div class="page-content-flex-subcontainer" id="release-dashboard">
 
       <div>
-  			<span>Created on: {{ release.created_on }}</span>
-  		</div>
+        <h4>
+          Release: {{ release.release_name }}
+        </h4>
 
-  	</div>
-  </div>
-</div>
+        <h4>
+          Artist: {{ release.artist_name }}
+        </h4>
+        <h4>
+          Price: {{ release.price }}
+        </h4>
+        <h4>
+          Tracks: 
+        </h4>
+    
+        <ol>
+          {% for track in release.tracks %}
+          <li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
+          {% endfor %}
+        </ol>
+        
 
-<div class = "dashboard">
 
-  <div class = "w3-container">
+        <div>
+          <span>Created on: {{ release.created_on }}</span>
+        </div>
 
-    <h4>Cover Art</h4>
-
-    <div class = "release-cover-art">
-      <img src={{ release.cover_art }} />
-    </div>
-
-  <h4>
-    Description: {{ release.description }}
-  </h4>
-
-  </div>
-  <div class="w3-container">
-    <h4>
-      Purchasers:
-      {% for purchaser in release.purchasers %}
-      <ol>
-        <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
-      </ol>
-      {% endfor %}
-    </h4>
-  </div>
-
-</div>
-
-<div class = "dashboard">
-
-  {% if userinfo and creator is true and release.smart_contract_address is none %}
-
-  <form action="{{ url_for('show_release_for_deployment', release_id=release.id) }}">
-      <input type="submit" value="Deploy Smart Contract" />
-  </form>
-  {% endif %}
-
-  <div id = "user-dashboard" class="sub-dashboard">
-
-    <span><h3>User Dashboard</h3></span>
-
-    <div id="wallet_display">
-      <span>Current wallet: </span>
-      <span id ="account-address"></span>
-    </div>
-
-    <div id="eth_balance_display">
-      <span>Current ETH balance: </span>
-      <span id = "account-balance"></span>
-    </div>
-
-    <br>
-    <button id="enable-ethereum-button">Enable Ethereum</button>
-  </div>
-    <div id ="payment-token-dashboard" class="sub-dashboard">
-
-      <h3>DAI Dashboard</h3>
-      <div id="payment-token-balance-display">
-        <span>Current DAI balance: </span>
-        <span id ="payment-token-balance"></span>
       </div>
 
-      {% if userinfo and userinfo.purchased is none %}
+    </div>
 
-      <form action="" method="post" >
+    <div class="page-content-flex-subcontainer" id="release-dashboard">
+      <h4>Cover Art</h4>
+      <div>
+        <div class = "release-cover-art">
+          <img src={{ release.cover_art }} />
+        </div>
 
-          <div>
-            <label for="pay-contract-amount">Amount of DAI to pay: </label>
-            <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          </div>
-          <div>
-            <button type="button" id="btn-pay-contract">Buy Release with DAI</button>
-          </div>
+        <h4>
+          Description: {{ release.description }}
+        </h4>
 
+      </div>
+      <div>
+        <h4>
+          Purchasers:
+          {% for purchaser in release.purchasers %}
+          <ol>
+            <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
+          </ol>
+          {% endfor %}
+        </h4>
+      </div>
+
+    </div>
+
+    <div class="page-content-flex-subcontainer" id="smart-contract-dashboard">
+
+      {% if userinfo and creator is true and release.smart_contract_address is none %}
+
+      <form action="{{ url_for('show_release_for_deployment', release_id=release.id) }}">
+          <input type="submit" value="Deploy Smart Contract" />
       </form>
-
-      {% elif userinfo and userinfo.purchased is not none %}
-
-      <form action="/purchase" method="post" hidden>
-          <div>
-
-        
-          <label for="pay-contract-amount">Pay DAI to token contract: </label>
-          <input type="number" size=50 id="pay-contract-amount">
-          <br>
-          <button type="button" id="btn-pay-contract">Pay</button></input>
-          </div>
-      </form>
-
-      <span>You have already purchased this release.</span>
-
-      {% else %}
-
-      <form action="/purchase" method="post" hidden>
-          <div>
-
-        
-          <label for="pay-contract-amount">Pay DAI to token contract: </label>
-          <input type="number" size=50 id="pay-contract-amount">
-          <br>
-          <button type="button" id="btn-pay-contract">Pay</button></input>
-          </div>
-      </form>
-
       {% endif %}
 
-    </div>
+      <div id = "user-dashboard" class="sub-dashboard">
 
-    <div id = "musicakes-dashboard" class = "sub-dashboard">
-      <h3>Musicakes Dashboard</h3>
-      <div id = "musicakes-contract-address-display">
-        <span>Contract address: {{ release.smart_contract_address }}</span>
+        <span><h3>User Dashboard</h3></span>
 
-        <!-- proxy element to store and query smart contract address for window.appConfig --->
-        <meta id="smart_contract_address" data-address="{{ release.smart_contract_address }}">
+        <div id="wallet_display">
+          <span>Current wallet: </span>
+          <span id ="account-address"></span>
+        </div>
 
-        <!-- proxy element to store and query release price for window.appConfig --->
-        <meta id="price" data-address="{{ release.price }}">
+        <div id="eth_balance_display">
+          <span>Current ETH balance: </span>
+          <span id = "account-balance"></span>
+        </div>
 
-        <!-- proxy element to store and query release id for window.appConfig --->
-        <meta id="release-id" data-address="{{ release.id }}">        
-
-        <!-- proxy element to store and query CSRF token for window.appConfig --->
-        <meta id="csrf-token" data-address="{{ csrf_token() }}">   
-
-        <span id = "musicakes-address"></span>
+        <br>
+        <button id="enable-ethereum-button">Enable Ethereum</button>
       </div>
 
-      <div id = "musicakes-supply-display">
-        <span>Total supply of Musicakes: </span>
-        <span id = "musicakes-supply"></span>
+      <div id ="payment-token-dashboard" class="sub-dashboard">
+
+        <h3>DAI Dashboard</h3>
+        <div id="payment-token-balance-display">
+          <span>Current DAI balance: </span>
+          <span id ="payment-token-balance"></span>
+        </div>
+
+        {% if userinfo and userinfo.purchased is none %}
+
+        <form action="" method="post" >
+
+            <div>
+              <label for="pay-contract-amount">Amount of DAI to pay: </label>
+              <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            </div>
+            <div>
+              <button type="button" id="btn-pay-contract">Buy Release with DAI</button>
+            </div>
+
+        </form>
+
+        {% elif userinfo and userinfo.purchased is not none %}
+
+        <form action="/purchase" method="post" hidden>
+            <div>
+
+          
+            <label for="pay-contract-amount">Pay DAI to token contract: </label>
+            <input type="number" size=50 id="pay-contract-amount">
+            <br>
+            <button type="button" id="btn-pay-contract">Pay</button></input>
+            </div>
+        </form>
+
+        <span>You have already purchased this release.</span>
+
+        {% else %}
+
+        <form action="/purchase" method="post" hidden>
+            <div>
+
+          
+            <label for="pay-contract-amount">Pay DAI to token contract: </label>
+            <input type="number" size=50 id="pay-contract-amount">
+            <br>
+            <button type="button" id="btn-pay-contract">Pay</button></input>
+            </div>
+        </form>
+
+        {% endif %}
+
       </div>
 
-      <div id = "user-token-balance-display">
-        <span>Number of Musicakes held in this wallet: </span>
-        <span id = "user-musicakes-balance"></span>
+      <div id = "musicakes-dashboard" class = "sub-dashboard">
+        <h3>Musicakes Dashboard</h3>
+        <div id = "musicakes-contract-address-display">
+          <span>Contract address: {{ release.smart_contract_address }}</span>
+
+          <!-- proxy element to store and query smart contract address for window.appConfig --->
+          <meta id="smart_contract_address" data-address="{{ release.smart_contract_address }}">
+
+          <!-- proxy element to store and query release price for window.appConfig --->
+          <meta id="price" data-address="{{ release.price }}">
+
+          <!-- proxy element to store and query release id for window.appConfig --->
+          <meta id="release-id" data-address="{{ release.id }}">        
+
+          <!-- proxy element to store and query CSRF token for window.appConfig --->
+          <meta id="csrf-token" data-address="{{ csrf_token() }}">   
+
+          <span id = "musicakes-address"></span>
+        </div>
+
+        <div id = "musicakes-supply-display">
+          <span>Total supply of Musicakes: </span>
+          <span id = "musicakes-supply"></span>
+        </div>
+
+        <div id = "user-token-balance-display">
+          <span>Number of Musicakes held in this wallet: </span>
+          <span id = "user-musicakes-balance"></span>
+        </div>
+
+
+        <div id = "musicakes-payment-token-display">
+          <span>DAI balance in Musicakes contract: </span>
+          <span id = "musicakes-payment-token-balance"></span>
+        </div>
+
+        <div id="account-unclaimed-dividends-display">
+          <span>Dividends unclaimed: </span>
+          <span id="account-unclaimed-dividends"></span>
+        </div>
+
+        <div id="claim-dividends-section">
+          <button type="button" id="btn-claim-dividends">Claim Dividends</button>
+        </div>
+
+        <div id="update-dividends-section">
+          <button type="button" id="btn-update-dividends">Update Dividends</button>
+        </div>
+
       </div>
 
+      <div id = "musicakes-management-dashboard" class = "sub-dashboard">
 
-      <div id = "musicakes-payment-token-display">
-        <span>DAI balance in Musicakes contract: </span>
-        <span id = "musicakes-payment-token-balance"></span>
-      </div>
+        <div>
 
-      <div id="account-unclaimed-dividends-display">
-        <span>Dividends unclaimed: </span>
-        <span id="account-unclaimed-dividends"></span>
-      </div>
+          <h3>Transfer your Musicakes</h3>
 
-      <div id="claim-dividends-section">
-        <button type="button" id="btn-claim-dividends">Claim Dividends</button>
-      </div>
+        </div>
 
-      <div id="update-dividends-section">
-        <button type="button" id="btn-update-dividends">Update Dividends</button>
-      </div>
-
-    </div>
-
-    <div id = "musicakes-management-dashboard" class = "sub-dashboard">
-
-      <div>
-
-        <h3>Transfer your Musicakes</h3>
-
-      </div>
-
-      
-      <div>
-
-
-          Address to transfer Musicakes: 
-          <input type="text" size=50 id="transfer-musicakes-address">
-      </div>
-      <div>
-          Number of Musicakes to transfer: 
-          <input type="text" size=50 id="transfer-musicakes-amount">
-      </div>
-
-      <div>
         
-        <button type="button" id="btn-transfer-musicakes">Transfer</button>
-      </div>
+        <div>
 
+
+            Address to transfer Musicakes: 
+            <input type="text" size=50 id="transfer-musicakes-address">
+        </div>
+        <div>
+            Number of Musicakes to transfer: 
+            <input type="text" size=50 id="transfer-musicakes-amount">
+        </div>
+
+        <div>
+          
+          <button type="button" id="btn-transfer-musicakes">Transfer</button>
+        </div>
+
+      </div>
     </div>
   </div>
-
 </div>
 
 
