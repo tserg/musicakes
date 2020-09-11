@@ -15,6 +15,7 @@ button {
 	vertical-align: top;
 	display: inline-block;
 	width: 100%;
+	min-width:700px;
 	border-bottom: 3px solid #ccc;
 }
 
