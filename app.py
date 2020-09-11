@@ -921,7 +921,7 @@ def create_app(test_config=None):
             start = (page-1)*ARTISTS_PER_PAGE
             end = start + ARTISTS_PER_PAGE
 
-            all_artists = Artist.query.all()
+            all_artists = Artist.query.order_by(Artist.created_on.desc()).all()
 
             formatted_all_artists = [artist.short() for artist in all_artists]
 
@@ -1425,7 +1425,7 @@ def create_app(test_config=None):
             start = (page-1)*RELEASES_PER_PAGE
             end = start + RELEASES_PER_PAGE
 
-            all_releases = Release.query.all()
+            all_releases = Release.query.order_by(Release.created_on.desc()).all()
 
             formatted_all_releases = [release.short_public()
                                       for release in all_releases]
@@ -1751,7 +1751,7 @@ def create_app(test_config=None):
             start = (page-1)*TRACKS_PER_PAGE
             end = start + TRACKS_PER_PAGE
 
-            all_tracks = Track.query.all()
+            all_tracks = Track.query.order_by(Track.created_on.desc()).all()
 
             formatted_all_tracks = [track.short_public() for track in all_tracks]
 
