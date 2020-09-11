@@ -10,11 +10,8 @@
 		</h4>
 
 		<h4>
-
 			Profile Picture
 		</h4>
-
-
 
 		<div class = "display-picture"> 
 		{% if userinfo.profile_picture is none %}
@@ -23,10 +20,7 @@
 			<img src="{{ userinfo.profile_picture }}" />
 		{% endif %}
 		</div>
-
-
-
-		<a href="/account/edit">Change profile picture</a>
+		<a href="/account/edit" class="button">Change profile picture</a>
 	</div>
 
 	<div class = "page-content-container"> 
