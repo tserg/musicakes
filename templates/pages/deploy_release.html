@@ -1,62 +1,66 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Create a new release{% endblock %}
 {% block content %}
-{% if userinfo.artist_name is none %} 
-<h4> You have not created an artist profile yet.</h4> 
 
-{% else %} 
-<div id = "release-and-user-dashboard" class = "dashboard">
+<div class="page-content-wrap">
+  {% if userinfo.artist_name is none %} 
+  <h4> You have not created an artist profile yet.</h4> 
 
-
-  <div id = "release-dashboard" class="w3-container">
-
-    <div class = "w3-content">
-      <h4>
-        Release: {{ release.release_name }}
-      </h4>
-
-      <h4>
-        Artist: {{ release.artist_name }}
-      </h4>
-      <h4>
-        Price: {{ release.price }}
-      </h4>
-      <h4>
-        Tracks: 
-      </h4>
-  
-      <ol>
-        {% for track in release.tracks %}
-        <li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
-        {% endfor %}
-      </ol>
-      
+  {% else %} 
+  <div id = "release-and-user-dashboard" class = "dashboard">
 
 
-      <div>
-        <span>Created on: {{ release.created_on }}</span>
+    <div id = "release-dashboard" class="w3-container">
+
+      <div class = "w3-content">
+        <h4>
+          Release: {{ release.release_name }}
+        </h4>
+
+        <h4>
+          Artist: {{ release.artist_name }}
+        </h4>
+        <h4>
+          Price: {{ release.price }}
+        </h4>
+        <h4>
+          Tracks: 
+        </h4>
+    
+        <ol>
+          {% for track in release.tracks %}
+          <li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
+          {% endfor %}
+        </ol>
+        
+
+
+        <div>
+          <span>Created on: {{ release.created_on }}</span>
+        </div>
+
       </div>
-
     </div>
   </div>
+    <div class="form-wrapper">
+
+        <h3 class="form-heading">Create a new release</h3>
+
+        <!-- proxy element to store and query release id for window.appConfig --->
+        <meta id="release-id" data-address="{{ release.id }}">
+        <meta id="contract-factory-address" data-address="{{ contract_factory_address }}">      
+        <h3>Step 3: Deploy your Musicakes smart contract</h3>
+
+        <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
+
+        <div class="w3-container">
+          <button type="button" value="Deploy contract" class="btn btn-primary btn-lg btn-block" id="deploy-contract-btn">Deploy smart contract</button>
+        </div>
+
+    </div>
+  {% endif %}
+
 </div>
-  <div class="form-wrapper">
-
-      <h3 class="form-heading">Create a new release</h3>
-
-      <!-- proxy element to store and query release id for window.appConfig --->
-      <meta id="release-id" data-address="{{ release.id }}">
-      <meta id="contract-factory-address" data-address="{{ contract_factory_address }}">      
-      <h3>Step 3: Deploy your Musicakes smart contract</h3>
-
-      <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
-
-      <div class="w3-container">
-        <button type="button" value="Deploy contract" class="btn btn-primary btn-lg btn-block" id="deploy-contract-btn">Deploy smart contract</button>
-      </div>
-
-  </div>
-{% endif %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 <script type="text/javascript">
   window.appConfig = {

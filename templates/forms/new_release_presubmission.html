@@ -1,26 +1,34 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Create a new release - Step 1{% endblock %}
 {% block content %}
-{% if userinfo.artist_name is none %} 
-<h4> You have not created an artist profile yet.</h4> 
 
-{% else %} 
-  <div class="form-wrapper">
-    <form method="post" class="form" onsubmit="return validateForm()" name="new_release">
-      {{ form.hidden_tag() }}
-      <h3 class="form-heading">Create a new release</h3>
-      <br>
-      <h3>Step 1: Select the number of tracks</h3>
-
-      <div class="form-group">
-          <label for="track_count">Number of tracks</label>
-          {{ form.track_count(class_ = 'form-control', autofocus = true) }}
-
-      </div>
-
-      <input type="submit" value="Create release" class="btn btn-primary btn-lg btn-block">
-    </form>
+<div class="page-content-wrap">
+  {% if userinfo.artist_name is none %} 
+  <div class="page-content-container">
+    <h4> You have not created an artist profile yet.</h4>
   </div>
+
+  {% else %} 
+  <div class="page-content-container">
+    <div class="form-wrapper">
+      <form method="post" class="form" onsubmit="return validateForm()" name="new_release">
+        {{ form.hidden_tag() }}
+
+        <h3 class="form-heading">Create a new release</h3>
+        <h3>Step 1: Select the number of tracks</h3>
+
+        <div class="form-group">
+            <label for="track_count">Number of tracks</label>
+            {{ form.track_count(class_ = 'form-control', autofocus = true) }}
+
+        </div>
+
+        <input type="submit" value="Create release" class="btn btn-primary btn-lg btn-block">
+      </form>
+    </div>
+  </div>
+
+</div>
 {% endif %}
 
 {% endblock %}

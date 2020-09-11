@@ -1,107 +1,161 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Create a new release{% endblock %}
 {% block content %}
-{% if userinfo.artist_name is none %} 
-<h4> You have not created an artist profile yet.</h4> 
+<div class="page-content-wrap">
+  {% if userinfo.artist_name is none %}
 
-{% else %} 
-  <div class="form-wrapper">
-    <form class="form" name="new_release" onsubmit="return false">
+  <div class="page-content-container">
 
-      <div class="w3-container">
-        <h3 class="form-heading">Create a new release</h3>
+    <h4> You have not created an artist profile yet.</h4> 
+  </div>
+
+  {% else %} 
+  <div class="page-content-container">
+    <div class="form-wrapper">
+      <form class="form" name="new_release" onsubmit="return false">
+
+        <div class="w3-container">
+          <h3 class="form-heading">Create a new release</h3>
+          <br>
+          <h3>Step 2: Upload your tracks</h3>
+        </div>
+
+        <div class="w3-container">
+            <h4>Release Information</h4>
+
+        </div>
+
+        <div>
+
+          <fieldset class ="form-group" id="tracks-information">
+
+          <div class="form-group">
+            <div class="form-sub-group">
+              <label for="release_name">Release name</label>
+            </div>
+
+            <div class="form-sub-group">
+              <input type="text" id="release-name-input" minlength="1" maxlength="100">
+              <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-sub-group">
+              <label for="release_cover_art">Cover Art</label>
+            </div>
+            <div class="form-sub-group">
+              <input type="file" id="release-cover-art-input" accept="image/png, image/jpg, image/jpeg">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-sub-group">
+              <label for="release_text">Description of release</label>
+            </div>
+            <div class="form-sub-group">
+              <textarea id="release-text-input" rows="4" cols="50"></textarea>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="form-sub-group">
+              <label for="release_price">Price of release</label>
+            </div>
+            <div class="form-sub-group">
+              <input type="number" id="release-price-input" value="1" min="1" max="100">
+            </div>
+          </div>
+
+        </fieldset>
+
+        </div>
+
+        <div>
+            <h4>Tracks</h4>
+
+        </div>
+
+        <div id="track-form-container">
+          <fieldset class ="track-form-group">
+            <div class="form-sub-group">
+              <label for="track-name-input-1">Track name</label>
+            </div>
+
+            <div class="form-sub-group">
+              <input type="text" id="track-name-input-1" minlength="1" maxlength="100">
+            </div>
+            <div class="form-sub-group">
+              <label for="track-file-1">Track WAV file</label>
+            </div>
+
+            <div class="form-sub-group">
+              <input type="file" id="track-file-input-1" accept="audo/wav">
+            </div>
+
+            <div class="form-sub-group">
+              <label for="track_price-1">Track price</label>
+            </div>
+
+            <div class="form-sub-group">
+
+              <input type="number" id="track-price-input-1" value="1" min="1" max="100">
+            </div>
+
+            <label for="upload-progress-1">Upload progress: </label>
+            <progress id="upload-progress-1" value="0" max="100">0%</progress>
+
+          </fieldset>
+          {% for track_number in track_count %}
+          <fieldset class ="track-form-group">
+            <div class="form-sub-group">
+              <label for="track-name-input-{{track_number}}">Track name</label>
+            </div>
+
+            <div class="form-sub-group">
+              <input type="text" id="track-name-input-{{track_number}}" minlength="1" maxlength="100">
+            </div>
+
+            <div class="form-sub-group">
+              <label for="track-file-input-{{track_number}}">Track WAV file</label>
+            </div>
+
+            <div class="form-sub-group">
+              <input type="file" id="track-file-input-{{track_number}}" accept="audo/wav">
+            </div>
+
+            <div class="form-sub-group">
+              <label for="track_price-input-{{track_number}}">Track price</label>
+            </div>
+
+            <div class="form-sub-group">
+
+              <input type="number" id="track-price-input-{{track_number}}" value="1" min="1" max="100">
+            </div>
+            <label for="upload-progress-{{track_number}}">Upload progress: </label>
+            <progress id="upload-progress-{{track_number}}" value="0" max="100">0%</progress>
+
+          </fieldset>
+          {% endfor %}
+        </div>
         <br>
-        <h3>Step 2: Upload your tracks</h3>
-      </div>
 
-      <div class="w3-container">
-          <h4>Release Information</h4>
-
-      </div>
-
-      <div class="w3-container">
-
-        <fieldset class ="form-group" id="tracks-information">
-
-        <div class="form-group">
-            <label for="release_name">Release name</label>
-            <input type="text" id="release-name-input" minlength="1" maxlength="100">
-            <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
-
+        <div>
+          <button type="submit" value="Create release" class="btn btn-primary btn-lg btn-block" id="create-release-btn">Create release</button>
         </div>
 
-        <div class="form-group">
-            <label for="release_cover_art">Cover Art</label>
-            <input type="file" id="release-cover-art-input" accept="image/png, image/jpg, image/jpeg">
-
-        </div>
-
-        <div class="form-group">
-            <label for="release_text">Description of release</label>
-            <textarea id="release-text-input" rows="4" cols="50"></textarea>
-
-        </div>
-
-        <div class="form-group">
-            <label for="release_price">Price of release</label>
-            <input type="number" id="release-price-input" value="1" min="1" max="100">
-
-        </div>
-
-      </fieldset>
-
-      </div>
-
-      <div class="w3-container">
-          <h4>Tracks</h4>
-
-      </div>
-
-      <div class="w3-container" id="track-form-container">
-        <fieldset class ="track-form-group">
-          <label for="track-name-input-1">Track name</label>
-          <input type="text" id="track-name-input-1" minlength="1" maxlength="100">
-          <br><br>
-          <label for="track-file-1">Track WAV file</label>
-          <input type="file" id="track-file-input-1" accept="audo/wav">
-          <br><br>
-          <label for="track_price-1">Track price</label>
-          <input type="number" id="track-price-input-1" value="1" min="1" max="100">
-          <br><br>
-          <label for="upload-progress-1">Upload progress: </label>
-          <progress id="upload-progress-1" value="0" max="100">0%</progress>
-
-        </fieldset>
-        {% for track_number in track_count %}
-        <fieldset class ="track-form-group">
-          <label for="track-name-input-{{track_number}}">Track name</label>
-          <input type="text" id="track-name-input-{{track_number}}" minlength="1" maxlength="100">
-          <br><br>
-          <label for="track-file-input-{{track_number}}">Track WAV file</label>
-          <input type="file" id="track-file-input-{{track_number}}" accept="audo/wav">
-          <br><br>
-          <label for="track_price-input-{{track_number}}">Track price</label>
-          <input type="number" id="track-price-input-{{track_number}}" value="1" min="1" max="100">
-          <br><br>
-          <label for="upload-progress-{{track_number}}">Upload progress: </label>
-          <progress id="upload-progress-{{track_number}}" value="0" max="100">0%</progress>
-
-        </fieldset>
-        {% endfor %}
-      </div>
+      </form>
       <br>
-
-      <div class="w3-container">
-        <button type="submit" value="Create release" class="btn btn-primary btn-lg btn-block" id="create-release-btn">Create release</button>
+      <div>
+        <button type="button" value="Back" class="btn btn-primary btn-lg btn-block" onclick="window.location='/releases/create';">Back</button>
       </div>
-
-    </form>
-    <br>
-    <div class="w3-container">
-      <button type="button" value="Back" class="btn btn-primary btn-lg btn-block" onclick="window.location='/releases/create';">Back</button>
     </div>
   </div>
+
 {% endif %}
+
+</div>
+
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/new_release.js') }}"></script>
 
