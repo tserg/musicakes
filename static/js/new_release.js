@@ -157,6 +157,8 @@ function addReleaseToServer(file_name, release_name, release_price, release_text
         response = JSON.parse(xhr.response);
 
         const release_id = response['release_id'];
+        console.log("Release is created with ID");
+        console.log(release_id);
         addTracks(release_id);
 
       }
@@ -280,6 +282,7 @@ function addTrackToServer(file_name, track_name, track_price, release_id) {
         created_track_count += 1;
         console.log(created_track_count);
         console.log(tracks_count);
+        console.log(release_id);
         if (created_track_count == tracks_count) {
           alert("All tracks have been successfully uploaded");
           window.location.replace('/releases/' + release_id.toString() + '/deploy');

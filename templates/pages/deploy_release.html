@@ -7,12 +7,10 @@
   <h4> You have not created an artist profile yet.</h4> 
 
   {% else %} 
-  <div id = "release-and-user-dashboard" class = "dashboard">
 
+  <div class = "page-content-container" id="release-dashboard">
 
-    <div id = "release-dashboard" class="w3-container">
-
-      <div class = "w3-content">
+      <div>
         <h4>
           Release: {{ release.release_name }}
         </h4>
@@ -40,9 +38,10 @@
         </div>
 
       </div>
-    </div>
+
   </div>
-    <div class="form-wrapper">
+  <div class="page-content-container">
+    <div>
 
         <h3 class="form-heading">Create a new release</h3>
 
@@ -53,11 +52,12 @@
 
         <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
 
-        <div class="w3-container">
+        <div>
           <button type="button" value="Deploy contract" class="btn btn-primary btn-lg btn-block" id="deploy-contract-btn">Deploy smart contract</button>
         </div>
 
     </div>
+  </div>
   {% endif %}
 
 </div>

@@ -143,6 +143,22 @@ button {
 	max-height:100%;
 }
 
+/* Divs for forms */
+
+.form-group {
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.form-sub-group {
+	padding-top:5px;
+	padding-bottom:5px;
+}
+
+#release-text-input {
+	resize: none;
+}
+
 
 /* Styles for footer */
 
@@ -164,16 +180,3 @@ button {
 	font-size: 17px;
 }
 
-.form-group {
-	padding-top: 15px;
-	padding-bottom: 15px;
-}
-
-.form-sub-group {
-	padding-top:5px;
-	padding-bottom:5px;
-}
-
-#release-text-input {
-	resize: none;
-}
