@@ -2,33 +2,35 @@
 {% block title %}Create an artist profile{% endblock %}
 {% block content %}
 {% if userinfo.artist_name is none %}
-<div class ="w3-container">
-  <div class="form-wrapper">
-    <form method="post" class="form" onsubmit="return validateForm()" name="new_artist">
+<div class="page-content-wrap">
+  <div class ="page-content-container">
+    <div class="form-group">
+      <form method="post" class="form" onsubmit="return validateForm()" name="new_artist">
 
-      {{ form.hidden_tag() }}
-      <h3 class="form-heading">Create an artist profile</h3>
+        {{ form.hidden_tag() }}
+        <h3 class="form-heading">Create an artist profile</h3>
 
-      <fieldset>
+        <fieldset>
 
-      <div class="form-group">
-          <label for="artist_name">Artist name</label>
-          {{ form.artist_name(class_ = 'form-control', autofocus = true) }}
+        <div class="form-sub-group">
+            <label for="artist_name">Artist name</label>
+            {{ form.artist_name(class_ = 'form-control', autofocus = true) }}
 
-      </div>
-      <div class="form-group">
-        <label for="artist_country">Country</label>
-          {{ form.artist_country(class_ = 'form-control', autofocus = true) }}
         </div>
-      </fieldset>
-      <br>
-      <input type="submit" value="Create artist profile" class="btn btn-primary btn-lg btn-block">
+        <div class="form-sub-group">
+          <label for="artist_country">Country</label>
+            {{ form.artist_country(class_ = 'form-control', autofocus = true) }}
+          </div>
+        </fieldset>
+        <br>
+        <input type="submit" value="Create artist profile">
 
-    </form>
+      </form>
+    </div>
   </div>
+  {% else %} 
+    <h4> You have an existing artist profile tied to this account.</h4> 
+  {% endif %}
 </div>
-{% else %} 
-  <h4> You have an existing artist profile tied to this account.</h4> 
-{% endif %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/new_artist.js') }}"></script>
 {% endblock %}

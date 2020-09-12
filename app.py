@@ -1672,6 +1672,10 @@ def create_app(test_config=None):
 
                 user_track_count = len(Track.query.filter(Track.artist_id==user.artist.id).all())
 
+                # Snippet to determine which smart contract factory address to use 
+
+                '''
+
                 if user_track_count > 5:
 
                     contract_factory_address = MusicakesContractFactory.query.get(2).smart_contract_address
@@ -1679,6 +1683,10 @@ def create_app(test_config=None):
                 else:
 
                     contract_factory_address = MusicakesContractFactory.query.get(1).smart_contract_address
+
+                '''
+
+                contract_factory_address = MusicakesContractFactory.query.get(1).smart_contract_address
 
                 return render_template('pages/deploy_release.html', release=release_data, userinfo=data,
                                         contract_factory_address=contract_factory_address)
