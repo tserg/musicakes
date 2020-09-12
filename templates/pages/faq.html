@@ -7,51 +7,74 @@
   </style>
 {% endblock %}
 {% block content %}
-
-	<div class="w3-container">
+<div class="page-content-wrap">
+	<div class="page-content-container">
 
 		<h2>Frequently Asked Questions</h2>
 		
-		<div class = "w3-container">
+		<div class = "page-content-subcontainer">
 			<h3>What is Musicakes?</h3>
-			<h5>Musicakes is a simple, experimental web application for artists to sell their music. Payments on Musicakes are made using the DAI token, a USD-pegged stablecoin, to a smart contract specific to that release. We take a 2% fee to (hopefully) cover AWS and related costs, and the remaining 98% goes to the artist (or whoever the artist decides).</h5>
-			<br>
-			<h5>We enable the artist to determine how the payment should be split by representing shares to the proceeds as tokens (called Musicakes too). Payments to the release's smart contract will be allocated based on how the Musicakes for that release is distributed across wallet addresses. Each release will have 100 Musicakes tokens upon the creation of the smart contract. 2 will be sent to the platform, representing the 2% fee. The remaining 98 will be sent to the artist's wallet address that was used at the time the release was created.
-			</h5>
-			<br>
-			<h5>In order to claim payment, a user will need to trigger a function in the smart contract using the Ethereum wallet address holding the Musicakes token. This will require payment of a gas fee to the Ethereum network.<h5>
+			<div class = "page-content-subcontainer">
+				<span>Musicakes is a simple, experimental web application for artists to sell their music, and to tokenise the revenue streams from their music sold on this platform.
+
+				</span>
+			</div>
+			<div class="page-content-subcontainer">
+				 <span>To purchase music, a user will have to pay using the DAI token, a USD-pegged stablecoin, to a smart contract specific to that release.</span>
+			</div>
+			<div class="page-content-subcontainer">
+				<span>We enable the artist to determine how the payment should be split by representing shares to the proceeds as tokens (called Musicakes too). Payments to the release's smart contract will be allocated based on how the Musicakes for that release is distributed across wallet addresses. Each release will have 100 Musicakes tokens upon the creation of the smart contract. All 100 tokens will be sent to the artist's wallet address that was used at the time the release was created. We may implement a 2% fee in the future to cover operating costs for AWS storage.</span>
+				
+			</div>
+
+			<div class="page-content-subcontainer">
+				<span>In order to claim payment, a user will need to trigger a function in the smart contract using the Ethereum wallet address holding the Musicakes token. This will require payment of a gas fee to the Ethereum network.</span>
+			</div>
 		</div>
 
-		<div class = "w3-container">
+		<div class = "page-content-subcontainer">
 			<h3>What do I need to use Musicakes?</h3>
-			<h5>To use Musicakes, you need to install Metamask and an Ethereum wallet address with DAI tokens.</h5>
+			<div class="page-content-subcontainer">
+				<span>To use Musicakes, you need to install Metamask and an Ethereum wallet address with DAI tokens.</span>
+			</div>
 		</div>
 
-		<div class ="w3-container">
+		<div class = "page-content-subcontainer">
 			<h3> What is DAI token?</h3>
-			<h5>DAI is a token on the Ethereum blockchain that is pegged to the value of one USD per token.</h5>
+			<div class="page-content-subcontainer">
+				<span>DAI is a token on the Ethereum blockchain that is pegged to the value of one USD per token.</span>
+			</div>
 		</div>
 
-		<div class = "w3-container">
+		<div class = "page-content-subcontainer">
 			<h3>Why is my purchase not showing up?</h3>
-			<h5>The transaction on the Ethereum network may take a while to be confirmed. You should not leave the release page until the transaction is confirmed. If you do, please send us your transaction hash and email account at musicakes [dot] team [at] gmail [dot] com so that we can update the database.</h5>
+			<div class="page-content-subcontainer">
+				<span>The transaction on the Ethereum network may take a while to be confirmed. You should not leave the release page until the transaction is confirmed. If you do, please send us your transaction hash and email account at musicakes [dot] team [at] gmail [dot] com so that we can update the database.</span>
+			</div>
 		</div>
 
-		<div class = "w3-container">
+		<div class = "page-content-subcontainer">
 			<h3>Can I use different wallet addresses?</h3>
-			<h5>Yes, you can. Your account is not tied to a wallet address.</h5>
+			<div class="page-content-subcontainer">
+				<span>Yes, you can. Your account is not tied to a wallet address.</span>
+			</div>
 		</div>
 
-		<div class = "w3-container">
+		<div class = "page-content-subcontainer">
 			<h3>Do you use decentralised file storage?</h3>
-			<h5>No. We are currently using AWS S3 to store the track files.</h5>
+			<div class="page-content-subcontainer">
+				<span>No. We are currently using AWS S3 to store the track files.</span>
+			</div>
 		</div>
 
-		<div class = "w3-container">
+		<div class = "page-content-subcontainer">
 			<h3>Do you have an email that I can reach out to?</h3>
-			<h5>You can address your queries to musicakes [dot] team [at] gmail [dot] com.</h5>
+			<div class="page-content-subcontainer">
+				<span>You can address your queries to musicakes [dot] team [at] gmail [dot] com.</span>
+			</div>
 		</div>
 
 	</div>
+</div>
 
 {% endblock %}
