@@ -1038,11 +1038,16 @@ def create_app(test_config=None):
         try:
 
             if form.validate():
+                
+                # Split soundcloud url to get username in order to input into widget
+
+                soundcloud_url = form.soundcloud_url.split("/")[-1]
 
                 new_artist = Artist(
                     name = form.artist_name.data,
                     country = form.artist_country.data,
-                    user_id = user_id
+                    user_id = user_id,
+                    soundcloud_url = form.soundcloud_url
                 )
 
                 new_artist.insert()
@@ -1094,7 +1099,7 @@ def create_app(test_config=None):
 
     @app.route('/artists/<int:artist_id>/edit', methods=['PUT'])
     @requires_log_in
-    def edit_artist_submission(artist_id):
+    def edit_artist_picture(artist_id):
 
         logged_in = session.get('token', None)
         if logged_in:
@@ -1115,8 +1120,6 @@ def create_app(test_config=None):
 
             artist_picture_file_name = S3_LOCATION + auth_id + "/" + request.get_json()['file_name']
 
-            # Create new release in database
-
             current_artist.artist_picture = artist_picture_file_name
             current_artist.update()
 
@@ -1130,8 +1133,43 @@ def create_app(test_config=None):
                 'success': False
             })
 
+    @app.route('/artists/<int:artist_id>/edit_2', methods=['POST'])
+    @requires_log_in
+    def edit_artist_details(artist_id):
 
+        logged_in = session.get('token', None)
+        if logged_in:
 
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user.artist is None:
+
+                abort(404)
+
+        try:
+
+            current_artist = Artist.query.filter(Artist.id==artist_id).one_or_none()
+            if current_artist is None:
+                abort(404)
+
+            soundcloud_url = request.form['soundcloud_url']
+
+            # Split soundcloud url to get username in order to input into widget
+
+            soundcloud_url_processed = soundcloud_url.split("/")[-1]
+
+            current_artist.soundcloud_url = soundcloud_url_processed
+            current_artist.update()
+
+            return redirect(url_for('edit_artist', artist_id=artist_id))
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
+        return redirect('/')
 
     ###################################################
 

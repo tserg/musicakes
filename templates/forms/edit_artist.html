@@ -15,6 +15,17 @@
     <meta id="artist-id" data-id="{{ artist.id }}">
 
     <div class="form-wrapper">
+      <form method="post" class="form" action="{{ url_for('edit_artist_details', artist_id=artist.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="form-group">
+          <label for="soundcloud-url-input"><h4>Soundcloud URL </h4></label>
+          <input name="soundcloud_url" type="url" id="soundcloud-url-input" size="30" value="https://soundcloud.com/{{ artist.soundcloud_url }}"/>
+        </div>
+        <input type="submit" id="edit-sc-url-btn" value="Update Soundcloud URL">
+      </form>
+    </div>
+
+    <div class="form-wrapper">
       <form method="post" class="form" onsubmit="return false">
 
         <div class="form-group">

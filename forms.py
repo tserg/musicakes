@@ -17,8 +17,16 @@ from wtforms import (
 )
 
 from wtforms.widgets import html5
+from wtforms.fields.html5 import URLField
 
-from wtforms.validators import DataRequired, AnyOf, URL, Optional, Length, NoneOf
+from wtforms.validators import (
+	DataRequired,
+	AnyOf,
+	URL,
+	Optional,
+	Length,
+	NoneOf
+)
 
 from werkzeug.utils import secure_filename
 import pycountry
@@ -47,6 +55,8 @@ class ArtistForm(FlaskForm):
 			'artist_country', validators=[DataRequired()],
 			choices = [(country.name, country.name) for country in pycountry.countries]
 		)
+
+	soundcloud_url = URLField(validators=[URL()])
 
 class EditUserForm(FlaskForm):
 	profile_picture = FileField('Profile Picture', validators=[

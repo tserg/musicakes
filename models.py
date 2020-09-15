@@ -88,6 +88,7 @@ class Artist(db.Model):
                              cascade='all, delete', lazy=True)
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     user = db.relationship('User', back_populates='artist')
+    soundcloud_url = Column(String, nullable=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
     def insert(self):
@@ -118,6 +119,7 @@ class Artist(db.Model):
             'name': self.name,
             'country': self.country,
             'artist_picture': self.artist_picture,
+            'soundcloud_url': self.soundcloud_url,
             'releases': formatted_releases
         }
 
