@@ -314,7 +314,9 @@ def create_app(test_config=None):
     @app.route('/')
     def index():
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -471,7 +473,9 @@ def create_app(test_config=None):
     @requires_log_in
     def sign_s3_upload():
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -536,7 +540,8 @@ def create_app(test_config=None):
     @requires_log_in
     def sign_s3_download_track():
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -610,7 +615,8 @@ def create_app(test_config=None):
     @app.route('/about', methods=['GET'])
     def show_about_us():
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -633,7 +639,9 @@ def create_app(test_config=None):
     @app.route('/faq', methods=['GET'])
     def show_faq():
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -655,7 +663,8 @@ def create_app(test_config=None):
     @app.route('/terms', methods=['GET'])
     def show_terms_of_use():
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -677,7 +686,9 @@ def create_app(test_config=None):
     @app.route('/privacy', methods=['GET'])
     def show_privacy_policy():
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -801,8 +812,8 @@ def create_app(test_config=None):
     @app.route('/users/<int:user_id>', methods=['GET'])
     def show_user(user_id):
         try:
-
-            if 'jwt_payload' in session:
+            logged_in = session.get('token', None)
+            if logged_in:
 
 
 
@@ -894,8 +905,8 @@ def create_app(test_config=None):
 
     @app.route('/artists', methods=['GET'])
     def get_artists():
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -943,8 +954,8 @@ def create_app(test_config=None):
 
     @app.route('/artists/<int:artist_id>', methods=['GET'])
     def show_artist(artist_id):
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -980,8 +991,8 @@ def create_app(test_config=None):
     @app.route('/artists/create', methods=['GET'])
     @requires_log_in
     def create_artist_form():
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1047,8 +1058,8 @@ def create_app(test_config=None):
     @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
     @requires_log_in
     def edit_artist(artist_id):
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1085,9 +1096,8 @@ def create_app(test_config=None):
     @requires_log_in
     def edit_artist_submission(artist_id):
 
-        print("put triggered")
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1104,10 +1114,6 @@ def create_app(test_config=None):
                 abort(404)
 
             artist_picture_file_name = S3_LOCATION + auth_id + "/" + request.get_json()['file_name']
-
-
-            print("artist picture URL: ")
-            print(artist_picture_file_name)
 
             # Create new release in database
 
@@ -1187,8 +1193,8 @@ def create_app(test_config=None):
     @app.route('/releases/<int:release_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_release(release_id):
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1235,8 +1241,8 @@ def create_app(test_config=None):
     @app.route('/tracks/<int:track_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_track(track_id):
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1281,8 +1287,8 @@ def create_app(test_config=None):
     @app.route('/tracks/<int:track_id>/download', methods=['GET'])
     @requires_log_in
     def download_purchased_track(track_id):
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1344,9 +1350,9 @@ def create_app(test_config=None):
     @requires_log_in
     def download_purchased_release(release_id):
 
-        print("download_purchased_release triggered")
+        logged_in = session.get('token', None)
 
-        if 'jwt_payload' in session:
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1429,8 +1435,8 @@ def create_app(test_config=None):
 
             formatted_all_releases = [release.short_public()
                                       for release in all_releases]
-
-            if 'jwt_payload' in session:
+            logged_in = session.get('token', None)
+            if logged_in:
 
                 auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1463,7 +1469,9 @@ def create_app(test_config=None):
     @app.route('/releases/<int:release_id>', methods=['GET'])
     def show_release(release_id):
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1493,30 +1501,32 @@ def create_app(test_config=None):
 
             release_data = current_release.short_public()
 
-            purchases = Purchase.query.filter(Purchase.release_id==release_id). \
-                        join(Release).all()
+            if logged_in:
 
-            temp=[]
+                purchases = Purchase.query.filter(Purchase.release_id==release_id). \
+                            join(Release).all()
 
-            for purchase in purchases:
-                purchaser_name = User.query.get(purchase.user_id).username
-                temp_dict = {}
+                temp=[]
 
-                if purchaser_name not in temp:
-                    temp_dict['user_id'] = purchase.user_id
-                    temp_dict['username'] = purchaser_name
-                    temp.append(temp_dict)
+                for purchase in purchases:
+                    purchaser_name = User.query.get(purchase.user_id).username
+                    temp_dict = {}
 
-            release_data['purchasers'] = temp
+                    if purchaser_name not in temp:
+                        temp_dict['user_id'] = purchase.user_id
+                        temp_dict['username'] = purchaser_name
+                        temp.append(temp_dict)
 
-            if current_release.artist.user.id == user.id:
-                creator = True
+                release_data['purchasers'] = temp
+
+                if current_release.artist.user.id == user.id:
+                    creator = True
+
+                else:
+                    creator=False
 
             else:
-                creator=False 
-
-            print(creator)
-            print(current_release.smart_contract_address)
+                creator=False
 
             return render_template('pages/show_release.html', release=release_data, userinfo=data, creator=creator)
 
@@ -1529,7 +1539,8 @@ def create_app(test_config=None):
     @app.route('/releases/create', methods=['GET'])
     @requires_log_in
     def create_release_presubmission_form():
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)       
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1557,8 +1568,8 @@ def create_app(test_config=None):
     @app.route('/releases/create', methods=['POST'])
     @requires_log_in
     def create_release_presubmission():
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1597,8 +1608,8 @@ def create_app(test_config=None):
     @app.route('/releases/create_2', methods=['POST'])
     @requires_log_in
     def create_release_submission():
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1644,7 +1655,8 @@ def create_app(test_config=None):
     @app.route('/releases/<int:release_id>/deploy', methods=['GET'])
     @requires_log_in
     def show_release_for_deployment(release_id):
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1705,8 +1717,8 @@ def create_app(test_config=None):
     @app.route('/releases/<int:release_id>/deploy', methods=['POST'])
     @requires_log_in
     def deploy_release_smart_contract(release_id):
-
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1765,7 +1777,9 @@ def create_app(test_config=None):
 
             tracks_count = len(formatted_all_tracks)
 
-            if 'jwt_payload' in session:
+            logged_in = session.get('token', None)
+
+            if logged_in:
 
                 auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1796,16 +1810,15 @@ def create_app(test_config=None):
     @app.route('/tracks/<int:track_id>', methods=['GET'])
     def show_track(track_id):
 
-        print("show track triggered")
-
         track = Track.query.get(track_id)
 
         if track is None:
 
             abort(404)
 
+        logged_in = session.get('token', None)
 
-        if 'jwt_payload' in session:
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
@@ -1876,7 +1889,9 @@ def create_app(test_config=None):
     @requires_log_in
     def create_track():
 
-        if 'jwt_payload' in session:
+        logged_in = session.get('token', None)
+
+        if logged_in:
 
             auth_id = session['jwt_payload']['sub'][6:]
 
