@@ -53,7 +53,7 @@ class ArtistForm(FlaskForm):
 
 	artist_country = SelectField(
 			'artist_country', validators=[DataRequired()],
-			choices = [(country.name, country.name) for country in pycountry.countries]
+			choices = sorted([(country.name, country.name) for country in pycountry.countries])
 		)
 
 	soundcloud_url = URLField(validators=[URL()])
