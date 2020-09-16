@@ -879,9 +879,17 @@ def create_app(test_config=None):
 
             if form.validate():
 
+                new_username = form.username.data.lower()
+
+                if User.query.filter(User.username==new_username).one_or_none():
+
+                    flash('The username has been taken. Please choose another username.')
+                                                
+                    return redirect(url_for('create_user_form'))
+
                 new_user = User(
                     auth_id = auth_id,
-                    username = form.username.data
+                    username = new_username
                 )
 
                 new_user.insert()
