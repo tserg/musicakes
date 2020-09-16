@@ -1103,9 +1103,9 @@ def create_app(test_config=None):
             artist_data = current_artist.short()
             form = EditArtistForm()
 
-            if current_artist.soundcloud_url is not "":
+            if current_artist.soundcloud_url is not None:
                 form.artist_soundcloud_url.data = "https://soundcloud.com/" + current_artist.soundcloud_url
-            if current_artist.facebook_url is not "":
+            if current_artist.facebook_url is not None:
                 form.artist_facebook_url.data = current_artist.facebook_url
 
             return render_template('forms/edit_artist.html', form=form, artist=artist_data, userinfo=data)

@@ -114,6 +114,15 @@ class Artist(db.Model):
                                           for track in release.tracks]}
                               for release in self.releases]
 
+        if self.soundcloud_url is None:
+            soundcloud_url = ""
+        else:
+            soundcloud_url = self.soundcloud_url
+
+        if self.facebook_url is None:
+            facebook_url = ""
+        else:
+            facebook_url = self.facebook_url
 
         return {
             'id': self.id,
@@ -121,8 +130,8 @@ class Artist(db.Model):
             'name': self.name,
             'country': self.country,
             'artist_picture': self.artist_picture,
-            'soundcloud_url': self.soundcloud_url,
-            'facebook_url': self.facebook_url,
+            'soundcloud_url': soundcloud_url,
+            'facebook_url': facebook_url,
             'releases': formatted_releases
         }
 
