@@ -89,6 +89,7 @@ class Artist(db.Model):
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     user = db.relationship('User', back_populates='artist')
     soundcloud_url = Column(String, nullable=True)
+    facebook_url = Column(String, nullable=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
     def insert(self):
@@ -113,13 +114,24 @@ class Artist(db.Model):
                                           for track in release.tracks]}
                               for release in self.releases]
 
+        if self.soundcloud_url == "":
+            soundcloud_url = None
+        else:
+            soundcloud_url = self.soundcloud_url
+
+        if self.facebook_url == "":
+            facebook_url = None
+        else:
+            facebook_url = self.facebook_url
+
         return {
             'id': self.id,
             'user': self.user_id,
             'name': self.name,
             'country': self.country,
             'artist_picture': self.artist_picture,
-            'soundcloud_url': self.soundcloud_url,
+            'soundcloud_url': soundcloud_url,
+            'facebook_url': facebook_url,
             'releases': formatted_releases
         }
 

@@ -5,7 +5,7 @@
 <div class="page-content-wrap">
   <div class ="page-content-container">
     <div class="form-group">
-      <form method="post" class="form" onsubmit="return validateForm()" name="new_artist">
+      <form method="post" class="form" action="{{ url_for('create_artist') }}" name="new_artist">
 
         {{ form.hidden_tag() }}
         <h3 class="form-heading">Create an artist profile</h3>
@@ -25,14 +25,30 @@
           <div class="form-sub-group">
             {{ form.artist_country(class_ = 'form-control', autofocus = true) }}
           </div>
+
+          
+          <div class="form-sub-group">
+            <label for="artist_soundcloud_url">Soundcloud URL</label>
+          </div>
+          <div class="form-sub-group">
+            {{ form.artist_soundcloud_url(class_ = 'form-control', autofocus = true) }}
+          </div>
+
+          <div class="form-sub-group">
+            <label for="artist_facebook_url">Facebook URL</label>
+          </div>
+          <div class="form-sub-group">
+            {{ form.artist_facebook_url(class_ = 'form-control', autofocus = true) }}
+          </div>
         </fieldset>
         <br>
         <input type="submit" value="Create artist profile">
 
       </form>
     </div>
+
   </div>
-  <div class="page-content-container">
+
   {% else %} 
     <h4> You have an existing artist profile tied to this account.</h4> 
   {% endif %}

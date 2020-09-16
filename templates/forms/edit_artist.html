@@ -16,37 +16,52 @@
 
     <div class="form-wrapper">
       <form method="post" class="form" action="{{ url_for('edit_artist_details', artist_id=artist.id) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <div class="form-group">
-          <label for="soundcloud-url-input"><h4>Soundcloud URL </h4></label>
-          <input name="soundcloud_url" type="url" id="soundcloud-url-input" size="30" value="https://soundcloud.com/{{ artist.soundcloud_url }}"/>
-        </div>
-        <input type="submit" id="edit-sc-url-btn" value="Update Soundcloud URL">
+        {{ form.hidden_tag() }}
+        <fieldset>
+          <div class="form-sub-group">
+            <label for="artist_soundcloud_url">Soundcloud URL</label>
+          </div>
+          <div class="form-sub-group">
+            {{ form.artist_soundcloud_url(class_ = 'form-control', autofocus = true) }}
+          </div>
+
+          <div class="form-sub-group">
+            <label for="artist_facebook_url">Facebook URL</label>
+          </div>
+          <div class="form-sub-group">
+            {{ form.artist_facebook_url(class_ = 'form-control', autofocus = true) }}
+          </div>
+
+          <br>
+          <input type="submit" value="Update artist profile">
+        </fieldset>
+        
       </form>
     </div>
 
     <div class="form-wrapper">
       <form method="post" class="form" onsubmit="return false">
-
-        <div class="form-group">
-
+        <fieldset>
           <div class="form-group">
-            <label for="artist-picture-input"><h4>Artist Picture</h4></label>
-            <input type="file" id="artist-picture-input" accept="image/png, image/jpg, image/jpeg">
-            <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
+
+            <div class="form-group">
+              <label for="artist-picture-input"><h4>Artist Picture</h4></label>
+              <input type="file" id="artist-picture-input" accept="image/png, image/jpg, image/jpeg">
+              <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
+
+            </div>
 
           </div>
-
-        </div>
-        <div class="display-picture">
-        {% if artist.artist_picture is none %}
-          <img id="preview" src="/static/img/musicakes.png" />
-        {% else %}
-          <img src="{{ artist.artist_picture }}" />
-        {% endif %}
-      </div>
-      <br>
-        <input type="button" id="edit-artist-btn" value="Update artist picture">
+          <div class="display-picture">
+          {% if artist.artist_picture is none %}
+            <img id="preview" src="/static/img/musicakes.png" />
+          {% else %}
+            <img src="{{ artist.artist_picture }}" />
+          {% endif %}
+          </div>
+          <br>
+          <input type="button" id="edit-artist-btn" value="Update artist picture">
+        </fieldset>
       </form>
     </div>
   </div>

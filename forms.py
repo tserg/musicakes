@@ -25,11 +25,24 @@ from wtforms.validators import (
 	URL,
 	Optional,
 	Length,
-	NoneOf
+	NoneOf,
+	ValidationError
 )
 
 from werkzeug.utils import secure_filename
 import pycountry
+
+def flash_validation_errors(form):
+	"""	
+		Helper function to show form errors
+	"""
+
+	for field, errors in form.errors.items():
+		for error in errors:
+			flash(u"Error in the %s field - %s" % (
+				getattr(form, field).label.text,
+				error),
+			'error')
 
 def check_punctuation(form, field):
 	for i in field.data:
@@ -56,13 +69,29 @@ class ArtistForm(FlaskForm):
 			choices = sorted([(country.name, country.name) for country in pycountry.countries])
 		)
 
-	soundcloud_url = URLField(validators=[URL()])
+	artist_soundcloud_url = URLField(
+		validators=[URL(), Optional()]
+	)
+
+	artist_facebook_url = URLField(validators=[
+		URL(), Optional()]
+	)
 
 class EditUserForm(FlaskForm):
 	profile_picture = FileField('Profile Picture', validators=[
 		FileRequired(),
 		FileAllowed(['jpg', 'jpeg', 'png'], 'Image only!')
 	])
+
+class EditArtistForm(FlaskForm):
+	
+	artist_soundcloud_url = URLField(
+		validators=[URL(), Optional()]
+	)
+
+	artist_facebook_url = URLField(validators=[
+		URL(), Optional()]
+	)
 
 '''
 

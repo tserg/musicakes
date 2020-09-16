@@ -23,13 +23,21 @@
 			        {% endif %}
 			    </div>
 			</div>
-			<div class="page-content-container">
-				{% if artist.soundcloud_url is not none %}
+			<div class="page-content-flex-container">
+				<div class="artist-page-icon">
+					{% if artist.soundcloud_url is not none %}
 
-					<iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2F{{ artist.soundcloud_url }}&color=orange_white&size=32" style="width: 32px; height: 32px;"></iframe>
+						<iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2F{{ artist.soundcloud_url }}&color=orange_white&size=32"></iframe>
 
+					{% endif %}
+				</div>
+				<div class="artist-page-icon">
+					{% if artist.facebook_url is not none %}
 
-				{% endif %}
+						<a href="{{ artist.facebook_url }}" target="_blank"><img id="facebook-icon" src="/static/img/f_logo_RGB-Blue_58.png" /></a>
+
+					{% endif %}
+				</div>
 			</div>
 		</div>
 

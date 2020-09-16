@@ -26,10 +26,6 @@ from flask_wtf import (
     CSRFProtect
 )
 
-from wtforms import (
-    FormField,
-    FieldList
-)
 from forms import *
 from jose import jwt
 
@@ -1049,24 +1045,33 @@ def create_app(test_config=None):
                 
                 # Split soundcloud url to get username in order to input into widget
 
-                soundcloud_url = form.soundcloud_url.split("/")[-1]
+                artist_soundcloud_url = str(form.artist_soundcloud_url.data).split("/")[-1]
 
                 new_artist = Artist(
                     name = form.artist_name.data,
                     country = form.artist_country.data,
                     user_id = user_id,
-                    soundcloud_url = form.soundcloud_url
+                    soundcloud_url = artist_soundcloud_url,
+                    facebook_url = form.artist_facebook_url.data
                 )
 
                 new_artist.insert()
-                flash('Your artist profile has been successfully created.')
+                return redirect(url_for('edit_artist', artist_id=new_artist.id))
+
+            else:
+
+                errors = [error[0] for field, error in form.errors.items()]
+                for error in errors:
+                    flash(error)
+                return redirect(url_for('create_artist_form'))
 
         except Exception as e:
 
             print(e)
             flash('Your artist profile could not be created.')
+            return redirect(url_for('create_artist_form'))
 
-        return redirect(url_for('index'))
+        return redirect(url_for('create_artist_form'))
 
     @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
     @requires_log_in
@@ -1096,8 +1101,13 @@ def create_app(test_config=None):
                 abort(404)
 
             artist_data = current_artist.short()
+            form = EditArtistForm()
 
-            return render_template('forms/edit_artist.html', artist=artist_data, userinfo=data)
+            if current_artist.soundcloud_url is not "":
+                form.artist_soundcloud_url.data = "https://soundcloud.com/" + current_artist.soundcloud_url
+            form.artist_facebook_url.data = current_artist.facebook_url
+
+            return render_template('forms/edit_artist.html', form=form, artist=artist_data, userinfo=data)
 
         except Exception as e:
             print(e)
@@ -1144,17 +1154,7 @@ def create_app(test_config=None):
     @app.route('/artists/<int:artist_id>/edit_2', methods=['POST'])
     @requires_log_in
     def edit_artist_details(artist_id):
-
-        logged_in = session.get('token', None)
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user.artist is None:
-
-                abort(404)
+        form = EditArtistForm(request.form)
 
         try:
 
@@ -1162,16 +1162,29 @@ def create_app(test_config=None):
             if current_artist is None:
                 abort(404)
 
-            soundcloud_url = request.form['soundcloud_url']
+            if form.validate():
 
-            # Split soundcloud url to get username in order to input into widget
+                soundcloud_url = form.artist_soundcloud_url.data
+                facebook_url = form.artist_facebook_url.data
 
-            soundcloud_url_processed = soundcloud_url.split("/")[-1]
+                print(soundcloud_url, facebook_url)
 
-            current_artist.soundcloud_url = soundcloud_url_processed
-            current_artist.update()
+                # Split soundcloud url to get username in order to input into widget
 
-            return redirect(url_for('edit_artist', artist_id=artist_id))
+                soundcloud_url_processed = str(soundcloud_url).split("/")[-1]
+
+                current_artist.soundcloud_url = soundcloud_url_processed
+                current_artist.facebook_url = facebook_url
+                current_artist.update()
+
+                return redirect(url_for('edit_artist', artist_id=artist_id))
+
+            else:
+
+                errors = [error[0] for field, error in form.errors.items()]
+                for error in errors:
+                    flash(error)
+                return redirect(url_for('edit_artist', artist_id=artist_id))
 
         except Exception as e:
             print(e)
