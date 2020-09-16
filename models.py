@@ -108,6 +108,7 @@ class Artist(db.Model):
         formatted_releases = [{"release_id": release.id,
                                "release_name": release.name,
                                "release_price": release.price,
+                               "release_cover_art": release.cover_art,
                                "tracks": [{"track_name": track.name,
                                            "track_id": track.id,
                                            "track_price": track.price}

@@ -60,10 +60,10 @@
 					{% for release in artist.releases %}
 					<div class="list-grid-item">
 					    <div class="display-picture">
-					        {% if release.cover_art is none %}
+					        {% if release.release_cover_art is none %}
 					          <img id="preview" src="/static/img/musicakes.png" />
 					        {% else %}
-					          <img src="{{ release.cover_art }}" />
+					          <img src="{{ release.release_cover_art }}" />
 					        {% endif %}
 					    </div>
 						<a href="../releases/{{ release.release_id }}">{{ release.release_name }}</a>
