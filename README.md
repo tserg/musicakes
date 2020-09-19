@@ -4,9 +4,9 @@ This is an application for artists to list their music for sale, and for fans to
 
 When an artist creates a release, the artist will also deploy a smart contract on the Ethereum blockchain. Payments are made using the DAI ERC-20 token on the Ethereum blockchain to a smart contract address. At the time of creation, the smart contract will also mint Musicakes tokens to the artist's wallet address, representing the right to claim payments from that specific smart contract.
 
-Artists with less than five tracks will have all 100 Musicakes tokens minted to their wallet addresses.
+Artists will have all 100 Musicakes tokens minted to their wallet addresses.
 
-For artists with five or more tracks, 98 Musicakes tokens will be minted to their wallet address, and 2 Musicakes tokens will be minted to the platform, representing a 2% fee.
+In the future, we may implement a 2% fee for artists with five or more tracks to cover AWS costs. This will be implemented by having 98 Musicakes tokens minted to their wallet address, and 2 Musicakes tokens minted to the platform, representing a 2% fee.
 
 ## Getting Started
 
