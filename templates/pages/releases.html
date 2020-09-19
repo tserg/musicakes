@@ -16,11 +16,13 @@
 
 			<div class="list-grid-item">
 			    <div class="display-picture">
-			        {% if release.cover_art is none %}
-			          <img id="preview" src="/static/img/musicakes.png" />
-			        {% else %}
-			          <img src="{{ release.cover_art }}" />
-			        {% endif %}
+			    	<a href="/releases/{{ release.id }}">
+				        {% if release.cover_art is none %}
+				          <img id="preview" src="/static/img/musicakes.png" />
+				        {% else %}
+				          <img src="{{ release.cover_art }}" />
+				        {% endif %}
+				    </a>
 			    </div>
 				<a href="/releases/{{ release.id }}">
 					<div>

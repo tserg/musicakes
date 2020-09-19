@@ -14,11 +14,13 @@
 				
 			<div class="list-grid-item">
 			    <div class="display-picture">
-			        {% if track.release_cover_art is none %}
-			          <img id="preview" src="/static/img/musicakes.png" />
-			        {% else %}
-			          <img src="{{ track.release_cover_art }}" />
-			        {% endif %}
+			    	<a href="../tracks/{{ track.id }}">
+				        {% if track.release_cover_art is none %}
+				          <img id="preview" src="/static/img/musicakes.png" />
+				        {% else %}
+				          <img src="{{ track.release_cover_art }}" />
+				        {% endif %}
+				    </a>
 			    </div>
 				<a href="../tracks/{{ track.id }}"><h5>{{ track.artist_name }} - {{ track.track_name }}</h5></a>
 			</div>
