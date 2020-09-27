@@ -289,3 +289,16 @@ class MusicakesContractFactory(db.Model):
             'smart_contract_address': self.smart_contract_address,
             'description': self.description
         }
+
+class PaymentToken(db.Model):
+
+    id = Column(Integer, primary_key=True)
+    smart_contract_address = Column(String, unique=True, nullable=False)
+    ticker = Column(String, unique=False, nullable=False)
+
+    def short(self):
+        return {
+            'id': self.id,
+            'smart_contract_address': self.smart_contract_address,
+            'ticker': self.ticker
+        }

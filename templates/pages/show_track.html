@@ -134,6 +134,9 @@
           <!-- proxy element to store and query smart contract address for window.appConfig --->
           <meta id="smart_contract_address" data-address="{{ track.smart_contract_address }}">
 
+          <!-- proxy element to store and query payment token address for window.appConfig --->
+          <meta id="payment_token_address" data-address="{{ track.payment_token_address }}">
+
           <!-- proxy element to store and query track price for window.appConfig --->
           <meta id="price" data-address="{{ track.price }}">
 
@@ -214,7 +217,8 @@
     smart_contract_address: $('#smart_contract_address').data(),
     price: $('#price').data(),
     track_id: $('#track-id').data(),
-    csrf_token: $('#csrf-token').data()
+    csrf_token: $('#csrf-token').data(),
+    payment_token_address: $('#payment_token_address').data()
   }
 </script>
 

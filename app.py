@@ -36,7 +36,8 @@ from models import (
     Release,
     Track,
     Purchase,
-    MusicakesContractFactory
+    MusicakesContractFactory,
+    PaymentToken
 )
 
 from urllib.request import urlopen
@@ -1561,23 +1562,26 @@ def create_app(test_config=None):
 
             release_data = current_release.short_public()
 
+            payment_token_address = PaymentToken.query.get(1).smart_contract_address
+            release_data['payment_token_address'] = payment_token_address
+
+            purchases = Purchase.query.filter(Purchase.release_id==release_id). \
+                        join(Release).all()
+
+            temp=[]
+
+            for purchase in purchases:
+                purchaser_name = User.query.get(purchase.user_id).username
+                temp_dict = {}
+
+                if purchaser_name not in temp:
+                    temp_dict['user_id'] = purchase.user_id
+                    temp_dict['username'] = purchaser_name
+                    temp.append(temp_dict)
+
+            release_data['purchasers'] = temp
+
             if logged_in:
-
-                purchases = Purchase.query.filter(Purchase.release_id==release_id). \
-                            join(Release).all()
-
-                temp=[]
-
-                for purchase in purchases:
-                    purchaser_name = User.query.get(purchase.user_id).username
-                    temp_dict = {}
-
-                    if purchaser_name not in temp:
-                        temp_dict['user_id'] = purchase.user_id
-                        temp_dict['username'] = purchaser_name
-                        temp.append(temp_dict)
-
-                release_data['purchasers'] = temp
 
                 if current_release.artist.user.id == user.id:
                     creator = True
@@ -1917,8 +1921,6 @@ def create_app(test_config=None):
 
             data = None
 
-        print(data)
-
         try:
 
             formatted_track_data = track.short_public()
@@ -1938,6 +1940,9 @@ def create_app(test_config=None):
                     temp.append(temp_dict)
 
             formatted_track_data['purchasers'] = temp
+
+            payment_token_address = PaymentToken.query.get(1).smart_contract_address
+            formatted_track_data['payment_token_address'] = payment_token_address
 
             return render_template('pages/show_track.html', track=formatted_track_data, userinfo=data)
 

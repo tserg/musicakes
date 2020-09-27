@@ -54,7 +54,8 @@ musicakesTransferButton.addEventListener('click', () => {
 
 /* Payment token contract */
 
-const paymentTokenAddress = "0xc2118d4d90b274016cB7a54c03EF52E6c537D957";
+const paymentTokenAddress = window.appConfig.payment_token_address.address;
+console.log(paymentTokenAddress);
 const musicakesAddress = window.appConfig.smart_contract_address.address;
 
 var _paymentTokenAbi = [
