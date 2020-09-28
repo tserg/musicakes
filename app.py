@@ -1704,6 +1704,7 @@ def create_app(test_config=None):
             )
 
             new_release.insert()
+            print(new_release.id)
 
             return jsonify({
                 'success': True,
