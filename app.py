@@ -1109,6 +1109,8 @@ def create_app(test_config=None):
                 form.artist_soundcloud_url.data = "https://soundcloud.com/" + current_artist.soundcloud_url
             if current_artist.facebook_url is not None:
                 form.artist_facebook_url.data = current_artist.facebook_url
+            if current_artist.instagram_url is not None:
+                form.artist_instagram_url.data = current_artist.instagram_url
 
             return render_template('forms/edit_artist.html', form=form, artist=artist_data, userinfo=data)
 
@@ -1169,8 +1171,9 @@ def create_app(test_config=None):
 
                 soundcloud_url = form.artist_soundcloud_url.data
                 facebook_url = form.artist_facebook_url.data
+                instagram_url = form.artist_instagram_url.data
 
-                print(soundcloud_url, facebook_url)
+                print(soundcloud_url, facebook_url, instagram_url)
 
                 # Split soundcloud url to get username in order to input into widget
 
@@ -1178,6 +1181,7 @@ def create_app(test_config=None):
 
                 current_artist.soundcloud_url = soundcloud_url_processed
                 current_artist.facebook_url = facebook_url
+                current_artist.instagram_url = instagram_url
                 current_artist.update()
 
                 return redirect(url_for('edit_artist', artist_id=artist_id))

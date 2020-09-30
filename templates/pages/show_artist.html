@@ -41,6 +41,14 @@
 
 				</div>
 				{% endif %}
+				{% if artist.instagram_url|length > 0 %}
+				<div class="artist-page-icon">
+
+						<a href="{{ artist.instagram_url }}" target="_blank"><img id="instagram-icon" src="/static/img/glyph-logo_May2016.png" /></a>
+
+				</div>
+				{% endif %}
+				
 			</div>
 		</div>
 

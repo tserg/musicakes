@@ -77,6 +77,10 @@ class ArtistForm(FlaskForm):
 		URL(), Optional()]
 	)
 
+	artist_instagram_url = URLField(validators=[
+		URL(), Optional()]
+	)
+
 class EditUserForm(FlaskForm):
 	profile_picture = FileField('Profile Picture', validators=[
 		FileRequired(),
@@ -90,6 +94,10 @@ class EditArtistForm(FlaskForm):
 	)
 
 	artist_facebook_url = URLField(validators=[
+		URL(), Optional()]
+	)
+
+	artist_instagram_url = URLField(validators = [
 		URL(), Optional()]
 	)
 

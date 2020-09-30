@@ -88,8 +88,13 @@ class Artist(db.Model):
                              cascade='all, delete', lazy=True)
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     user = db.relationship('User', back_populates='artist')
+
+    # External links
+
     soundcloud_url = Column(String, nullable=True)
     facebook_url = Column(String, nullable=True)
+    instagram_url = Column(String, nullable=True)
+
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
 
     def insert(self):
@@ -115,6 +120,9 @@ class Artist(db.Model):
                                           for track in release.tracks]}
                               for release in self.releases]
 
+        # Checks if external link is null, and replace with empty string if null for 
+        # rendering in jinja
+
         if self.soundcloud_url is None:
             soundcloud_url = ""
         else:
@@ -125,6 +133,11 @@ class Artist(db.Model):
         else:
             facebook_url = self.facebook_url
 
+        if self.instagram_url is None:
+            instagram_url = ""
+        else:
+            instagram_url = self.instagram_url
+
         return {
             'id': self.id,
             'user': self.user_id,
@@ -133,6 +146,7 @@ class Artist(db.Model):
             'artist_picture': self.artist_picture,
             'soundcloud_url': soundcloud_url,
             'facebook_url': facebook_url,
+            'instagram_url': instagram_url,
             'releases': formatted_releases
         }
 
