@@ -21,11 +21,11 @@ const enableEthereumButton = document.querySelector('#enable-ethereum-button');
 
 var web3 = new Web3(Web3.givenProvider);
 
-const price = parseFloat(window.appConfig.price.address);
+const price = parseFloat(window.appConfig.price.value);
 
-const release_id = parseInt(window.appConfig.release_id.address);
+const release_id = parseInt(window.appConfig.release_id.value);
 
-const csrf_token = window.appConfig.csrf_token.address;
+const csrf_token = window.appConfig.csrf_token.value;
 if (csrf_token) {
   console.log("CSRF Token loaded");
 }
@@ -36,27 +36,37 @@ ethereumButton.addEventListener('click', () => {
 	getAccount();
 });
 
-musicakesPayButton.addEventListener('click', () => {
-	payMusicakes();
-});
+if (musicakesPayButton != null) {
 
-musicakesClaimDividendsButton.addEventListener('click', () => {
-	claimDividends();
-});
+  musicakesPayButton.addEventListener('click', () => {
+  	payMusicakes();
+  });
+}
 
-musicakesUpdateDividendsButton.addEventListener('click', () => {
-	updateDividends();
-});
+if (musicakesClaimDividendsButton != null) {
 
-musicakesTransferButton.addEventListener('click', () => {
-  transferMusicakes();
-});
+  musicakesClaimDividendsButton.addEventListener('click', () => {
+  	claimDividends();
+  });
+}
+
+if (musicakesUpdateDividendsButton != null) {
+  musicakesUpdateDividendsButton.addEventListener('click', () => {
+  	updateDividends();
+  });
+}
+
+if (musicakesTransferButton != null) {
+  musicakesTransferButton.addEventListener('click', () => {
+    transferMusicakes();
+  });
+}
 
 /* Payment token contract */
 
-const paymentTokenAddress = window.appConfig.payment_token_address.address;
+const paymentTokenAddress = window.appConfig.payment_token_address.value;
 console.log(paymentTokenAddress);
-const musicakesAddress = window.appConfig.smart_contract_address.address;
+const musicakesAddress = window.appConfig.smart_contract_address.value;
 
 var _paymentTokenAbi = [
   {
@@ -644,7 +654,12 @@ var _musicakesAbi = [
   ]
 
 const paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
-const musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
+
+if (musicakesAddress.length > 2) {
+
+  const musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
+
+}
 
 ethereum.on('accountsChanged', function(accounts) {
   loadInterface();

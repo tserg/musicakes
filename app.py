@@ -1586,6 +1586,13 @@ def create_app(test_config=None):
 
             release_data['purchasers'] = temp
 
+            # Checks if smart contract address is in db
+
+            print(current_release.smart_contract_address)
+
+            if current_release.smart_contract_address is None:
+                release_data['smart_contract_address'] = "0x"
+
             if logged_in:
 
                 if current_release.artist.user.id == user.id:

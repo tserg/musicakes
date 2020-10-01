@@ -6,6 +6,21 @@
 
   <div class="page-content-container">
     <h1>If you have submitted a transaction, do not refresh your page until the transaction is confirmed.</h1>
+
+    <!-- proxy element to store and query payment token address for window.appConfig --->
+    <meta id="payment_token_address" data-value="{{ release.payment_token_address }}">
+
+
+    <!-- proxy element to store and query release price for window.appConfig --->
+    <meta id="price" data-value="{{ release.price }}">
+
+    <!-- proxy element to store and query release id for window.appConfig --->
+    <meta id="release-id" data-value="{{ release.id }}">        
+
+    <!-- proxy element to store and query CSRF token for window.appConfig --->
+    <meta id="csrf-token" data-value="{{ csrf_token() }}">   
+    <!-- proxy element to store and query smart contract address for window.appConfig --->
+    <meta id="smart_contract_address" data-value="{{ release.smart_contract_address }}">
   </div>
 
   <div class="page-content-flex-container">
@@ -70,7 +85,11 @@
 
     <div class="page-content-flex-subcontainer" id="smart-contract-dashboard">
 
-      {% if userinfo and creator is true and release.smart_contract_address is none %}
+      {% if release.smart_contract_address|length == 2 %}
+        <span><h4>The smart contract has not been deployed yet.</h4></span>
+      {% endif %}
+
+      {% if userinfo and creator is true and release.smart_contract_address|length == 2 %}
 
       <form action="{{ url_for('show_release_for_deployment', release_id=release.id) }}">
           <input type="submit" value="Deploy Smart Contract" />
@@ -96,80 +115,68 @@
       </div>
 
       <div id ="payment-token-dashboard">
-
+        {% if release.smart_contract_address|length > 2 %}
         <h3>DAI Dashboard</h3>
         <div id="payment-token-balance-display">
           <span>Current DAI balance: </span>
           <span id ="payment-token-balance"></span>
         </div>
+        
 
-        {% if userinfo and userinfo.purchased is none %}
+          {% if userinfo and userinfo.purchased is none %}
 
-        <form action="" method="post" >
+          <form action="" method="post" >
 
-            <div>
+              <div>
+                <label for="pay-contract-amount">Amount of DAI to pay: </label>
+                <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+              </div>
+              <div>
+                <button type="button" id="btn-pay-contract">Buy Release with DAI</button>
+              </div>
+
+          </form>
+
+          {% elif userinfo and userinfo.purchased is not none %}
+
+          <form action="/purchase" method="post" hidden>
+              <div>
+
+            
               <label for="pay-contract-amount">Amount of DAI to pay: </label>
-              <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            </div>
-            <div>
-              <button type="button" id="btn-pay-contract">Buy Release with DAI</button>
-            </div>
+              <input type="number" size=50 id="pay-contract-amount">
+              <br>
+              <button type="button" id="btn-pay-contract">Pay</button></input>
+              </div>
+          </form>
 
-        </form>
+          <span>You have already purchased this release.</span>
 
-        {% elif userinfo and userinfo.purchased is not none %}
+          {% else %}
 
-        <form action="/purchase" method="post" hidden>
-            <div>
+          <form action="/purchase" method="post" hidden>
+              <div>
 
-          
-            <label for="pay-contract-amount">Pay DAI to token contract: </label>
-            <input type="number" size=50 id="pay-contract-amount">
-            <br>
-            <button type="button" id="btn-pay-contract">Pay</button></input>
-            </div>
-        </form>
+            
+              <label for="pay-contract-amount">Amount of DAI to pay: </label>
+              <input type="number" size=50 id="pay-contract-amount">
+              <br>
+              <button type="button" id="btn-pay-contract">Pay</button></input>
+              </div>
+          </form>
 
-        <span>You have already purchased this release.</span>
-
-        {% else %}
-
-        <form action="/purchase" method="post" hidden>
-            <div>
-
-          
-            <label for="pay-contract-amount">Pay DAI to token contract: </label>
-            <input type="number" size=50 id="pay-contract-amount">
-            <br>
-            <button type="button" id="btn-pay-contract">Pay</button></input>
-            </div>
-        </form>
-
+          {% endif %}
         {% endif %}
 
       </div>
+
+      {% if release.smart_contract_address|length > 2 %}
 
       <div id = "musicakes-dashboard">
         <h3>Musicakes Dashboard</h3>
         <div id = "musicakes-contract-address-display">
           <span>Contract address: {{ release.smart_contract_address }}</span>
-
-          <!-- proxy element to store and query smart contract address for window.appConfig --->
-          <meta id="smart_contract_address" data-address="{{ release.smart_contract_address }}">
-
-          <!-- proxy element to store and query payment token address for window.appConfig --->
-          <meta id="payment_token_address" data-address="{{ release.payment_token_address }}">
-
-
-          <!-- proxy element to store and query release price for window.appConfig --->
-          <meta id="price" data-address="{{ release.price }}">
-
-          <!-- proxy element to store and query release id for window.appConfig --->
-          <meta id="release-id" data-address="{{ release.id }}">        
-
-          <!-- proxy element to store and query CSRF token for window.appConfig --->
-          <meta id="csrf-token" data-address="{{ csrf_token() }}">   
 
           <span id = "musicakes-address"></span>
         </div>
@@ -231,6 +238,7 @@
         </div>
 
       </div>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -247,6 +255,7 @@
     payment_token_address: $('#payment_token_address').data()
   }
 </script>
+
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
 
