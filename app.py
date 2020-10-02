@@ -49,6 +49,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Environment variables for Auth0
+
 AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN', 'Does not exist')
 AUTH0_ACCESS_TOKEN_URL = os.getenv('AUTH0_ACCESS_TOKEN_URL', 'Does not exist')
 AUTH0_AUTHORIZE_URL = os.getenv('AUTH0_AUTHORIZE_URL', 'Does not exist')
@@ -57,11 +59,20 @@ AUTH0_CLIENT_SECRET = os.getenv('CLIENT_SECRET', 'Does not exist')
 AUTH0_USER_INFO_URL = os.getenv('AUTH0_USER_INFO_URL', 'Does not exist')
 ALGORITHMS = os.getenv('ALGORITHMS', 'Does not exist')
 API_AUDIENCE = os.getenv('API_AUDIENCE', 'Does not exist')
+REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
+
+# Environment variables for AWS S3
+
 S3_BUCKET = os.getenv('S3_BUCKET', 'Does not exist')
 S3_KEY = os.getenv('S3_KEY', 'Does not exist')
 S3_SECRET = os.getenv('S3_SECRET', 'Does not exist')
 S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
-REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
+
+# Environment variables for Ethereum blockchain
+
+ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')
+
+# Environment variables for app
 
 RELEASES_PER_PAGE = 10
 TRACKS_PER_PAGE = 10
@@ -1604,7 +1615,11 @@ def create_app(test_config=None):
             else:
                 creator=False
 
-            return render_template('pages/show_release.html', release=release_data, userinfo=data, creator=creator)
+            return render_template('pages/show_release.html',
+                                    release=release_data, 
+                                    userinfo=data,
+                                    creator=creator,
+                                    chain_id=ETHEREUM_CHAIN_ID)
 
         except Exception as e:
             print(e)
@@ -1962,7 +1977,10 @@ def create_app(test_config=None):
             if formatted_track_data['smart_contract_address'] is None:
                 formatted_track_data['smart_contract_address'] = "0x"
 
-            return render_template('pages/show_track.html', track=formatted_track_data, userinfo=data)
+            return render_template('pages/show_track.html',
+                                    track=formatted_track_data,
+                                    userinfo=data,
+                                    chain_id=ETHEREUM_CHAIN_ID)
 
         except:
 

@@ -7,6 +7,9 @@
      <h1>If you have submitted a transaction, do not refresh your page until the transaction is confirmed.</h1>
   </div>
 
+  <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
+  <meta id="chain_id" data-value="{{ chain_id }}">
+
   <!-- proxy element to store and query smart contract address for window.appConfig --->
   <meta id="smart_contract_address" data-value="{{ track.smart_contract_address }}">
 
@@ -235,7 +238,8 @@
     price: $('#price').data(),
     track_id: $('#track-id').data(),
     csrf_token: $('#csrf-token').data(),
-    payment_token_address: $('#payment_token_address').data()
+    payment_token_address: $('#payment_token_address').data(),
+    chain_id: $('#chain_id').data()
   }
 </script>
 
