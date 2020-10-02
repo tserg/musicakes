@@ -17,8 +17,11 @@
   },
   "homepage": "https://github.com/tserg/musicakes#readme",
   "dependencies": {
+    "@metamask/detect-provider": "^1.1.0",
     "@truffle/contract": "^4.2.6",
+    "elliptic": "^6.5.3",
     "web3": "^1.2.8"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "type": "module"
 }

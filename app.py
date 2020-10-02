@@ -1957,6 +1957,11 @@ def create_app(test_config=None):
             payment_token_address = PaymentToken.query.get(1).smart_contract_address
             formatted_track_data['payment_token_address'] = payment_token_address
 
+            # Checks if smart contract address is in db
+
+            if formatted_track_data['smart_contract_address'] is None:
+                formatted_track_data['smart_contract_address'] = "0x"
+
             return render_template('pages/show_track.html', track=formatted_track_data, userinfo=data)
 
         except:

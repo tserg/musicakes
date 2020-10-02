@@ -21,41 +21,19 @@ const enableEthereumButton = document.querySelector('#enable-ethereum-button');
 
 var web3 = new Web3(Web3.givenProvider);
 
-const price = parseFloat(window.appConfig.price.address);
+const price = parseFloat(window.appConfig.price.value);
 
-const track_id = parseInt(window.appConfig.track_id.address);
+const track_id = parseInt(window.appConfig.track_id.value);
 
-const csrf_token = window.appConfig.csrf_token.address;
+const csrf_token = window.appConfig.csrf_token.value;
 if (csrf_token) {
   console.log("CSRF Token is loaded");
 }
 
-// Initialise buttons
-
-ethereumButton.addEventListener('click', () => {
-	getAccount();
-});
-
-musicakesPayButton.addEventListener('click', () => {
-	payMusicakes();
-});
-
-musicakesClaimDividendsButton.addEventListener('click', () => {
-	claimDividends();
-});
-
-musicakesUpdateDividendsButton.addEventListener('click', () => {
-	updateDividends();
-});
-
-musicakesTransferButton.addEventListener('click', () => {
-  transferMusicakes();
-});
-
 /* Payment token contract */
 
-const paymentTokenAddress = window.appConfig.payment_token_address.address;
-const musicakesAddress = window.appConfig.smart_contract_address.address;
+const paymentTokenAddress = window.appConfig.payment_token_address.value;
+const musicakesAddress = window.appConfig.smart_contract_address.value;
 
 var _paymentTokenAbi = [
   {
@@ -612,11 +590,97 @@ var _musicakesAbi = [
   ]
 
 const paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
-const musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
 
-ethereum.on('accountsChanged', function(accounts) {
-  loadInterface();
-});
+if (musicakesAddress.length > 2) {
+  const musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
+} else {
+  const musicakesContract = null;
+}
+
+// Initialise Metamask
+
+window.addEventListener('load', async () => {
+
+  window.provider = await detectEthereumProvider();
+
+  console.log(provider);
+
+  if (provider) {
+
+    console.log('Ethereum successfully detected!');
+
+    ethereum.on('accountsChanged', function(accounts) {
+      loadInterface();
+    });
+
+    // From now on, this should always be true:
+    // provider === window.ethereum
+
+    // Access the decentralized web!
+
+    // Legacy providers may only have ethereum.sendAsync
+    const chainId = await provider.request({
+      method: 'eth_chainId'
+    })
+
+    
+  } else {
+
+    // if the provider is not detected, detectEthereumProvider resolves to null
+    alert('Please install MetaMask to continue!');
+  }
+  startApp();
+
+})
+
+// Initialise buttons
+
+function startApp() {
+
+  ethereumButton.addEventListener('click', () => {
+    if (provider) {
+      getAccount();
+    } else {
+      alert('Please install MetaMask to continue!');
+    }
+  });
+
+  if (musicakesPayButton != null) {
+
+    musicakesPayButton.addEventListener('click', () => {
+
+      if (provider) {
+        payMusicakes();
+      } else {
+        alert('Please install MetaMask to continue!');
+      }
+    });
+  }
+
+  if (musicakesClaimDividendsButton != null) {
+
+    musicakesClaimDividendsButton.addEventListener('click', () => {
+
+      if (provider) {
+        claimDividends();
+      } else {
+        alert('Please install MetaMask to continue!');
+      }
+    });
+  }
+
+  if (musicakesUpdateDividendsButton != null) {
+    musicakesUpdateDividendsButton.addEventListener('click', () => {
+
+      if (provider) {
+        updateDividends();
+      } else {
+        alert('Please install MetaMask to continue!');
+      }
+      
+    });
+  }
+}
 
 async function getAccount() {
 	await ethereum.enable();

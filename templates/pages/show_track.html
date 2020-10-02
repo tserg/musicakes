@@ -7,6 +7,21 @@
      <h1>If you have submitted a transaction, do not refresh your page until the transaction is confirmed.</h1>
   </div>
 
+  <!-- proxy element to store and query smart contract address for window.appConfig --->
+  <meta id="smart_contract_address" data-value="{{ track.smart_contract_address }}">
+
+  <!-- proxy element to store and query payment token address for window.appConfig --->
+  <meta id="payment_token_address" data-value="{{ track.payment_token_address }}">
+
+  <!-- proxy element to store and query track price for window.appConfig --->
+  <meta id="price" data-value="{{ track.price }}">
+
+  <!-- proxy element to store and query track id for window.appConfig --->
+  <meta id="track-id" data-value="{{ track.id }}">        
+
+  <!-- proxy element to store and query CSRF token for window.appConfig --->
+  <meta id="csrf-token" data-value="{{ csrf_token() }}">   
+
   <div class="page-content-flex-container">
     <div class="page-content-flex-subcontainer" id="track-dashboard">
 
@@ -57,6 +72,17 @@
   <div class = "page-content-flex-subcontainer" id="smart-contract-dashboard">
     <div id = "user-dashboard">
 
+      {% if track.smart_contract_address|length == 2 %}
+        <span><h4>The smart contract has not been deployed yet.</h4></span>
+      {% endif %}
+
+      {% if userinfo and creator is true and track.smart_contract_address|length == 2 %}
+
+      <form action="{{ url_for('show_release_for_deployment', release_id=track.release_id) }}">
+          <input type="submit" value="Deploy Smart Contract" />
+      </form>
+      {% endif %}
+
       <span><h3>User Dashboard</h3></span>
 
       <div id="wallet_display">
@@ -74,7 +100,7 @@
     </div>
 
     <div id ="payment-token-dashboard">
-
+        {% if track.smart_contract_address|length > 2 %}
         <h3>DAI Dashboard</h3>
         <div id="payment-token-balance-display">
           <span>Current DAI balance: </span>
@@ -123,28 +149,18 @@
         </form>
 
         {% endif %}
+      {% endif %}
 
       </div>
+
+      {% if track.smart_contract_address|length > 2 %}
 
       <div id = "musicakes-dashboard">
         <h3>Musicakes Dashboard</h3>
         <div id = "musicakes-contract-address-display">
           <span>Contract address: {{ track.smart_contract_address }}</span>
 
-          <!-- proxy element to store and query smart contract address for window.appConfig --->
-          <meta id="smart_contract_address" data-address="{{ track.smart_contract_address }}">
 
-          <!-- proxy element to store and query payment token address for window.appConfig --->
-          <meta id="payment_token_address" data-address="{{ track.payment_token_address }}">
-
-          <!-- proxy element to store and query track price for window.appConfig --->
-          <meta id="price" data-address="{{ track.price }}">
-
-          <!-- proxy element to store and query track id for window.appConfig --->
-          <meta id="track-id" data-address="{{ track.id }}">        
-
-          <!-- proxy element to store and query CSRF token for window.appConfig --->
-          <meta id="csrf-token" data-address="{{ csrf_token() }}">   
 
           <span id = "musicakes-address"></span>
         </div>
@@ -206,6 +222,7 @@
         </div>
 
       </div>
+      {% endif %}
     </div>
 
   </div>
@@ -224,9 +241,9 @@
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
 
+<script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/purchase_track.js') }}"></script>
 
