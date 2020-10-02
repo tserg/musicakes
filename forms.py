@@ -13,7 +13,8 @@ from wtforms import (
 	FloatField,
 	FormField,
 	FieldList,
-	TextAreaField
+	TextAreaField,
+	HiddenField
 )
 
 from wtforms.widgets import html5
@@ -101,27 +102,21 @@ class EditArtistForm(FlaskForm):
 		URL(), Optional()]
 	)
 
-'''
 
 class TrackForm(FlaskForm):
+
+	track_id = HiddenField('Track ID')
 
 	track_name = StringField('Track Name', validators=[DataRequired(),
 		Length(1, 100, "Track name must be between %(min)d to %(max)d characters.")]
 	)
 
-	track_file = FileField('Track WAV file', validators=[
-		FileRequired(),
-		FileAllowed(['wav'], 'WAV files only!'),
-		],
-		render_kw={'class': "track-file-fields"}
-	)
-
 	track_price = IntegerField('Price of track',
 		default=1, 
 		validators=[DataRequired()],
-		widget=html5.NumberInput(min=1,max=100)
+		widget=html5.NumberInput()
 	)
-'''
+
 
 class ReleasePresubmissionForm(FlaskForm):
 
@@ -131,6 +126,19 @@ class ReleasePresubmissionForm(FlaskForm):
 		widget=html5.NumberInput(min=1,max=100)
 	)
 
+class EditReleaseForm(FlaskForm):
+
+	release_name = StringField('release_name', validators=[DataRequired(),
+		Length(1, 100, "Release name must be between %(min)d to %(max)d characters.")]
+	)
+
+	release_price = IntegerField('Price of release',
+		default=1, 
+		validators=[DataRequired()],
+		widget=html5.NumberInput(min=1,max=100),
+	)
+
+	tracks = FieldList(FormField(TrackForm))
 
 '''
 class ReleaseForm(FlaskForm):

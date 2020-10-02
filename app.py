@@ -2,6 +2,8 @@ import os
 import json
 from urllib.parse import urlencode
 
+from werkzeug.datastructures import MultiDict
+
 import boto3
 from botocore.exceptions import ClientError
 import zipfile
@@ -1845,6 +1847,128 @@ def create_app(test_config=None):
                 'success': False
             })
 
+    @app.route('/releases/<int:release_id>/edit', methods=['GET'])
+    @requires_log_in
+    def edit_release_form(release_id):
+
+        logged_in = session.get('token', None)
+        if logged_in:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_private()
+
+            else: 
+
+                abort(401)
+
+        else:
+
+            abort(401)
+
+        try:
+
+            # Initialise form and populate with existing data
+            release = Release.query.filter(Release.id==release_id).one_or_none()
+            release_data = release.short_private()
+            release_data['release_price'] = release.price
+            form = EditReleaseForm(data=release_data)
+
+            # Get artist data
+
+            artist = Artist.query.filter(Artist.user_id==user.id).one_or_none()
+            artist_data = artist.short()
+
+            # Get tracks data and populate form
+
+            tracks = [track.short_public() for track in release.tracks]
+
+            for i in range(len(tracks)):
+
+                form.tracks[i].track_name.data = tracks[i]['track_name']
+                form.tracks[i].track_price.data = tracks[i]['price']
+                form.tracks[i].track_id.data = tracks[i]['id']
+
+            return render_template('forms/edit_release.html',
+                                    form=form,
+                                    artist=artist_data,
+                                    release=release_data,
+                                    userinfo=data)
+
+        except Exception as e:
+            print(e)
+            abort(404)
+
+    @app.route('/releases/<int:release_id>/edit', methods=['POST'])
+    @requires_log_in
+    def edit_release_form_submit(release_id):
+
+        form = EditReleaseForm(request.form)
+
+        logged_in = session.get('token', None)
+        if logged_in:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user:
+                data = user.short_private()
+
+            else: 
+
+                abort(401)
+
+        else:
+
+            abort(401)
+
+        try:
+
+            if form.validate():
+
+                # Get values from form
+
+                release_name = form.release_name.data
+                release_price = form.release_price.data
+
+                # Update release information
+
+                release = Release.query.filter(Release.id==release_id).one_or_none()
+                release.name = release_name
+                release.price = release_price
+
+                release.update()
+
+                # Update tracks information
+
+                for track_data in form.tracks.data:
+
+                    current_track_id = track_data['track_id']
+                    current_track = Track.query.filter(Track.id==current_track_id).one_or_none()
+                    print(current_track)
+                    print(track_data['track_name'], track_data['track_price'])
+                    current_track.name = track_data['track_name']
+                    current_track.price = track_data['track_price']
+
+                    current_track.update()
+
+                flash('Your release information has been updated.')
+
+            else:
+
+                print(form.errors)
+
+        except Exception as e:
+
+            print(e)
+            flash('Your release information could not be updated. Please try again.')
+        
+        return redirect(url_for('edit_release_form', release_id=release_id))
+
     ###################################################
 
     # Tracks
@@ -2042,7 +2166,7 @@ def create_app(test_config=None):
         return render_template('errors/401.html'), 401
 
     @app.errorhandler(401)
-    def not_found_error(error):
+    def unathorised_error(error):
         return render_template('errors/401.html'), 401
 
 

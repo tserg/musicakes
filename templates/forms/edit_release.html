@@ -1,0 +1,75 @@
+
+{% extends 'layouts/layout.html' %}
+{% block title %}Edit your release{% endblock %}
+{% block content %}
+<div class="page-content-wrap">
+
+  <div class="page-content-container">
+    <h4>
+      Artist: {{ artist.name }}
+    </h4>
+
+    <meta id="artist-id" data-id="{{ artist.id }}">
+
+    <div class="form-wrapper">
+      <form method="post" class="form" action="{{ url_for('edit_release_form', release_id=release.id) }}">
+        {{ form.hidden_tag() }}
+        <div class="form-sub-group">
+	        <fieldset>
+	        <legend>Release Information</legend>
+	          <div class="form-sub-group">
+	            <label for="release_name">Release Name</label>
+	          </div>
+	          <div class="form-sub-group">
+	            {{ form.release_name(class_ = 'form-control', autofocus = true) }}
+	          </div>
+
+	          <div class="form-sub-group">
+	            <label for="release_price">Release Price</label>
+	          </div>
+	          <div class="form-sub-group">
+	            {{ form.release_price(class_ = 'form-control', autofocus = true) }}
+	          </div>
+
+	          <br>
+	          
+	        </fieldset>
+	    </div>
+
+	    <div class="form-sub-group">
+
+	        <fieldset>
+	          <legend>Track(s) Information</legend>
+	          {% for track_form in form.tracks %}
+	          <fieldset>
+	          	
+	          	{{ track_form.hidden_tag() }}
+	          	{% for field in track_form if field.widget.input_type != 'hidden' %}
+	          	<div class="form-sub-group">
+	          		{{ field.label }}
+	          	<div class="form-sub-group">
+	          	<div class="form-sub-group">
+	          		{{ field }}
+	          	<div class="form-sub-group">
+	          	{% endfor %}
+
+	          </fieldset>
+	          {% endfor %}
+	          
+	        </fieldset>
+	    </div>
+        
+        <div class = "form-sub-group">
+
+        	<input type="submit" value="Update release information">
+      	</div>
+      </form>
+    </div>
+
+  </div>
+
+</div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
+
+{% endblock %}
