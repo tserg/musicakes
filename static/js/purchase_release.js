@@ -993,6 +993,10 @@ async function transferMusicakes() {
   var musicakesTransferAddressValue = musicakesTransferAddress.value;
   var musicakesTransferAmountValue = Number(musicakesTransferAmount.value);
 
+  if (musicakesTransferAddressValue.length != 42 || musicakesTransferAddressValue.indexOf('0x') != 0) {
+    alert('Please enter a valid Ethereum address.');
+  }
+
   if (Number.isInteger(musicakesTransferAmountValue) == false) {
     alert("The amount must be an integer.");
   }
