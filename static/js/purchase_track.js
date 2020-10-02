@@ -151,6 +151,11 @@ var _musicakesAbi = [
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
           "internalType": "string",
           "name": "name",
           "type": "string"
@@ -159,11 +164,6 @@ var _musicakesAbi = [
           "internalType": "string",
           "name": "symbol",
           "type": "string"
-        },
-        {
-          "internalType": "contract IERC20",
-          "name": "_fundsToken",
-          "type": "address"
         }
       ],
       "payable": false,
@@ -521,6 +521,37 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "recipient",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
       "constant": true,
       "inputs": [
         {
@@ -589,7 +620,7 @@ var _musicakesAbi = [
       "stateMutability": "nonpayable",
       "type": "function"
     }
-  ]
+  ];
 
 const paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
 
