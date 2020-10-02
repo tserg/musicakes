@@ -851,6 +851,8 @@ async function loadInterface() {
 
 async function payMusicakes() {
 
+  getAccount();
+
   const account = ethereum.selectedAddress;
 
 	var payAmount = musicakesPayValue.value;
@@ -917,6 +919,8 @@ async function payMusicakes() {
 
 async function claimDividends() {
 
+  getAccount();
+
   const account = ethereum.selectedAddress;
 
 	musicakesContract.methods.withdrawFunds().send({from: account})
@@ -934,6 +938,8 @@ async function claimDividends() {
 
 async function updateDividends() {
 
+  getAccount();
+
   const account = ethereum.selectedAddress;
 
 	musicakesContract.methods.updateFundsReceived().send({from: account})
@@ -950,6 +956,8 @@ async function updateDividends() {
 }
 
 async function transferMusicakes() {
+
+  getAccount();
 
   const account = ethereum.selectedAddress;
 

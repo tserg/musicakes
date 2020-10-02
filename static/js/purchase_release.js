@@ -152,6 +152,11 @@ var _musicakesAbi = [
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
           "internalType": "string",
           "name": "name",
           "type": "string"
@@ -160,11 +165,6 @@ var _musicakesAbi = [
           "internalType": "string",
           "name": "symbol",
           "type": "string"
-        },
-        {
-          "internalType": "contract IERC20",
-          "name": "_fundsToken",
-          "type": "address"
         }
       ],
       "payable": false,
@@ -621,7 +621,7 @@ var _musicakesAbi = [
       "stateMutability": "nonpayable",
       "type": "function"
     }
-  ]
+  ];
 
 const paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
 
@@ -886,6 +886,8 @@ async function loadInterface() {
 
 async function payMusicakes() {
 
+  getAccount();
+
   const account = ethereum.selectedAddress;
 
 	var payAmount = musicakesPayValue.value;
@@ -893,8 +895,6 @@ async function payMusicakes() {
   if (payAmount < price) {
     alert("The minimum price to pay is " + price.toString() + ".");
   }
-
-
 
   else {
 
@@ -954,6 +954,8 @@ async function payMusicakes() {
 
 async function claimDividends() {
 
+  getAccount();
+
   const account = ethereum.selectedAddress;
 
 	musicakesContract.methods.withdrawFunds().send({from: account})
@@ -971,6 +973,8 @@ async function claimDividends() {
 
 async function updateDividends() {
 
+  getAccount();
+
   const account = ethereum.selectedAddress;
 
 	musicakesContract.methods.updateFundsReceived().send({from: account})
@@ -987,6 +991,8 @@ async function updateDividends() {
 }
 
 async function transferMusicakes() {
+
+  getAccount();
 
   const account = ethereum.selectedAddress;
 
