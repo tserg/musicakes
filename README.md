@@ -106,8 +106,13 @@ CREATE DATABASE musicakes_test;
 #### Ropsten Testnet
 
 Contract factory addresses on Ropsten testnet are:
-  * 0x97107a1544361baF4865C882b24e8B0B9244d117 (100 tokens to creator)
+  * 0x8232d36c1dc9EACf5089Ac76cbbf37CDfB678D82 (100 tokens to creator)
   * 0xec67abe36b67afB03228101b7110A0a6155fdCdD (98 tokens to creator, 2 to project)
+
+#### Mainnet
+
+Contract factory addresses on mainnet are:
+  * 0x6C56962D9952e78422bA12B7D36C725C953AF767 (100 tokens to creator)
 
 ## API Reference
 
