@@ -75,6 +75,12 @@
 					        {% endif %}
 					    </div>
 						<a href="../releases/{{ release.release_id }}">{{ release.release_name }}</a>
+						{% if userinfo and creator is true %} 
+						
+						<br>
+						<br>
+						<a href="../releases/{{ release.release_id }}/edit" class="button">Edit release</a>
+						{% endif %}
 					</div>
 					{% endfor %}
 
