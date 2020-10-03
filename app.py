@@ -983,13 +983,22 @@ def create_app(test_config=None):
             if user:
                 data = user.short_private()
 
+                # Checks if current user is the artist
+
+                if user.artist.id == artist_id:
+                    creator = True
+                else:
+                    creator = False
+
             else: 
 
                 data = None
+                creator = False
 
         else:
 
             data = None
+            creator = False
 
         try:
 
@@ -999,7 +1008,10 @@ def create_app(test_config=None):
 
             artist_data = current_artist.short()
 
-            return render_template('pages/show_artist.html', artist=artist_data, userinfo=data)
+            return render_template('pages/show_artist.html',
+                                    artist=artist_data,
+                                    userinfo=data,
+                                    creator=creator)
 
         except Exception as e:
             print(e)
