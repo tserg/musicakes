@@ -1130,6 +1130,8 @@ def create_app(test_config=None):
             artist_data = current_artist.short()
             form = EditArtistForm()
 
+            # Populate form with external links if available
+
             if current_artist.soundcloud_url is not None:
                 form.artist_soundcloud_url.data = "https://soundcloud.com/" + current_artist.soundcloud_url
             if current_artist.facebook_url is not None:
@@ -1887,6 +1889,7 @@ def create_app(test_config=None):
             release = Release.query.filter(Release.id==release_id).one_or_none()
             release_data = release.short_private()
             release_data['release_price'] = release.price
+            release_data['release_description'] = release.description
             form = EditReleaseForm(data=release_data)
 
             # Get artist data
@@ -1946,12 +1949,14 @@ def create_app(test_config=None):
 
                 release_name = form.release_name.data
                 release_price = form.release_price.data
+                release_description = form.release_description.data
 
                 # Update release information
 
                 release = Release.query.filter(Release.id==release_id).one_or_none()
                 release.name = release_name
                 release.price = release_price
+                release.description = release_description
 
                 release.update()
 

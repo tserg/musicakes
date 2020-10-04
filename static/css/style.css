@@ -200,7 +200,7 @@ a.button {
 	padding-bottom:5px;
 }
 
-#release-text-input {
+.release-text-input {
 	resize: none;
 	white-space: pre-wrap;
 }

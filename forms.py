@@ -17,7 +17,11 @@ from wtforms import (
 	HiddenField
 )
 
-from wtforms.widgets import html5
+from wtforms.widgets import (
+	html5,
+	TextArea
+)
+
 from wtforms.fields.html5 import URLField
 
 from wtforms.validators import (
@@ -137,6 +141,15 @@ class EditReleaseForm(FlaskForm):
 		validators=[DataRequired()],
 		widget=html5.NumberInput(min=1,max=100),
 	)
+
+	release_description = TextAreaField('Description of release',
+			widget=TextArea(),
+			render_kw={
+				'class': 'release-text-input',
+				'rows': 4,
+				'cols': 50
+			}
+		)
 
 	tracks = FieldList(FormField(TrackForm))
 
