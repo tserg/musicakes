@@ -17,28 +17,38 @@
         <div class="form-sub-group">
 	        <fieldset>
 	        <legend>Release Information</legend>
-	          <div class="form-sub-group">
-	            <label for="release_name">Release Name</label>
-	          </div>
-	          <div class="form-sub-group">
-	            {{ form.release_name(class_ = 'form-control', autofocus = true) }}
-	          </div>
+	          	<div class="form-sub-group">
+	            	<label for="release_name">Release Name</label>
+	          	</div>
 
-	          <div class="form-sub-group">
-	            <label for="release_price">Release Price</label>
-	          </div>
-	          <div class="form-sub-group">
-	            {{ form.release_price(class_ = 'form-control', autofocus = true) }}
-	          </div>
+	          	<div class="form-sub-group">
+	            	{{ form.release_name(class_ = 'form-control', autofocus = true) }}
+	          	</div>
 
-	          <div class="form-sub-group">
-	            <label for="release_description">Release Description</label>
-	          </div>
-	          <div class="form-sub-group textarea">
-	            {{ form.release_description(class_ = 'form-control', autofocus = true) }}
-	          </div>
+	          	<div class="form-sub-group">
+	          		Release Cover Art
+	          	</div>
+	          	<div class="form-sub-group">
+		        	<div class = "release-cover-art">
+		          		<img src={{ release.cover_art }} />
+		        	</div>
+		      	<div class="form-sub-group">
 
-	          <br>
+	          	<div class="form-sub-group">
+	            	<label for="release_price">Release Price</label>
+	          	</div>
+	          	<div class="form-sub-group">
+	            	{{ form.release_price(class_ = 'form-control', autofocus = true) }}
+	          	</div>
+
+	          	<div class="form-sub-group">
+	            	<label for="release_description">Release Description</label>
+	          	</div>
+	          	<div class="form-sub-group textarea">
+	            	{{ form.release_description(class_ = 'form-control', autofocus = true) }}
+	          	</div>
+
+	          	<br>
 	          
 	        </fieldset>
 	    </div>
