@@ -37,7 +37,7 @@
           Artist: {{ track.artist_name }}
         </h4>
         <h4>
-          Price: {{ track.price }}
+          Price: {{ track.price }} DAI
         </h4>
         <h4>
           Release: <a href="/releases/{{ track.release_id }}">{{ track.release_name }}</a>
@@ -115,12 +115,12 @@
         <form action="" method="post" >
 
             <div>
-              <label for="pay-contract-amount">Pay DAI to token contract: </label>
+              <label for="pay-contract-amount">Buy release with DAI: </label>
               <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             </div>
             <div>
-              <button type="button" id="btn-pay-contract">Pay</button>
+              <button type="button" id="btn-pay-contract">Buy now</button>
             </div>
         </form>
 
@@ -130,10 +130,10 @@
             <div>
 
           
-            <label for="pay-contract-amount">Pay DAI to token contract: </label>
+            <label for="pay-contract-amount">Buy release with DAI: </label>
             <input type="number" size=50 id="pay-contract-amount">
             <br>
-            <button type="button" id="btn-pay-contract">Pay</button></input>
+            <button type="button" id="btn-pay-contract">Buy now</button></input>
             </div>
         </form>
         
@@ -144,10 +144,10 @@
             <div>
 
           
-            <label for="pay-contract-amount">Pay DAI to token contract: </label>
+            <label for="pay-contract-amount">Buy release with DAI: </label>
             <input type="number" size=50 id="pay-contract-amount">
             <br>
-            <button type="button" id="btn-pay-contract">Pay</button></input>
+            <button type="button" id="btn-pay-contract">Buy now</button></input>
             </div>
         </form>
 
