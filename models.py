@@ -1,4 +1,5 @@
 import os
+import datetime
 from dotenv import load_dotenv
 from sqlalchemy import Column, String, Integer, Float, create_engine, DateTime, UniqueConstraint, CheckConstraint
 from flask_sqlalchemy import SQLAlchemy
@@ -72,7 +73,7 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'profile_picture': self.profile_picture,
-            'created_on': self.created_on,
+            'created_on': self.created_on.strftime('%d %B %Y'),
         }
 
 class Artist(db.Model):
@@ -191,7 +192,7 @@ class Release(db.Model):
             'description': self.description,
             'price': self.price,
             'tracks': formatted_tracks,
-            'created_on': self.created_on,
+            'created_on': self.created_on.strftime('%d %B %Y'),
             'smart_contract_address': self.smart_contract_address
         }
 
@@ -210,7 +211,7 @@ class Release(db.Model):
             'description': self.description,
             'price': self.price,
             'tracks': formatted_tracks,
-            'created_on': self.created_on,
+            'created_on': self.created_on.strftime('%d %B %Y'),
             'smart_contract_address': self.smart_contract_address
         }
 
@@ -248,7 +249,7 @@ class Track(db.Model):
             'release_name': self.release.name,
             'release_cover_art': self.release.cover_art,
             'track_name': self.name,
-            'created_on': self.created_on,
+            'created_on': self.created_on.strftime('%d %B %Y'),
             'smart_contract_address': self.release.smart_contract_address,
             'price': self.price
         }
@@ -288,7 +289,7 @@ class Purchase(db.Model):
             'user_id': self.user_id,
             'release_id': self.release_id,
             'paid': self.paid,
-            'purchased_on': self.purchased_on
+            'purchased_on': self.purchased_on.strftime('%d %B %Y')
         }
 
 class MusicakesContractFactory(db.Model):
