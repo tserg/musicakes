@@ -115,8 +115,8 @@
         <form action="" method="post" >
 
             <div>
-              <label for="pay-contract-amount">Buy release with DAI: </label>
-              <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
+              <label for="pay-contract-amount">Buy track with DAI: </label>
+              <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount' value="{{ track.price }}"></input>
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             </div>
             <div>
@@ -130,21 +130,21 @@
             <div>
 
           
-            <label for="pay-contract-amount">Buy release with DAI: </label>
+            <label for="pay-contract-amount">Buy track with DAI: </label>
             <input type="number" size=50 id="pay-contract-amount">
             <br>
             <button type="button" id="btn-pay-contract">Buy now</button></input>
             </div>
         </form>
         
-        <span>You have already purchased this release.</span>
+        <span>You have already purchased this track.</span>
         {% else %}
 
         <form action="/purchase" method="post" hidden>
             <div>
 
           
-            <label for="pay-contract-amount">Buy release with DAI: </label>
+            <label for="pay-contract-amount">Buy track with DAI: </label>
             <input type="number" size=50 id="pay-contract-amount">
             <br>
             <button type="button" id="btn-pay-contract">Buy now</button></input>

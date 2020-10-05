@@ -132,7 +132,7 @@
 
               <div>
                 <label for="pay-contract-amount">Buy release with DAI: </label>
-                <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount'></input>
+                <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}"></input>
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
               </div>
               <div>
