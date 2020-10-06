@@ -205,6 +205,44 @@ a.button {
 	white-space: pre-wrap;
 }
 
+/* Styles for dashboards */
+
+#musicakes-dashboard, #musicakes-management-dashboard {
+	display: none;
+}
+
+/* Styles for icons */
+
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  	background-color: #FFFAFA;
+
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+
+}
+
+.up {
+  transform: rotate(225deg);
+  -webkit-transform: rotate(225deg);
+}
+
+#btn-see-more {
+	border: none;
+	background: #FFFAFA;
+	padding-right: 20px;
+
+}
+
+#text-see-more {
+	white-space: pre;
+}
 
 /* Styles for footer */
 

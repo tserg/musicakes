@@ -99,7 +99,7 @@
       </form>
       {% endif %}
 
-      <div id = "user-dashboard">
+      <div id = "user-dashboard" class="page-content-subcontainer">
 
         <span><h3>User Dashboard</h3></span>
 
@@ -114,10 +114,10 @@
         </div>
 
         <br>
-        <button id="enable-ethereum-button">Enable Ethereum</button>
+        <button id="enable-ethereum-button">Connect your Metamask wallet</button>
       </div>
 
-      <div id ="payment-token-dashboard">
+      <div id ="payment-token-dashboard" class="page-content-subcontainer">
         {% if release.smart_contract_address|length > 2 %}
         <h3>DAI Dashboard</h3>
         <div id="payment-token-balance-display">
@@ -176,7 +176,7 @@
 
       {% if release.smart_contract_address|length > 2 %}
 
-      <div id = "musicakes-dashboard">
+      <div id = "musicakes-dashboard" class="page-content-subcontainer hidden">
         <h3>Musicakes Dashboard</h3>
         <div id = "musicakes-contract-address-display">
           <span>Contract address: {{ release.smart_contract_address }}</span>
@@ -205,17 +205,17 @@
           <span id="account-unclaimed-dividends"></span>
         </div>
 
-        <div id="claim-dividends-section">
+        <div id="claim-dividends-section"  class="page-content-subcontainer">
           <button type="button" id="btn-claim-dividends">Claim Dividends</button>
         </div>
 
-        <div id="update-dividends-section">
+        <div id="update-dividends-section" class="page-content-subcontainer">
           <button type="button" id="btn-update-dividends">Update Dividends</button>
         </div>
 
       </div>
 
-      <div id = "musicakes-management-dashboard">
+      <div id = "musicakes-management-dashboard" class="page-content-subcontainer hidden">
 
         <div>
 
@@ -241,7 +241,19 @@
         </div>
 
       </div>
+
+      <div>
+        <p>
+          <button class="button" id="btn-see-more">
+          <span class="arrow down" id="icon-see-more"></span>
+          <span id ="text-see-more">  See more</span>
+          </button>
+        </p>
+      </div>
       {% endif %}
+
+
+
     </div>
   </div>
 </div>

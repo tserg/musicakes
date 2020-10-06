@@ -19,6 +19,12 @@ const musicakesTransferAmount = document.querySelector('#transfer-musicakes-amou
 
 const enableEthereumButton = document.querySelector('#enable-ethereum-button');
 
+const seeMoreButton = document.querySelector('#btn-see-more');
+const seeMoreArrow = document.querySelector('#icon-see-more');
+const seeMoreText = document.querySelector('#text-see-more');
+const musicakesDashboard = document.querySelector('#musicakes-dashboard');
+const musicakesManagementDashboard = document.querySelector('#musicakes-management-dashboard');
+
 var web3 = new Web3(Web3.givenProvider);
 
 const ethereumChainId = parseInt(window.appConfig.chain_id.value);
@@ -31,6 +37,20 @@ const csrf_token = window.appConfig.csrf_token.value;
 if (csrf_token) {
   console.log("CSRF Token is loaded");
 }
+
+seeMoreButton.addEventListener('click', () => {
+    if (seeMoreArrow.className == "arrow down") {
+      seeMoreArrow.className = "arrow up";
+      seeMoreText.innerHTML = "  See less";
+      musicakesDashboard.style.display = "block";
+      musicakesManagementDashboard.style.display = "block";
+    } else {
+      seeMoreArrow.className = "arrow down";
+      seeMoreText.innerHTML = "  See more";
+      musicakesDashboard.style.display = "none";
+      musicakesManagementDashboard.style.display = "none";
+    }
+});
 
 /* Payment token contract */
 

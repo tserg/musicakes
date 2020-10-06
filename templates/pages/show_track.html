@@ -73,7 +73,7 @@
   </div>
 
   <div class = "page-content-flex-subcontainer" id="smart-contract-dashboard">
-    <div id = "user-dashboard">
+    <div id = "user-dashboard" class="page-content-subcontainer">
 
       {% if track.smart_contract_address|length == 2 %}
         <span><h4>The smart contract has not been deployed yet.</h4></span>
@@ -99,10 +99,10 @@
       </div>
 
       <br>
-      <button id="enable-ethereum-button">Enable Ethereum</button>
+      <button id="enable-ethereum-button">Connect your Metamask wallet</button>
     </div>
 
-    <div id ="payment-token-dashboard">
+    <div id ="payment-token-dashboard" class="page-content-subcontainer">
         {% if track.smart_contract_address|length > 2 %}
         <h3>DAI Dashboard</h3>
         <div id="payment-token-balance-display">
@@ -158,7 +158,7 @@
 
       {% if track.smart_contract_address|length > 2 %}
 
-      <div id = "musicakes-dashboard">
+      <div id = "musicakes-dashboard" class="page-content-subcontainer hidden">
         <h3>Musicakes Dashboard</h3>
         <div id = "musicakes-contract-address-display">
           <span>Contract address: {{ track.smart_contract_address }}</span>
@@ -199,7 +199,7 @@
 
       </div>
 
-      <div id = "musicakes-management-dashboard">
+      <div id = "musicakes-management-dashboard"  class="page-content-subcontainer hidden">
 
         <div>
 
@@ -226,6 +226,16 @@
 
       </div>
       {% endif %}
+
+      <div>
+        <p>
+          <button class="button" id="btn-see-more">
+          <span class="arrow down" id="icon-see-more"></span>
+          <span id ="text-see-more">  See more</span>
+          </button>
+        </p>
+      </div>
+
     </div>
 
   </div>
