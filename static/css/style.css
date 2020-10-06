@@ -211,6 +211,10 @@ a.button {
 	display: none;
 }
 
+#smart-contract-dashboard {
+	min-width: 470px;
+}
+
 /* Styles for icons */
 
 .arrow {

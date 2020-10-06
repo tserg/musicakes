@@ -228,14 +228,16 @@
 
 
             Address to transfer Musicakes: 
+            <br>
             <input type="text" size=50 id="transfer-musicakes-address">
         </div>
         <div>
             Number of Musicakes to transfer: 
+            <br>
             <input type="text" size=50 id="transfer-musicakes-amount">
         </div>
 
-        <div>
+        <div class="page-content-subcontainer">
           
           <button type="button" id="btn-transfer-musicakes">Transfer</button>
         </div>
@@ -253,8 +255,18 @@
       {% endif %}
 
 
-
     </div>
+
+    <div class="page-content-flex-subcontainer" id="release-dashboard-3">
+      {% if release.youtube_url is not none %}
+      <div class="page-content-subcontainer">
+      <iframe id="ytplayer" type="text/html" width="360" height="240"
+        src="{{ release.youtube_url }}"
+        frameborder="0"></iframe>
+      </div>
+      {% endif %}
+    </div>
+
   </div>
 </div>
 

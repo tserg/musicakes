@@ -121,6 +121,11 @@ class TrackForm(FlaskForm):
 		widget=html5.NumberInput()
 	)
 
+	track_youtube_url = URLField(
+		'YouTube URL',
+		validators=[URL(), Optional()]
+	)
+
 
 class ReleasePresubmissionForm(FlaskForm):
 

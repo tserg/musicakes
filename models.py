@@ -226,6 +226,7 @@ class Track(db.Model):
     price = Column(Integer, nullable=False)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     download_url = Column(String, unique=True, nullable=True)
+    youtube_url = Column(String, unique=True, nullable=True)
 
     __table_args__ = (UniqueConstraint('artist_id', 'release_id', 'name', name='unique_track_name'), )
 
@@ -251,7 +252,8 @@ class Track(db.Model):
             'track_name': self.name,
             'created_on': self.created_on.strftime('%#d %B %Y'),
             'smart_contract_address': self.release.smart_contract_address,
-            'price': self.price
+            'price': self.price,
+            'youtube_url': self.youtube_url
         }
 
 class Purchase(db.Model):
