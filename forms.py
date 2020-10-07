@@ -118,11 +118,11 @@ class TrackForm(FlaskForm):
 	track_price = IntegerField('Price of track',
 		default=1, 
 		validators=[DataRequired()],
-		widget=html5.NumberInput()
+		widget=html5.NumberInput(min=1, max=100)
 	)
 
 	track_youtube_url = URLField(
-		'YouTube URL',
+		'YouTube URL (e.g. https://www.youtube.com/watch?v=obe02lLwyps)',
 		validators=[URL(), Optional()]
 	)
 

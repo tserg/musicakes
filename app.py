@@ -1615,41 +1615,13 @@ def create_app(test_config=None):
 
             # Checks if smart contract address is in db
 
-            print(current_release.smart_contract_address)
-
             if current_release.smart_contract_address is None:
                 release_data['smart_contract_address'] = "0x"
 
-            # Get YouTube playlist URL from tracks' YouTube URL
+            # Get YouTube playlist URL 
 
-            youtube_url = 'https://youtube.com/embed/'
-
-            for i in range(len(current_release.tracks)):
-
-                current_track = current_release.tracks[i]
-                if current_track.youtube_url is not None:
-
-                    if i == 0:
-                        track_youtube_id = current_release.tracks[i].youtube_url.rsplit('=')[-1]
-                        youtube_url += track_youtube_id
-
-                        print(track_youtube_id)
-
-                    elif i == 1:
-                        youtube_url += '?playlist='
-                        track_youtube_id = current_release.tracks[i].youtube_url.rsplit('=')[-1]
-                        youtube_url += track_youtube_id
-                        youtube_url += ','
-
-                    else:
-                        track_youtube_id = current_release.tracks[i].youtube_url.rsplit('=')[-1]
-                        youtube_url += track_youtube_id
-                        youtube_url += ','
-
-            if youtube_url == 'https://youtube.com/embed/':
+            if release_data['youtube_url'] == 'https://youtube.com/embed/':
                 release_data['youtube_url'] = None
-            else:
-                release_data['youtube_url'] = youtube_url
 
             if logged_in:
 

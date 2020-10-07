@@ -225,7 +225,7 @@
         </div>
 
       </div>
-      {% endif %}
+
 
       <div>
         <p>
@@ -235,7 +235,18 @@
           </button>
         </p>
       </div>
+      {% endif %}
 
+    </div>
+
+    <div class="page-content-flex-subcontainer" id="release-dashboard-3">
+      {% if track.youtube_url is not none %}
+      <div class="page-content-subcontainer">
+      <iframe id="ytplayer" type="text/html" width="360" height="240"
+        src="{{ track.youtube_url }}"
+        frameborder="0"></iframe>
+      </div>
+      {% endif %}
     </div>
 
   </div>
