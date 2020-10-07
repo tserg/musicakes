@@ -11,23 +11,19 @@
 
   {% else %} 
   <div class="page-content-container">
-    <div>
+    <div class="page-content-subcontainer">
       <form class="form" name="new_release" onsubmit="return false">
 
         <div>
-          <h3 class="form-heading">Create a new release</h3>
+          <h3>Create a new release</h3>
           <br>
-          <h3>Step 2: Upload your tracks</h3>
-        </div>
-
-        <div>
-            <h4>Release Information</h4>
-
+          <h3>Step 2 of 3: Upload your release's information and tracks</h3>
         </div>
 
         <div>
 
           <fieldset class ="form-group" id="tracks-information">
+          <legend>Release information</legend>
 
           <div class="form-group">
             <div class="form-sub-group">
@@ -71,13 +67,9 @@
 
         </div>
 
-        <div>
-            <h4>Tracks</h4>
-
-        </div>
-
-        <div id="track-form-container">
+        <div class="page-content-subcontainer">
           <fieldset class ="track-form-group">
+            <legend>Track(s) information</legend>
             <div class="form-sub-group">
               <label for="track-name-input-1">Track name</label>
             </div>
