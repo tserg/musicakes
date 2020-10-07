@@ -1903,15 +1903,17 @@ def create_app(test_config=None):
             artist_data = artist.short()
 
             # Get tracks data and populate form
+            # Tracks need to be sorted so as to render in order based on track ID
 
             tracks = [track.short_public() for track in release.tracks]
+            ordered_tracks = sorted(tracks, key=lambda track: track['id'])
 
             for i in range(len(tracks)):
 
-                form.tracks[i].track_name.data = tracks[i]['track_name']
-                form.tracks[i].track_price.data = tracks[i]['price']
-                form.tracks[i].track_id.data = tracks[i]['id']
-                form.tracks[i].track_youtube_url.data = tracks[i]['youtube_url']
+                form.tracks[i].track_name.data = ordered_tracks[i]['track_name']
+                form.tracks[i].track_price.data = ordered_tracks[i]['price']
+                form.tracks[i].track_id.data = ordered_tracks[i]['id']
+                form.tracks[i].track_youtube_url.data = ordered_tracks[i]['youtube_url']
 
             return render_template('forms/edit_release.html',
                                     form=form,
