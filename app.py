@@ -1976,7 +1976,11 @@ def create_app(test_config=None):
                     print(track_data['track_name'], track_data['track_price'])
                     current_track.name = track_data['track_name']
                     current_track.price = track_data['track_price']
-                    current_track.youtube_url = track_data['track_youtube_url']
+
+                    if track_data['track_youtube_url'] == '':
+                        current_track.youtube_url = None
+                    else:
+                        current_track.youtube_url = track_data['track_youtube_url']
 
                     current_track.update()
 
