@@ -186,6 +186,7 @@ class Release(db.Model):
             # Get YouTube playlist URL from tracks' YouTube URL
 
         youtube_embed_url = 'https://youtube.com/embed/'
+        added_track_count = 0
 
         for i in range(len(self.tracks)):
 
@@ -194,15 +195,17 @@ class Release(db.Model):
 
                 track_youtube_id = current_track.youtube_url.rsplit('/')[-1]
 
-                if i == 0:
+                if added_track_count == 0:
 
                     youtube_embed_url += track_youtube_id
+                    added_track_count += 1
                     print(track_youtube_id)
 
-                elif i == 1:
+                elif added_track_count == 1:
                     youtube_embed_url += '?playlist='
                     youtube_embed_url += track_youtube_id
                     youtube_embed_url += ','
+                    added_track_count += 1
 
                 else:
                     youtube_embed_url += track_youtube_id
