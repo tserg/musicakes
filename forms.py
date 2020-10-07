@@ -122,7 +122,7 @@ class TrackForm(FlaskForm):
 	)
 
 	track_youtube_url = URLField(
-		'YouTube URL (e.g. https://www.youtube.com/watch?v=obe02lLwyps)',
+		'YouTube URL (e.g. https://youtu.be/obe02lLwyps)',
 		validators=[URL(), Optional()]
 	)
 

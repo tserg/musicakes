@@ -240,10 +240,10 @@
     </div>
 
     <div class="page-content-flex-subcontainer" id="release-dashboard-3">
-      {% if track.youtube_url is not none %}
+      {% if track.youtube_embed_url is not none %}
       <div class="page-content-subcontainer">
       <iframe id="ytplayer" type="text/html" width="360" height="240"
-        src="{{ track.youtube_url }}"
+        src="{{ track.youtube_embed_url }}"
         frameborder="0"></iframe>
       </div>
       {% endif %}

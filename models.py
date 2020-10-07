@@ -185,29 +185,28 @@ class Release(db.Model):
 
             # Get YouTube playlist URL from tracks' YouTube URL
 
-        youtube_url = 'https://youtube.com/embed/'
+        youtube_embed_url = 'https://youtube.com/embed/'
 
         for i in range(len(self.tracks)):
 
             current_track = self.tracks[i]
             if current_track.youtube_url is not None:
 
-                if i == 0:
-                    track_youtube_id = current_track.youtube_url.rsplit('=')[-1]
-                    youtube_url += track_youtube_id
+                track_youtube_id = current_track.youtube_url.rsplit('/')[-1]
 
+                if i == 0:
+
+                    youtube_embed_url += track_youtube_id
                     print(track_youtube_id)
 
                 elif i == 1:
-                    youtube_url += '?playlist='
-                    track_youtube_id = current_track.youtube_url.rsplit('=')[-1]
-                    youtube_url += track_youtube_id
-                    youtube_url += ','
+                    youtube_embed_url += '?playlist='
+                    youtube_embed_url += track_youtube_id
+                    youtube_embed_url += ','
 
                 else:
-                    track_youtube_id = current_track.youtube_url.rsplit('=')[-1]
-                    youtube_url += track_youtube_id
-                    youtube_url += ','
+                    youtube_embed_url += track_youtube_id
+                    youtube_embed_url += ','
 
         return {
             'id': self.id,
@@ -220,7 +219,7 @@ class Release(db.Model):
             'tracks': formatted_tracks,
             'created_on': self.created_on.strftime('%#d %B %Y'),
             'smart_contract_address': self.smart_contract_address,
-            'youtube_url': youtube_url
+            'youtube_embed_url': youtube_embed_url
         }
 
     def short_private(self):
@@ -270,13 +269,11 @@ class Track(db.Model):
 
     def short_public(self):
 
-        youtube_url = 'https://youtube.com/embed/'
+        youtube_embed_url = 'https://youtube.com/embed/'
 
         if self.youtube_url is not None:
-            track_youtube_id = self.youtube_url.rsplit('=')[-1]
-            youtube_url += track_youtube_id
-        else: 
-            youtube_url = None
+            track_youtube_id = self.youtube_url.rsplit('/')[-1]
+            youtube_embed_url += track_youtube_id
 
         return {
             'id': self.id,
@@ -289,7 +286,8 @@ class Track(db.Model):
             'created_on': self.created_on.strftime('%#d %B %Y'),
             'smart_contract_address': self.release.smart_contract_address,
             'price': self.price,
-            'youtube_url': youtube_url
+            'youtube_url': self.youtube_url,
+            'youtube_embed_url': youtube_embed_url
         }
 
 class Purchase(db.Model):

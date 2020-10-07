@@ -1620,8 +1620,10 @@ def create_app(test_config=None):
 
             # Get YouTube playlist URL 
 
-            if release_data['youtube_url'] == 'https://youtube.com/embed/':
-                release_data['youtube_url'] = None
+            if release_data['youtube_embed_url'] == 'https://youtube.com/embed/':
+                release_data['youtube_embed_url'] = None
+
+            print(release_data['youtube_embed_url'])
 
             if logged_in:
 
@@ -2122,6 +2124,11 @@ def create_app(test_config=None):
 
             if formatted_track_data['smart_contract_address'] is None:
                 formatted_track_data['smart_contract_address'] = "0x"
+
+            if formatted_track_data['youtube_embed_url'] == 'https://youtube.com/embed/':
+                formatted_track_data['youtube_embed_url'] = None
+
+            print(formatted_track_data['youtube_embed_url'])
 
             return render_template('pages/show_track.html',
                                     track=formatted_track_data,
