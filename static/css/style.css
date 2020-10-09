@@ -42,12 +42,12 @@ a.button {
 }
 
 .topnav a {
-  float: left;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  text-decoration: none;
-  font-size: 17px;
+  	float: left;
+  	color: black;
+  	text-align: center;
+  	padding: 14px 24px;
+  	text-decoration: none;
+  	font-size: 17px;
 }
 
 .topnav a.topnav-main-item:hover {
@@ -78,13 +78,23 @@ a.button {
 
 /* Dropdown Content (Hidden by Default) */
 .topnav-dropdown-content {
-  display: none;
-  text-align: left;
   position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  display: none;
+  float: left;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 1rem;
+  color: #212529;
+  text-align: left;
+  list-style: none;
   background-color: #FFFAFA;
-  min-width: 180px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
 }
 
 /* Links inside the dropdown */
@@ -267,4 +277,3 @@ a.button {
 	text-decoration: none;
 	font-size: 17px;
 }
-
