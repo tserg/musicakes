@@ -9,6 +9,7 @@ from botocore.exceptions import ClientError
 import zipfile
 
 from functools import wraps
+
 from flask import (
     Flask,
     request,
@@ -29,6 +30,10 @@ from flask_wtf import (
     CSRFProtect
 )
 
+from celery import Celery
+
+from datetime import timedelta
+
 from forms import *
 from jose import jwt
 
@@ -41,6 +46,11 @@ from models import (
     Purchase,
     MusicakesContractFactory,
     PaymentToken
+)
+
+from tasks import (
+    hello,
+    print_transaction_hash
 )
 
 from urllib.request import urlopen
@@ -91,6 +101,12 @@ def create_app(test_config=None):
     app = Flask(__name__)
 
     app.config.from_object('config')
+    app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+    app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+    celery.conf.update(app.config)
+
     csrf = CSRFProtect()
     csrf.init_app(app)
 
@@ -346,6 +362,7 @@ def create_app(test_config=None):
 
             data = None
 
+
         return render_template('pages/index.html', userinfo=data)
 
 
@@ -369,6 +386,9 @@ def create_app(test_config=None):
         latest_releases = Release.query.order_by(Release.created_on.desc()).limit(5).all()
 
         latest_releases_data = [release.short_public() for release in latest_releases]
+
+
+        task = hello.apply_async(countdown=5)
 
         return render_template('pages/home.html', userinfo=data, latest_releases=latest_releases_data)
 
@@ -1307,6 +1327,7 @@ def create_app(test_config=None):
             wallet_address = request.get_json()['wallet_address']
             paid = request.get_json()['paid']
 
+            # task = print_transaction_hash.apply_async(args=(transaction_hash,), countdown=1)
 
             purchase = Purchase(
                     user_id = user.id,
@@ -1330,6 +1351,40 @@ def create_app(test_config=None):
             print(e)
 
             abort(404)
+
+
+    @app.route('/releases/<int:release_id>/purchase_transaction_hash', methods=['POST'])
+    @requires_log_in
+    def purchase_release_transaction_hash(release_id):
+        logged_in = session.get('token', None)
+        if logged_in:
+
+            auth_id = session['jwt_payload']['sub'][6:]
+
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            if user is None:
+
+                abort(404)
+
+        else:
+
+            abort(404)
+
+        try:
+            print("Transaction hash received")
+            transaction_hash = request.get_json()['transaction_hash']
+
+            task = print_transaction_hash.apply_async(args=(transaction_hash,), countdown=1)
+
+            return jsonify({
+                'success': True
+            })
+
+        except Exception as e:
+            return jsonify({
+                'success': False
+            })
 
     @app.route('/tracks/<int:track_id>/purchase', methods=['POST'])
     @requires_log_in

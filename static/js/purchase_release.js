@@ -909,6 +909,22 @@ async function payMusicakes() {
 		paymentTokenContract.methods.transfer(musicakesAddress, payAmountFormatted).send({from: account})
 		.once('transactionHash', function(hash) {
 			console.log(hash);
+
+      var data = JSON.stringify({
+        transaction_hash: hash
+      });
+      releaseIdString = release_id.toString();
+      fetch('/releases/' + releaseIdString + '/purchase_transaction_hash', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'X-CSRFToken': csrf_token,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: data
+      });
+
 		})
 		.once('receipt', function(receipt) {
       console.log('Receipt for purchase');
@@ -919,6 +935,10 @@ async function payMusicakes() {
         wallet_address: account,
         transaction_hash: receipt.transactionHash,
         paid: payAmount
+      })
+      .then(function(response) {
+        console.log(response);
+
       });
 
       releaseIdString = release_id.toString();
