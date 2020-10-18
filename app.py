@@ -4,6 +4,8 @@ from urllib.parse import urlencode
 
 from werkzeug.datastructures import MultiDict
 
+# Import AWS S3 and dependencies
+
 import boto3
 from botocore.exceptions import ClientError
 import zipfile
@@ -30,7 +32,7 @@ from flask_wtf import (
     CSRFProtect
 )
 
-from celery import Celery
+from tasks import *
 
 from datetime import timedelta
 
@@ -48,14 +50,15 @@ from models import (
     PaymentToken
 )
 
-from tasks import (
-    hello,
-    print_transaction_hash
-)
-
 from urllib.request import urlopen
 from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
+
+from celery import Celery
+
+# Import web3.py
+
+from web3 import Web3, HTTPProvider
 
 from dotenv import load_dotenv
 
@@ -84,6 +87,17 @@ S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
 
 ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')
 
+# Environment variables for Celery and Redies
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'Does not exist')
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'Does not exist')
+
+# Environment variables for Infura
+
+WEB3_INFURA_PROJECT_ID = os.getenv('WEB3_INFURA_PROJECT_ID', 'Does not exist')
+WEB3_INFURA_API_SECRET = os.getenv('WEB3_INFURA_API_SECRET', 'Does not exist')
+#WEB3_PROVIDER_URI = os.getenv('WEB3_PROVIDER_URI', 'Does not exist')
+
 # Environment variables for app
 
 RELEASES_PER_PAGE = 10
@@ -98,25 +112,24 @@ class AuthError(Exception):
 def create_app(test_config=None):
 
     # create and configure the app
-    app = Flask(__name__)
+    flask_app = Flask(__name__)
 
-    app.config.from_object('config')
-    app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-    app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+    flask_app.config.from_object('config')
+    flask_app.config['CELERY_BROKER_URL'] = CELERY_BROKER_URL
+    flask_app.config['CELERY_RESULT_BACKEND'] = CELERY_RESULT_BACKEND
 
-    celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-    celery.conf.update(app.config)
+    celery = make_celery(flask_app)
 
     csrf = CSRFProtect()
-    csrf.init_app(app)
+    csrf.init_app(flask_app)
 
     db=SQLAlchemy()
 
-    setup_db(app)
+    setup_db(flask_app)
 
-    CORS(app, resources={r"/*": {"origins": "http://localhost:5000"}})
+    CORS(flask_app, resources={r"/*": {"origins": "http://localhost:5000"}})
 
-    oauth = OAuth(app)
+    oauth = OAuth(flask_app)
 
     auth0 = oauth.register(
         'auth0',
@@ -129,8 +142,6 @@ def create_app(test_config=None):
             'scope': 'openid profile email',
         },
     )
-
-
     ###################################################
 
     # Auth
@@ -304,7 +315,7 @@ def create_app(test_config=None):
     # /server.py
 
     # Here we're using the /callback route.
-    @app.route('/callback')
+    @flask_app.route('/callback')
     def callback_handling():
         # Handles response from token endpoint
         token = auth0.authorize_access_token()
@@ -325,12 +336,12 @@ def create_app(test_config=None):
         }
         return redirect('/home')
 
-    @app.route('/login')
+    @flask_app.route('/login')
     def login():
         return auth0.authorize_redirect(redirect_uri=REDIRECT_URL,
                                         audience=API_AUDIENCE)
 
-    @app.route('/logout')
+    @flask_app.route('/logout')
     def logout():
         # Clear session stored data
         session.clear()
@@ -338,7 +349,7 @@ def create_app(test_config=None):
         params = {'returnTo': url_for('index', _external=True), 'client_id': AUTH0_CLIENT_ID}
         return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
 
-    @app.route('/')
+    @flask_app.route('/')
     def index():
 
         logged_in = session.get('token', None)
@@ -368,7 +379,7 @@ def create_app(test_config=None):
 
     # after logging in
 
-    @app.route('/home', methods=['GET'])
+    @flask_app.route('/home', methods=['GET'])
     @requires_log_in
     def home():
 
@@ -387,11 +398,41 @@ def create_app(test_config=None):
 
         latest_releases_data = [release.short_public() for release in latest_releases]
 
-
-        task = hello.apply_async(countdown=5)
-
         return render_template('pages/home.html', userinfo=data, latest_releases=latest_releases_data)
 
+    ###################################################
+
+    # Celery
+
+    ###################################################
+
+    @celery.task()
+    def print_transaction_hash(_transactionHash, _walletAddress, _paid, _userId, _releaseId):
+
+        if ETHEREUM_CHAIN_ID == 1:
+            from web3.auto.infura import w3
+        else:
+            from web3.auto.infura.ropsten import w3
+
+        print(_transactionHash)
+
+        print("w3 connection: ")
+        print(w3.isConnected())
+
+        receipt = w3.eth.waitForTransactionReceipt(_transactionHash)
+
+        if receipt:
+            purchase = Purchase(
+                    user_id = _userId,
+                    release_id = _releaseId,
+                    paid = _paid,
+                    wallet_address = _walletAddress,
+                    transaction_hash = _transactionHash
+                )
+
+            purchase.insert()
+
+        print(receipt)  
 
     ###################################################
 
@@ -500,7 +541,7 @@ def create_app(test_config=None):
 
         return str(zip_file_name + ".zip")
 
-    @app.route('/sign_s3_upload/', methods=['GET'])
+    @flask_app.route('/sign_s3_upload/', methods=['GET'])
     @requires_log_in
     def sign_s3_upload():
 
@@ -567,7 +608,7 @@ def create_app(test_config=None):
             'url': S3_LOCATION + key
         })
 
-    @app.route('/sign_s3_download/', methods=['GET'])
+    @flask_app.route('/sign_s3_download/', methods=['GET'])
     @requires_log_in
     def sign_s3_download_track():
 
@@ -619,7 +660,7 @@ def create_app(test_config=None):
             'file_name': filename
         })
 
-    @app.route('/releases/<int:release_id>/download', methods=['GET'])
+    @flask_app.route('/releases/<int:release_id>/download', methods=['GET'])
     @requires_log_in
     def download_release(release_id):
 
@@ -643,7 +684,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @app.route('/about', methods=['GET'])
+    @flask_app.route('/about', methods=['GET'])
     def show_about_us():
 
         logged_in = session.get('token', None)
@@ -667,7 +708,7 @@ def create_app(test_config=None):
         return render_template('pages/about.html', userinfo=data)
 
 
-    @app.route('/faq', methods=['GET'])
+    @flask_app.route('/faq', methods=['GET'])
     def show_faq():
 
         logged_in = session.get('token', None)
@@ -691,7 +732,7 @@ def create_app(test_config=None):
             
         return render_template('pages/faq.html', userinfo=data)
 
-    @app.route('/terms', methods=['GET'])
+    @flask_app.route('/terms', methods=['GET'])
     def show_terms_of_use():
 
         logged_in = session.get('token', None)
@@ -714,7 +755,7 @@ def create_app(test_config=None):
             
         return render_template('pages/terms.html', userinfo=data)
 
-    @app.route('/privacy', methods=['GET'])
+    @flask_app.route('/privacy', methods=['GET'])
     def show_privacy_policy():
 
         logged_in = session.get('token', None)
@@ -745,7 +786,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @app.route('/account', methods=['GET'])
+    @flask_app.route('/account', methods=['GET'])
     @requires_log_in
     def show_account():
 
@@ -774,7 +815,7 @@ def create_app(test_config=None):
 
         return render_template('pages/show_account.html', userinfo=data)
 
-    @app.route('/account/edit', methods=['GET'])
+    @flask_app.route('/account/edit', methods=['GET'])
     @requires_log_in
     def edit_user_form():
 
@@ -793,7 +834,7 @@ def create_app(test_config=None):
 
         return render_template('forms/edit_user.html', form = form, userinfo=data)
 
-    @app.route('/account/edit', methods=['POST'])
+    @flask_app.route('/account/edit', methods=['POST'])
     @requires_log_in
     def edit_user_submission():
 
@@ -840,7 +881,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @app.route('/users/<int:user_id>', methods=['GET'])
+    @flask_app.route('/users/<int:user_id>', methods=['GET'])
     def show_user(user_id):
         try:
             logged_in = session.get('token', None)
@@ -891,7 +932,7 @@ def create_app(test_config=None):
             print(e)
             abort(404)
 
-    @app.route('/users/create', methods=['GET'])
+    @flask_app.route('/users/create', methods=['GET'])
     @requires_log_in
     def create_user_form():
         form = UserForm()
@@ -899,7 +940,7 @@ def create_app(test_config=None):
         return render_template('forms/new_user.html', form=form)
 
 
-    @app.route('/users/create', methods=['POST'])
+    @flask_app.route('/users/create', methods=['POST'])
     @requires_log_in
     def create_user_submission():
         form = UserForm(request.form)
@@ -942,7 +983,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @app.route('/artists', methods=['GET'])
+    @flask_app.route('/artists', methods=['GET'])
     def get_artists():
         logged_in = session.get('token', None)
         if logged_in:
@@ -991,7 +1032,7 @@ def create_app(test_config=None):
 
         return redirect('/')
 
-    @app.route('/artists/<int:artist_id>', methods=['GET'])
+    @flask_app.route('/artists/<int:artist_id>', methods=['GET'])
     def show_artist(artist_id):
         logged_in = session.get('token', None)
         if logged_in:
@@ -1039,7 +1080,7 @@ def create_app(test_config=None):
 
         return redirect('/')
 
-    @app.route('/artists/create', methods=['GET'])
+    @flask_app.route('/artists/create', methods=['GET'])
     @requires_log_in
     def create_artist_form():
         logged_in = session.get('token', None)
@@ -1076,7 +1117,7 @@ def create_app(test_config=None):
 
         return render_template('forms/new_artist.html', form=form, userinfo=data)
 
-    @app.route('/artists/create', methods=['POST'])
+    @flask_app.route('/artists/create', methods=['POST'])
     @requires_log_in
     def create_artist():
 
@@ -1120,7 +1161,7 @@ def create_app(test_config=None):
 
         return redirect(url_for('create_artist_form'))
 
-    @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
+    @flask_app.route('/artists/<int:artist_id>/edit', methods=['GET'])
     @requires_log_in
     def edit_artist(artist_id):
         logged_in = session.get('token', None)
@@ -1167,7 +1208,7 @@ def create_app(test_config=None):
 
         return redirect('/')
 
-    @app.route('/artists/<int:artist_id>/edit', methods=['PUT'])
+    @flask_app.route('/artists/<int:artist_id>/edit', methods=['PUT'])
     @requires_log_in
     def edit_artist_picture(artist_id):
 
@@ -1203,7 +1244,7 @@ def create_app(test_config=None):
                 'success': False
             })
 
-    @app.route('/artists/<int:artist_id>/edit_2', methods=['POST'])
+    @flask_app.route('/artists/<int:artist_id>/edit_2', methods=['POST'])
     @requires_log_in
     def edit_artist_details(artist_id):
         form = EditArtistForm(request.form)
@@ -1252,7 +1293,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @app.route('/account/purchases', methods=['GET'])
+    @flask_app.route('/account/purchases', methods=['GET'])
     @requires_log_in
     def show_purchases():
 
@@ -1303,7 +1344,7 @@ def create_app(test_config=None):
 
         return render_template('pages/show_purchases.html', userinfo=data)
 
-    @app.route('/releases/<int:release_id>/purchase', methods=['POST'])
+    @flask_app.route('/releases/<int:release_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_release(release_id):
         logged_in = session.get('token', None)
@@ -1353,7 +1394,7 @@ def create_app(test_config=None):
             abort(404)
 
 
-    @app.route('/releases/<int:release_id>/purchase_transaction_hash', methods=['POST'])
+    @flask_app.route('/releases/<int:release_id>/purchase_transaction_hash', methods=['POST'])
     @requires_log_in
     def purchase_release_transaction_hash(release_id):
         logged_in = session.get('token', None)
@@ -1374,8 +1415,16 @@ def create_app(test_config=None):
         try:
             print("Transaction hash received")
             transaction_hash = request.get_json()['transaction_hash']
+            wallet_address = request.get_json()['wallet_address']
+            paid = request.get_json()['paid']
 
-            task = print_transaction_hash.apply_async(args=(transaction_hash,), countdown=1)
+            task = print_transaction_hash.apply_async(
+                        args=(transaction_hash,
+                                wallet_address,
+                                paid,
+                                user.id,
+                                release_id), 
+                        countdown=1)
 
             return jsonify({
                 'success': True
@@ -1386,7 +1435,7 @@ def create_app(test_config=None):
                 'success': False
             })
 
-    @app.route('/tracks/<int:track_id>/purchase', methods=['POST'])
+    @flask_app.route('/tracks/<int:track_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_track(track_id):
         logged_in = session.get('token', None)
@@ -1432,7 +1481,7 @@ def create_app(test_config=None):
 
             abort(404)
 
-    @app.route('/tracks/<int:track_id>/download', methods=['GET'])
+    @flask_app.route('/tracks/<int:track_id>/download', methods=['GET'])
     @requires_log_in
     def download_purchased_track(track_id):
         logged_in = session.get('token', None)
@@ -1494,7 +1543,7 @@ def create_app(test_config=None):
 
         return redirect(url_for('show_purchases'))
 
-    @app.route('/releases/<int:release_id>/download', methods=['GET'])
+    @flask_app.route('/releases/<int:release_id>/download', methods=['GET'])
     @requires_log_in
     def download_purchased_release(release_id):
 
@@ -1567,7 +1616,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @app.route('/releases', methods=['GET'])
+    @flask_app.route('/releases', methods=['GET'])
     def get_releases():
 
         try:
@@ -1614,7 +1663,7 @@ def create_app(test_config=None):
             print(e)
             abort(404)
 
-    @app.route('/releases/<int:release_id>', methods=['GET'])
+    @flask_app.route('/releases/<int:release_id>', methods=['GET'])
     def show_release(release_id):
 
         logged_in = session.get('token', None)
@@ -1703,7 +1752,7 @@ def create_app(test_config=None):
 
         return redirect('/')
 
-    @app.route('/releases/create', methods=['GET'])
+    @flask_app.route('/releases/create', methods=['GET'])
     @requires_log_in
     def create_release_presubmission_form():
         logged_in = session.get('token', None)       
@@ -1732,7 +1781,7 @@ def create_app(test_config=None):
 
         return render_template('forms/new_release_presubmission.html', form=form, userinfo=data)
 
-    @app.route('/releases/create', methods=['POST'])
+    @flask_app.route('/releases/create', methods=['POST'])
     @requires_log_in
     def create_release_presubmission():
         logged_in = session.get('token', None)
@@ -1772,7 +1821,7 @@ def create_app(test_config=None):
 
         return render_template('forms/new_release.html', track_count=track_count_list, userinfo=data)
 
-    @app.route('/releases/create_2', methods=['POST'])
+    @flask_app.route('/releases/create_2', methods=['POST'])
     @requires_log_in
     def create_release_submission():
         logged_in = session.get('token', None)
@@ -1820,7 +1869,7 @@ def create_app(test_config=None):
                 'success': False
             })
 
-    @app.route('/releases/<int:release_id>/deploy', methods=['GET'])
+    @flask_app.route('/releases/<int:release_id>/deploy', methods=['GET'])
     @requires_log_in
     def show_release_for_deployment(release_id):
         logged_in = session.get('token', None)
@@ -1882,7 +1931,7 @@ def create_app(test_config=None):
         return redirect('/')
 
 
-    @app.route('/releases/<int:release_id>/deploy', methods=['POST'])
+    @flask_app.route('/releases/<int:release_id>/deploy', methods=['POST'])
     @requires_log_in
     def deploy_release_smart_contract(release_id):
         logged_in = session.get('token', None)
@@ -1921,7 +1970,7 @@ def create_app(test_config=None):
                 'success': False
             })
 
-    @app.route('/releases/<int:release_id>/edit', methods=['GET'])
+    @flask_app.route('/releases/<int:release_id>/edit', methods=['GET'])
     @requires_log_in
     def edit_release_form(release_id):
 
@@ -1980,7 +2029,7 @@ def create_app(test_config=None):
             print(e)
             abort(404)
 
-    @app.route('/releases/<int:release_id>/edit', methods=['POST'])
+    @flask_app.route('/releases/<int:release_id>/edit', methods=['POST'])
     @requires_log_in
     def edit_release_form_submit(release_id):
 
@@ -2060,7 +2109,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @app.route('/tracks', methods=['GET'])
+    @flask_app.route('/tracks', methods=['GET'])
     def get_tracks():
 
         try:
@@ -2108,7 +2157,7 @@ def create_app(test_config=None):
 
             abort(404)
 
-    @app.route('/tracks/<int:track_id>', methods=['GET'])
+    @flask_app.route('/tracks/<int:track_id>', methods=['GET'])
     def show_track(track_id):
 
         track = Track.query.get(track_id)
@@ -2200,7 +2249,7 @@ def create_app(test_config=None):
 
             abort(404)
 
-    @app.route('/tracks/create', methods=['POST'])
+    @flask_app.route('/tracks/create', methods=['POST'])
     @requires_log_in
     def create_track():
 
@@ -2251,29 +2300,26 @@ def create_app(test_config=None):
         Errors handling
     """
 
-    @app.errorhandler(AuthError)
+    @flask_app.errorhandler(AuthError)
     def auth_error(AuthError):
         return render_template('errors/401.html'), 401
 
-    @app.errorhandler(401)
+    @flask_app.errorhandler(401)
     def unathorised_error(error):
         return render_template('errors/401.html'), 401
 
 
-    @app.errorhandler(404)
+    @flask_app.errorhandler(404)
     def not_found_error(error):
         return render_template('errors/404.html'), 404
 
-    @app.errorhandler(500)
+    @flask_app.errorhandler(500)
     def server_error(error):
         return render_template('errors/500.html'), 500
 
 
-    return app
+    return flask_app
 
 
 app = create_app()
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+celery = make_celery(app)
