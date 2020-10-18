@@ -923,51 +923,14 @@ async function payMusicakes() {
           'Accept': 'application/json'
         },
         body: data
-      });
-
-		})
-		.once('receipt', function(receipt) {
-      console.log('Receipt for purchase');
-			console.log(receipt);
-      console.log(receipt.transactionHash);
-
-      var data = JSON.stringify({
-        wallet_address: account,
-        transaction_hash: receipt.transactionHash,
-        paid: payAmount
-      })
-      .then(function(response) {
-        console.log(response);
-
-      });
-
-      releaseIdString = release_id.toString();
-
-      fetch('/releases/' + releaseIdString + '/purchase', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'X-CSRFToken': csrf_token,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: data
       })
       .then(function(response) {
         console.log(response);
         if (response.ok) {
-          alert("Your purchase was successful!");
-          location.reload();
+          alert("Your transaction is pending.");
         }
-        else {
-          alert("Your purchase was not successful."
-            + "\nDo not make another transaction."
-            + "\nPlease contact us at musicakes [dot] team [at] gmail [dot] com with your transaction hash."
-          );
-        }
-
       });
-      
+
 		})
 		.on('error', function(error) {
 			console.log(error);

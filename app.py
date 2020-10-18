@@ -407,7 +407,7 @@ def create_app(test_config=None):
     ###################################################
 
     @celery.task()
-    def print_transaction_hash(_transactionHash, _walletAddress, _paid, _userId, _releaseId):
+    def print_transaction_hash(_transactionHash, _userId, _releaseId):
 
         if ETHEREUM_CHAIN_ID == 1:
             from web3.auto.infura import w3
@@ -419,20 +419,31 @@ def create_app(test_config=None):
         print("w3 connection: ")
         print(w3.isConnected())
 
-        receipt = w3.eth.waitForTransactionReceipt(_transactionHash)
+        receipt = w3.eth.waitForTransactionReceipt(_transactionHash, timeout=600)
+
+        print("Access receipt information")
+
+        transactionHash = receipt.transactionHash.hex()
+        paid = Web3.fromWei(Web3.toInt(hexstr=receipt.logs[0].data), 'ether')
+        walletAddress = receipt['from']
+
+        print(paid)
+        print(walletAddress)
 
         if receipt:
             purchase = Purchase(
                     user_id = _userId,
                     release_id = _releaseId,
-                    paid = _paid,
-                    wallet_address = _walletAddress,
-                    transaction_hash = _transactionHash
+                    paid = paid,
+                    wallet_address = walletAddress,
+                    transaction_hash = transactionHash
                 )
 
             purchase.insert()
 
-        print(receipt)  
+        print(receipt)
+
+        return True
 
     ###################################################
 
@@ -1344,6 +1355,7 @@ def create_app(test_config=None):
 
         return render_template('pages/show_purchases.html', userinfo=data)
 
+    '''
     @flask_app.route('/releases/<int:release_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_release(release_id):
@@ -1392,7 +1404,7 @@ def create_app(test_config=None):
             print(e)
 
             abort(404)
-
+    '''
 
     @flask_app.route('/releases/<int:release_id>/purchase_transaction_hash', methods=['POST'])
     @requires_log_in
@@ -1415,16 +1427,11 @@ def create_app(test_config=None):
         try:
             print("Transaction hash received")
             transaction_hash = request.get_json()['transaction_hash']
-            wallet_address = request.get_json()['wallet_address']
-            paid = request.get_json()['paid']
 
             task = print_transaction_hash.apply_async(
                         args=(transaction_hash,
-                                wallet_address,
-                                paid,
                                 user.id,
-                                release_id), 
-                        countdown=1)
+                                release_id))
 
             return jsonify({
                 'success': True
