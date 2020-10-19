@@ -1,7 +1,19 @@
 import os
 import datetime
 from dotenv import load_dotenv
-from sqlalchemy import Column, String, Integer, Float, create_engine, DateTime, UniqueConstraint, CheckConstraint
+
+from sqlalchemy import (
+    Column, 
+    String, 
+    Integer, 
+    Float,
+    Boolean,
+    create_engine, 
+    DateTime, 
+    UniqueConstraint, 
+    CheckConstraint
+)
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import json
@@ -343,6 +355,26 @@ class MusicakesContractFactory(db.Model):
             'smart_contract_address': self.smart_contract_address,
             'description': self.description
         }
+
+class PurchaseCeleryTask(db.Model):
+
+    id = Column(Integer, primary_key=True)
+    task_id = Column(String, nullable=False, unique=True)
+    user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
+    started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
+    is_confirmed = Column(Boolean, default=False, nullable=False)
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
 
 class PaymentToken(db.Model):
 

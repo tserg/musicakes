@@ -1,4 +1,5 @@
 import os
+import time
 import json
 from urllib.parse import urlencode
 
@@ -47,14 +48,18 @@ from models import (
     Track,
     Purchase,
     MusicakesContractFactory,
-    PaymentToken
+    PaymentToken,
+    PurchaseCeleryTask
 )
 
 from urllib.request import urlopen
 from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
 
+# Import Celery
+
 from celery import Celery
+from celery.signals import after_task_publish
 
 # Import web3.py
 
@@ -117,6 +122,7 @@ def create_app(test_config=None):
     flask_app.config.from_object('config')
     flask_app.config['CELERY_BROKER_URL'] = CELERY_BROKER_URL
     flask_app.config['CELERY_RESULT_BACKEND'] = CELERY_RESULT_BACKEND
+    flask_app.config['CELERY_SEND_EVENTS'] = True
 
     celery = make_celery(flask_app)
 
@@ -406,8 +412,8 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @celery.task()
-    def print_transaction_hash(_transactionHash, _userId, _releaseId):
+    @celery.task(bind=True)
+    def print_transaction_hash(self, _transactionHash, _userId, _releaseId):
 
         if ETHEREUM_CHAIN_ID == 1:
             from web3.auto.infura import w3
@@ -418,6 +424,8 @@ def create_app(test_config=None):
 
         print("w3 connection: ")
         print(w3.isConnected())
+
+        time.sleep(10)
 
         receipt = w3.eth.waitForTransactionReceipt(_transactionHash, timeout=600)
 
@@ -430,6 +438,10 @@ def create_app(test_config=None):
         print(paid)
         print(walletAddress)
 
+        task_id = self.request.id
+
+        print("Task ID: " + str(task_id))
+
         if receipt:
             purchase = Purchase(
                     user_id = _userId,
@@ -441,9 +453,22 @@ def create_app(test_config=None):
 
             purchase.insert()
 
+            purchase_celery_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.task_id==self.request.id).one_or_none()
+            print(purchase_celery_task)
+
+            purchase_celery_task.is_confirmed = True
+
+            purchase_celery_task.update()
+
         print(receipt)
 
         return True
+
+    @after_task_publish.connect
+    def task_sent_handler(sender=None, headers=None, body=None, **kwargs):
+
+        info = headers if 'task' in headers else body
+        print('after_task_publish for task id {info[id]}'.format())
 
     ###################################################
 
@@ -1433,8 +1458,21 @@ def create_app(test_config=None):
                                 user.id,
                                 release_id))
 
+            print("task id: " + str(task.id))
+            print("result ready: " + str(task.ready()))
+
+            purchase_celery_task = PurchaseCeleryTask(
+                task_id = task.id,
+                user_id = user.id,
+                is_confirmed = False
+            )
+
+            purchase_celery_task.insert()
+
             return jsonify({
-                'success': True
+                'success': True,
+                'task_id': task.id,
+                'completed': task.ready()
             })
 
         except Exception as e:

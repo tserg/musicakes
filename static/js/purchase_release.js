@@ -924,15 +924,19 @@ async function payMusicakes() {
         },
         body: data
       })
-      .then(function(response) {
+      .then(response => {
         console.log(response);
         if (response.ok) {
           alert("Your transaction is pending.");
         }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
       });
 
 		})
-		.on('error', function(error) {
+		.catch(error => {
 			console.log(error);
 		});
 
