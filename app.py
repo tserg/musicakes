@@ -64,6 +64,7 @@ from celery.signals import after_task_publish
 # Import web3.py
 
 from web3 import Web3, HTTPProvider
+from web3.exceptions import TransactionNotFound
 
 from dotenv import load_dotenv
 
@@ -413,7 +414,7 @@ def create_app(test_config=None):
     ###################################################
 
     @celery.task(bind=True)
-    def print_transaction_hash(self, _transactionHash, _userId, _releaseId):
+    def check_transaction_hash_confirmed(self, _transactionHash, _userId, _releaseId):
 
         if ETHEREUM_CHAIN_ID == 1:
             from web3.auto.infura import w3
@@ -425,9 +426,24 @@ def create_app(test_config=None):
         print("w3 connection: ")
         print(w3.isConnected())
 
-        time.sleep(10)
+        while True:
 
-        receipt = w3.eth.waitForTransactionReceipt(_transactionHash, timeout=600)
+            try:
+                print("get transaction receipt")
+                receipt = w3.eth.getTransactionReceipt(_transactionHash)
+
+            except TransactionNotFound as e:
+                print(e)
+                print(type(e))
+                print(isinstance(e, TransactionNotFound))
+                time.sleep(5)
+                continue
+
+            except Exception as o:
+                print(o)
+                continue
+
+            break
 
         print("Access receipt information")
 
@@ -453,7 +469,7 @@ def create_app(test_config=None):
 
             purchase.insert()
 
-            purchase_celery_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.task_id==self.request.id).one_or_none()
+            purchase_celery_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.task_id==task_id).one_or_none()
             print(purchase_celery_task)
 
             purchase_celery_task.is_confirmed = True
@@ -468,7 +484,9 @@ def create_app(test_config=None):
     def task_sent_handler(sender=None, headers=None, body=None, **kwargs):
 
         info = headers if 'task' in headers else body
-        print('after_task_publish for task id {info[id]}'.format())
+        print('after_task_publish for task id {info[id]}'.format(
+            info=info,
+        ))
 
     ###################################################
 
@@ -1405,7 +1423,7 @@ def create_app(test_config=None):
             wallet_address = request.get_json()['wallet_address']
             paid = request.get_json()['paid']
 
-            # task = print_transaction_hash.apply_async(args=(transaction_hash,), countdown=1)
+            # task = check_transaction_hash_confirmed.apply_async(args=(transaction_hash,), countdown=1)
 
             purchase = Purchase(
                     user_id = user.id,
@@ -1453,7 +1471,7 @@ def create_app(test_config=None):
             print("Transaction hash received")
             transaction_hash = request.get_json()['transaction_hash']
 
-            task = print_transaction_hash.apply_async(
+            task = check_transaction_hash_confirmed.apply_async(
                         args=(transaction_hash,
                                 user.id,
                                 release_id))

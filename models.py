@@ -358,8 +358,7 @@ class MusicakesContractFactory(db.Model):
 
 class PurchaseCeleryTask(db.Model):
 
-    id = Column(Integer, primary_key=True)
-    task_id = Column(String, nullable=False, unique=True)
+    task_id = Column(String, primary_key=True)
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
     started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     is_confirmed = Column(Boolean, default=False, nullable=False)
