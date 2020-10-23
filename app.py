@@ -49,7 +49,8 @@ from models import (
     Purchase,
     MusicakesContractFactory,
     PaymentToken,
-    PurchaseCeleryTask
+    PurchaseReleaseCeleryTask,
+    PurchaseTrackCeleryTask
 )
 
 from urllib.request import urlopen
@@ -414,7 +415,7 @@ def create_app(test_config=None):
     ###################################################
 
     @celery.task(bind=True)
-    def check_transaction_hash_confirmed(self, _transactionHash, _userId, _releaseId):
+    def check_purchase_release_transaction_hash_confirmed(self, _transactionHash, _userId, _releaseId):
 
         if ETHEREUM_CHAIN_ID == 1:
             from web3.auto.infura import w3
@@ -426,7 +427,11 @@ def create_app(test_config=None):
         print("w3 connection: ")
         print(w3.isConnected())
 
-        while True:
+
+        current_check = 0
+        check_duration = 30
+
+        while current_check < check_duration:
 
             try:
                 print("get transaction receipt")
@@ -436,7 +441,8 @@ def create_app(test_config=None):
                 print(e)
                 print(type(e))
                 print(isinstance(e, TransactionNotFound))
-                time.sleep(5)
+                time.sleep(30)
+                current_check += 1
                 continue
 
             except Exception as o:
@@ -447,47 +453,136 @@ def create_app(test_config=None):
 
         print("Access receipt information")
 
-        transactionHash = receipt.transactionHash.hex()
-        paid = Web3.fromWei(Web3.toInt(hexstr=receipt.logs[0].data), 'ether')
-        walletAddress = receipt['from']
-
-        print(paid)
-        print(walletAddress)
-
-        task_id = self.request.id
-
-        print("Task ID: " + str(task_id))
-
         if receipt:
-            purchase = Purchase(
-                    user_id = _userId,
-                    release_id = _releaseId,
-                    paid = paid,
-                    wallet_address = walletAddress,
-                    transaction_hash = transactionHash
-                )
 
-            purchase.insert()
+            transactionHash = receipt.transactionHash.hex()
+            paid = Web3.fromWei(Web3.toInt(hexstr=receipt.logs[0].data), 'ether')
+            walletAddress = receipt['from']
 
-            purchase_celery_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.task_id==task_id).one_or_none()
-            print(purchase_celery_task)
+            print(paid)
+            print(walletAddress)
 
-            purchase_celery_task.is_confirmed = True
+            # Checks if wallet address matches
 
-            purchase_celery_task.update()
+            task_id = self.request.id
+
+            purchase_release_celery_task = PurchaseReleaseCeleryTask.query.filter(PurchaseReleaseCeleryTask.task_id==task_id).one_or_none()
+            print(purchase_release_celery_task)
+
+            print(str(walletAddress))
+            print(purchase_release_celery_task.wallet_address)
+            print(str(walletAddress).lower()==purchase_release_celery_task.wallet_address)
+
+            if str(walletAddress).lower() == purchase_release_celery_task.wallet_address:
+
+                # Update the task status to confirmed
+
+                purchase_release_celery_task.is_confirmed = True
+
+                purchase_release_celery_task.update()
+
+                print("Task ID: " + str(task_id))
+
+                # Add the purchase
+
+                purchase = Purchase(
+                        user_id = _userId,
+                        release_id = _releaseId,
+                        paid = paid,
+                        wallet_address = walletAddress,
+                        transaction_hash = transactionHash
+                    )
+
+                purchase.insert()
 
         print(receipt)
 
         return True
 
-    @after_task_publish.connect
-    def task_sent_handler(sender=None, headers=None, body=None, **kwargs):
+    @celery.task(bind=True)
+    def check_purchase_track_transaction_hash_confirmed(self, _transactionHash, _userId, _trackId):
 
-        info = headers if 'task' in headers else body
-        print('after_task_publish for task id {info[id]}'.format(
-            info=info,
-        ))
+        if ETHEREUM_CHAIN_ID == 1:
+            from web3.auto.infura import w3
+        else:
+            from web3.auto.infura.ropsten import w3
 
+        print(_transactionHash)
+
+        print("w3 connection: ")
+        print(w3.isConnected())
+
+
+        current_check = 0
+        check_duration = 30
+
+        while current_check < check_duration:
+
+            try:
+                print("get transaction receipt")
+                receipt = w3.eth.getTransactionReceipt(_transactionHash)
+
+            except TransactionNotFound as e:
+                print(e)
+                print(type(e))
+                print(isinstance(e, TransactionNotFound))
+                time.sleep(30)
+                current_check += 1
+                continue
+
+            except Exception as o:
+                print(o)
+                continue
+
+            break
+
+        print("Access receipt information")
+
+        if receipt:
+
+            transactionHash = receipt.transactionHash.hex()
+            paid = Web3.fromWei(Web3.toInt(hexstr=receipt.logs[0].data), 'ether')
+            walletAddress = receipt['from']
+
+            print(paid)
+            print(walletAddress)
+
+            # Checks if wallet address matches
+
+            task_id = self.request.id
+
+            purchase_track_celery_task = PurchaseTrackCeleryTask.query.filter(PurchaseTrackCeleryTask.task_id==task_id).one_or_none()
+            print(purchase_track_celery_task)
+
+            print(str(walletAddress))
+            print(purchase_track_celery_task.wallet_address)
+            print(str(walletAddress).lower()==purchase_track_celery_task.wallet_address)
+
+            if str(walletAddress).lower() == purchase_track_celery_task.wallet_address:
+
+                # Update the task status to confirmed
+
+                purchase_track_celery_task.is_confirmed = True
+
+                purchase_track_celery_task.update()
+
+                print("Task ID: " + str(task_id))
+
+                # Add the purchase
+
+                purchase = Purchase(
+                        user_id = _userId,
+                        track_id = _trackId,
+                        paid = paid,
+                        wallet_address = walletAddress,
+                        transaction_hash = transactionHash
+                    )
+
+                purchase.insert()
+
+        print(receipt)
+
+        return True
     ###################################################
 
     # AWS S3
@@ -1423,7 +1518,7 @@ def create_app(test_config=None):
             wallet_address = request.get_json()['wallet_address']
             paid = request.get_json()['paid']
 
-            # task = check_transaction_hash_confirmed.apply_async(args=(transaction_hash,), countdown=1)
+            # task = check_purchase_release_transaction_hash_confirmed.apply_async(args=(transaction_hash,), countdown=1)
 
             purchase = Purchase(
                     user_id = user.id,
@@ -1470,8 +1565,9 @@ def create_app(test_config=None):
         try:
             print("Transaction hash received")
             transaction_hash = request.get_json()['transaction_hash']
+            wallet_address = request.get_json()['wallet_address']
 
-            task = check_transaction_hash_confirmed.apply_async(
+            task = check_purchase_release_transaction_hash_confirmed.apply_async(
                         args=(transaction_hash,
                                 user.id,
                                 release_id))
@@ -1479,13 +1575,15 @@ def create_app(test_config=None):
             print("task id: " + str(task.id))
             print("result ready: " + str(task.ready()))
 
-            purchase_celery_task = PurchaseCeleryTask(
+            purchase_release_celery_task = PurchaseReleaseCeleryTask(
                 task_id = task.id,
                 user_id = user.id,
+                release_id = release_id,
+                wallet_address=wallet_address,
                 is_confirmed = False
             )
 
-            purchase_celery_task.insert()
+            purchase_release_celery_task.insert()
 
             return jsonify({
                 'success': True,

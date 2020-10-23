@@ -911,7 +911,8 @@ async function payMusicakes() {
 			console.log(hash);
 
       var data = JSON.stringify({
-        transaction_hash: hash
+        transaction_hash: hash,
+        wallet_address: account
       });
       releaseIdString = release_id.toString();
       fetch('/releases/' + releaseIdString + '/purchase_transaction_hash', {

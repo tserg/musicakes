@@ -356,10 +356,32 @@ class MusicakesContractFactory(db.Model):
             'description': self.description
         }
 
-class PurchaseCeleryTask(db.Model):
+class PurchaseReleaseCeleryTask(db.Model):
 
     task_id = Column(String, primary_key=True)
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
+    wallet_address = Column(String, nullable=False)
+    release_id = Column(Integer, db.ForeignKey('releases.id'), nullable=False)
+    started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
+    is_confirmed = Column(Boolean, default=False, nullable=False)
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+class PurchaseTrackCeleryTask(db.Model):
+
+    task_id = Column(String, primary_key=True)
+    user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
+    wallet_address = Column(String, nullable=False)
+    track_id = Column(Integer, db.ForeignKey('tracks.id'), nullable=False)
     started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     is_confirmed = Column(Boolean, default=False, nullable=False)
 
