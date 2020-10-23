@@ -920,16 +920,10 @@ async function payMusicakes() {
 		paymentTokenContract.methods.transfer(musicakesAddress, payAmountFormatted).send({from: account})
 		.once('transactionHash', function(hash) {
 			console.log(hash);
-		})
-		.once('receipt', function(receipt) {
-      console.log('Receipt for purchase');
-			console.log(receipt);
-      console.log(receipt.transactionHash);
 
       var data = JSON.stringify({
         wallet_address: account,
-        transaction_hash: receipt.transactionHash,
-        paid: payAmount
+        transaction_hash: hash
       });
 
       trackIdString = track_id.toString();
@@ -944,25 +938,21 @@ async function payMusicakes() {
         },
         body: data
       })
-      .then(function(response) {
+      .then(response => {
         console.log(response);
         if (response.ok) {
-          alert("Your purchase was successful!");
-          location.reload();
+          alert("Your transaction is pending.");
         }
-        else {
-          alert("Your purchase was not successful."
-            + "\nDo not make another transaction."
-            + "\nPlease contact us at musicakes.team@gmail.com with your transaction hash."
-          );
-        }
-
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
       });
-      
-		})
-		.on('error', function(error) {
-			console.log(error);
-		});
+
+    })
+    .catch(error => {
+      console.log(error);
+    });
 
   }
 	

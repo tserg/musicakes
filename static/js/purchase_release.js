@@ -915,7 +915,7 @@ async function payMusicakes() {
         wallet_address: account
       });
       releaseIdString = release_id.toString();
-      fetch('/releases/' + releaseIdString + '/purchase_transaction_hash', {
+      fetch('/releases/' + releaseIdString + '/purchase', {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
