@@ -64,7 +64,19 @@ a.button {
 	height: auto;
 }
 
+.topnav-right {
+	padding-right: 100px;
+}
 
+
+.topnav-right a {
+	float: right;
+  	color: black;
+  	text-align: center;
+  	padding: 14px 24px;
+  	text-decoration: none;
+  	font-size: 17px;
+}
 
 /* The container <div> - needed to position the dropdown content */
 .topnav-dropdown {
@@ -113,11 +125,19 @@ a.button {
 	display:block;
 }
 
+.topnav-notification-dropdown-content a {
+	font-size: 12px;
+}
+
+
 /* Show the dropdown menu on hover */
-.topnav-dropdown:hover .topnav-dropdown-content {
+.topnav-main-dropdown:hover .topnav-main-dropdown-content {
 	display: block;
 }
 
+#pending-transactions-btn:onclick .topnav-notification-dropdown-content {
+	display: block;
+}
 
 /* Styles for page */
 

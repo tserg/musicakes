@@ -5,7 +5,7 @@ const showAccountPaymentTokenBalance = document.querySelector('#payment-token-ba
 const showMusicakesTotalSupply = document.querySelector('#musicakes-supply');
 const showAccountMusicakesBalance = document.querySelector('#user-musicakes-balance');
 const showMusicakesPaymentTokenBalance = document.querySelector('#musicakes-payment-token-balance');
-const showAccountUnclaimedDividends = document.querySelector('#account-unclaimed-dividends')
+const showAccountUnclaimedDividends = document.querySelector('#account-unclaimed-dividends');
 
 const musicakesPayButton = document.querySelector('#btn-pay-contract');
 const musicakesPayValue = document.querySelector('#pay-contract-amount');

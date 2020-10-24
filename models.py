@@ -190,6 +190,12 @@ class Release(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def purchase_description(self):
+
+        description = self.artist.name + " - " + self.name
+
+        return description
+
     def short_public(self):
 
         formatted_tracks = [{"name": track.name,
@@ -282,6 +288,12 @@ class Track(db.Model):
         db.session.delete(self)
         db.session.commit()
 
+    def purchase_description(self):
+
+        description = self.artist.name + " - " + self.name
+
+        return description
+
     def short_public(self):
 
         youtube_embed_url = 'https://youtube.com/embed/'
@@ -356,12 +368,15 @@ class MusicakesContractFactory(db.Model):
             'description': self.description
         }
 
-class PurchaseReleaseCeleryTask(db.Model):
+class PurchaseCeleryTask(db.Model):
 
     task_id = Column(String, primary_key=True)
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
     wallet_address = Column(String, nullable=False)
-    release_id = Column(Integer, db.ForeignKey('releases.id'), nullable=False)
+    transaction_hash = Column(String, unique=True, nullable=False)
+    purchase_description = Column(String, nullable=False)
+    purchase_type = Column(String, nullable=False)
+    purchase_type_id = Column(Integer, nullable=False)
     started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     is_confirmed = Column(Boolean, default=False, nullable=False)
 
@@ -376,26 +391,16 @@ class PurchaseReleaseCeleryTask(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-class PurchaseTrackCeleryTask(db.Model):
-
-    task_id = Column(String, primary_key=True)
-    user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
-    wallet_address = Column(String, nullable=False)
-    track_id = Column(Integer, db.ForeignKey('tracks.id'), nullable=False)
-    started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
-    is_confirmed = Column(Boolean, default=False, nullable=False)
-
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
+    def short(self):
+        return {
+            'user_id': self.user_id,
+            'wallet_address': self.wallet_address,
+            'transaction_hash': self.transaction_hash,
+            'purchase_description': self.purchase_description,
+            'purchase_type': self.purchase_type,
+            'purchase_type_id': self.purchase_type_id,
+            'is_confirmed': self.is_confirmed
+        }
 
 class PaymentToken(db.Model):
 
