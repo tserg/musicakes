@@ -968,6 +968,7 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
+                'chain_id': ETHEREUM_CHAIN_ID,
                 'data': pending_releases_formatted + pending_tracks_formatted
             })
 
