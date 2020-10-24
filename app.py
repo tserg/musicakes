@@ -1498,7 +1498,7 @@ def create_app(test_config=None):
 
     @flask_app.route('/releases/<int:release_id>/purchase', methods=['POST'])
     @requires_log_in
-    def purchase_release_transaction_hash(release_id):
+    def purchase_release(release_id):
         logged_in = session.get('token', None)
         if logged_in:
 
@@ -1581,14 +1581,14 @@ def create_app(test_config=None):
                         args=(transaction_hash,
                                 user.id))
 
-            print(task.id)
+            purchase_description = Track.query.filter(Track.id == track_id).one_or_none().purchase_description()
 
             purchase_celery_task = PurchaseCeleryTask(
                 task_id = task.id,
                 user_id = user.id,
-                purchase_description = Track.query.filter(Track.id == track_id).one_or_none().purchase_description(),
+                purchase_description = purchase_description,
                 purchase_type = 'track',
-                purchase_type_id = release_id,
+                purchase_type_id = track_id,
                 wallet_address=wallet_address,
                 transaction_hash = transaction_hash,
                 is_confirmed = False
