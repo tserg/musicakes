@@ -429,12 +429,17 @@ def create_app(test_config=None):
         current_check = 0
         check_duration = 30
 
+        # Checks for 15 minutes based on 30 intervals of 30 seconds each
+
         while current_check < check_duration:
 
             try:
                 receipt = w3.eth.getTransactionReceipt(_transactionHash)
 
             except TransactionNotFound as e:
+
+                # Retries after 30 seconds if transaction is not found
+
                 time.sleep(30)
                 current_check += 1
                 continue
@@ -459,6 +464,8 @@ def create_app(test_config=None):
 
             purchase_celery_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.task_id==task_id).one_or_none()
 
+            # Checks if wallet address is same as when transaction hash was first submitted
+
             if str(walletAddress).lower() == purchase_celery_task.wallet_address:
 
                 # Update the task status to confirmed
@@ -467,7 +474,7 @@ def create_app(test_config=None):
 
                 purchase_celery_task.update()
 
-                # Add the purchase
+                # Add the purchase depending on whether it is a track or release
 
                 if purchase_celery_task.purchase_type == 'release':
 
