@@ -42,6 +42,7 @@ async function getPendingTransactions() {
         	var link = document.createElement("A");
         	link.innerHTML = "Your purchase of " + data['data'][i]['purchase_description'] + " is pending confirmation.";
         	link.href = "https://etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+          link.target ="_blank";
         	pendingTransactionPlaceholder.appendChild(link);
         } 
 

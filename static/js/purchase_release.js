@@ -33,8 +33,8 @@ const price = parseFloat(window.appConfig.price.value);
 
 const release_id = parseInt(window.appConfig.release_id.value);
 
-const csrf_token = window.appConfig.csrf_token.value;
-if (csrf_token) {
+const csrf_token_purchase = window.appConfig.csrf_token.value;
+if (csrf_token_purchase) {
   console.log("CSRF Token loaded");
 }
 
@@ -919,7 +919,7 @@ async function payMusicakes() {
         method: 'POST',
         credentials: 'same-origin',
         headers: {
-          'X-CSRFToken': csrf_token,
+          'X-CSRFToken': csrf_token_purchase,
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
