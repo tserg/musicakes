@@ -8,9 +8,10 @@ pendingTransactionsButton.addEventListener('click', () => {
 
 	pendingTransactionPlaceholder.innerHTML = "";
 
-	getPendingTransactions();
+
 
 	if (pendingTransactionPlaceholder.style.display != "block") {
+    getPendingTransactions();
 		pendingTransactionPlaceholder.style.display = "block";
 	} else {
 		pendingTransactionPlaceholder.style.display = "none";
@@ -34,14 +35,20 @@ async function getPendingTransactions() {
       })
       .then(data => {
         console.log(data);
-        console.log(data['data'].length);
+
+        const chainId = data['chain_id'];
 
         for (i=0; i<data['data'].length; i++) {
-        	console.log(i);
-        	console.log(data['data'][i]);
+
         	var link = document.createElement("A");
         	link.innerHTML = "Your purchase of " + data['data'][i]['purchase_description'] + " is pending confirmation.";
-        	link.href = "https://etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+
+          if (chainId === 1) {
+        	  link.href = "https://etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+          } else {
+            link.href = "https://ropsten.etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+          }
+
           link.target ="_blank";
         	pendingTransactionPlaceholder.appendChild(link);
         } 
