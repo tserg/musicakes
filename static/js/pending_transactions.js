@@ -38,20 +38,29 @@ async function getPendingTransactions() {
 
         const chainId = data['chain_id'];
 
-        for (i=0; i<data['data'].length; i++) {
+        if (data['data'].length > 0) {
 
-        	var link = document.createElement("A");
-        	link.innerHTML = "Your purchase of " + data['data'][i]['purchase_description'] + " is pending confirmation.";
+          for (i=0; i<data['data'].length; i++) {
 
-          if (chainId === 1) {
-        	  link.href = "https://etherscan.io/tx/" + data['data'][i]['transaction_hash'];
-          } else {
-            link.href = "https://ropsten.etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+          	var link = document.createElement("A");
+          	link.innerHTML = "Your purchase of " + data['data'][i]['purchase_description'] + " is pending confirmation.";
+
+            if (chainId === 1) {
+          	  link.href = "https://etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+            } else {
+              link.href = "https://ropsten.etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+            }
+
+            link.target ="_blank";
+          	pendingTransactionPlaceholder.appendChild(link);
           }
 
-          link.target ="_blank";
-        	pendingTransactionPlaceholder.appendChild(link);
-        } 
+        } else {
+          var link = document.createElement("A");
+
+          link.innerHTML = "You do not have any pending transactions.";
+          pendingTransactionPlaceholder.appendChild(link);
+        }
 
       });
 

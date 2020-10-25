@@ -959,24 +959,20 @@ def create_app(test_config=None):
 
         try:
 
-            pending_release_purchases = PurchaseCeleryTask.query.filter(
+            pending_purchases = PurchaseCeleryTask.query.filter(
                                             PurchaseCeleryTask.user_id == user.id) \
-                                            .filter(PurchaseCeleryTask.is_confirmed == False).all()
+                                            .filter(PurchaseCeleryTask.is_confirmed == False) \
+                                            .order_by(PurchaseCeleryTask.started_on.desc()) \
+                                            .all()
 
-            pending_track_purchases = PurchaseCeleryTask.query.filter(
-                                            PurchaseCeleryTask.user_id == user.id) \
-                                            .filter(PurchaseCeleryTask.is_confirmed == True).all()
+            pending_purchases_formatted = [pending_purchase.short() for pending_purchase in pending_purchases]
 
-            pending_releases_formatted = [pending_release.short() for pending_release in pending_release_purchases]
-
-            pending_tracks_formatted = [pending_track.short() for pending_track in pending_track_purchases]
-
-            print(pending_releases_formatted + pending_tracks_formatted)
+            print(pending_purchases_formatted)
 
             return jsonify({
                 'success': True,
                 'chain_id': ETHEREUM_CHAIN_ID,
-                'data': pending_releases_formatted + pending_tracks_formatted
+                'data': pending_purchases_formatted
             })
 
         except:
