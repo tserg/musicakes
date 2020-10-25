@@ -59,7 +59,7 @@ from six.moves.urllib.parse import urlencode
 # Import Celery
 
 from celery import Celery
-from celery.signals import after_task_publish
+from celery.app.control import Control
 
 # Import web3.py
 
@@ -126,6 +126,7 @@ def create_app(test_config=None):
     flask_app.config['CELERY_SEND_EVENTS'] = True
 
     celery = make_celery(flask_app)
+    celery_control = Control(celery)
 
     csrf = CSRFProtect()
     csrf.init_app(flask_app)
@@ -1028,6 +1029,67 @@ def create_app(test_config=None):
             return jsonify({
                 'success': True
             })
+
+
+        except Exception as e:
+            print(e)
+            return jsonify({
+                'success': False
+            })
+
+    @flask_app.route('/transactions/<string:transaction_hash>/update', methods=['POST'])
+    def update_transaction(transaction_hash):
+        """
+        Updates a pending transaction's status 
+        """
+
+        auth_id = session['jwt_payload']['sub'][6:]
+
+        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+        if user:
+            data = user.short_private()
+
+        else:
+
+            abort(404)
+
+        try:
+
+            current_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.transaction_hash==transaction_hash).one_or_none()
+
+            if current_task:
+
+                purchase_description = current_task.purchase_description
+                purchase_type = current_task.purchase_type
+                purchase_type_id = current_task.purchase_type_id
+                wallet_address = current_task.wallet_address
+                transaction_hash = current_task.transaction_hash
+
+                    
+                celery_control.revoke(current_task.task_id, terminate=True)
+                current_task.delete()
+
+                new_task = check_transaction_hash_confirmed.apply_async(
+                            args=(current_task.transaction_hash,
+                                    user.id))
+
+                purchase_celery_task = PurchaseCeleryTask(
+                    task_id = new_task.id,
+                    user_id = user.id,
+                    purchase_description = purchase_description,
+                    purchase_type = purchase_type,
+                    purchase_type_id = purchase_type_id,
+                    wallet_address=wallet_address,
+                    transaction_hash = transaction_hash,
+                    is_confirmed = False
+                )
+
+                purchase_celery_task.insert()
+
+                return jsonify({
+                    'success': True
+                })
 
 
         except Exception as e:
