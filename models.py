@@ -379,6 +379,7 @@ class PurchaseCeleryTask(db.Model):
     purchase_type_id = Column(Integer, nullable=False)
     started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     is_confirmed = Column(Boolean, default=False, nullable=False)
+    is_visible = Column(Boolean, default=True, nullable=False)
 
     def insert(self):
         db.session.add(self)
@@ -393,13 +394,15 @@ class PurchaseCeleryTask(db.Model):
 
     def short(self):
         return {
+            'task_id': self.task_id,
             'user_id': self.user_id,
             'wallet_address': self.wallet_address,
             'transaction_hash': self.transaction_hash,
             'purchase_description': self.purchase_description,
             'purchase_type': self.purchase_type,
             'purchase_type_id': self.purchase_type_id,
-            'is_confirmed': self.is_confirmed
+            'is_confirmed': self.is_confirmed,
+            'is_visible': self.is_visible
         }
 
 class PaymentToken(db.Model):

@@ -881,7 +881,24 @@ def create_app(test_config=None):
 
         data['artist_name'] = artist_name
 
-        return render_template('pages/show_account.html', userinfo=data)
+        pending_transactions = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.user_id==user.id) \
+                                .filter(PurchaseCeleryTask.is_confirmed==False) \
+                                .filter(PurchaseCeleryTask.is_visible==True) \
+                                .order_by(PurchaseCeleryTask.started_on.desc()).limit(10).all()
+
+        transaction_history = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.user_id==user.id) \
+                                .filter(PurchaseCeleryTask.is_confirmed==True) \
+                                .filter(PurchaseCeleryTask.is_visible==True) \
+                                .order_by(PurchaseCeleryTask.started_on.desc()).limit(10).all()
+
+        print(transaction_history)
+
+        return render_template(
+            'pages/show_account.html',
+            userinfo=data,
+            transaction_history = transaction_history,
+            pending_transactions = pending_transactions
+        )
 
     @flask_app.route('/account/edit', methods=['GET'])
     @requires_log_in
@@ -946,6 +963,11 @@ def create_app(test_config=None):
     @flask_app.route('/pending_transactions', methods=['GET'])
     def get_pending_transactions():
 
+
+        """
+        Retrieves a list of pending transactions when user clicks on notifications button
+        """
+
         auth_id = session['jwt_payload']['sub'][6:]
 
         user = User.query.filter(User.auth_id==auth_id).one_or_none()
@@ -967,8 +989,6 @@ def create_app(test_config=None):
 
             pending_purchases_formatted = [pending_purchase.short() for pending_purchase in pending_purchases]
 
-            print(pending_purchases_formatted)
-
             return jsonify({
                 'success': True,
                 'chain_id': ETHEREUM_CHAIN_ID,
@@ -976,6 +996,42 @@ def create_app(test_config=None):
             })
 
         except:
+            return jsonify({
+                'success': False
+            })
+
+    @flask_app.route('/transactions/<string:transaction_hash>/hide', methods=['POST'])
+    def hide_transaction(transaction_hash):
+
+        """
+        Hides a transaction from a user's transaction history
+        """
+
+        auth_id = session['jwt_payload']['sub'][6:]
+
+        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+        if user:
+            data = user.short_private()
+
+        else:
+
+            abort(404)
+
+        try:
+            current_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.transaction_hash==transaction_hash).one_or_none()
+
+            if current_task:
+                current_task.is_visible=False
+                current_task.update()
+
+            return jsonify({
+                'success': True
+            })
+
+
+        except Exception as e:
+            print(e)
             return jsonify({
                 'success': False
             })
@@ -2442,6 +2498,10 @@ def create_app(test_config=None):
     @flask_app.errorhandler(404)
     def not_found_error(error):
         return render_template('errors/404.html'), 404
+
+    @flask_app.errorhandler(405)
+    def wrong_method(error):
+        return render_template('errors/405.html'), 405
 
     @flask_app.errorhandler(500)
     def server_error(error):

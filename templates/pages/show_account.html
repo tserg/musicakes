@@ -4,35 +4,101 @@
 <div class = "page-content-wrap">
 
 
-	<div class = "page-content-container"> 
-		<h4>
-			Username: {{ userinfo.username }}
-		</h4>
+	<div class="page-content-flex-container">
+		<div class="page-content-flex-subcontainer border-right">
+			<div class="page-content-container">
+				<h4>
+					Username: {{ userinfo.username }}
+				</h4>
 
-		<h4>
-			Profile Picture
-		</h4>
+				<h4>
+					Profile Picture
+				</h4>
 
-		<div class = "display-picture"> 
-		{% if userinfo.profile_picture is none %}
-			<img id="preview" src="/static/img/musicakes.png" />
-		{% else %}
-			<img src="{{ userinfo.profile_picture }}" />
-		{% endif %}
+				<div class = "display-picture"> 
+				{% if userinfo.profile_picture is none %}
+					<img id="preview" src="/static/img/musicakes.png" />
+				{% else %}
+					<img src="{{ userinfo.profile_picture }}" />
+				{% endif %}
+				</div>
+				<a href="/account/edit" class="button">Change profile picture</a>
+			</div>
+
+			<div class = "page-content-container"> 
+				<h4>
+					Artist profile: {% if userinfo.artist_name is none %} You have not created an artist profile  {% else %} <a href ="../artists/{{ userinfo.artist_id }}">{{ userinfo.artist_name}}</a> {% endif %}
+				</h4>
+			</div>
+
+			<div class = "page-content-container"> 
+				<h4>
+					Created on: {{ userinfo.created_on }}
+				</h4>
+			</div>
 		</div>
-		<a href="/account/edit" class="button">Change profile picture</a>
-	</div>
 
-	<div class = "page-content-container"> 
-		<h4>
-			Artist profile: {% if userinfo.artist_name is none %} You have not created an artist profile  {% else %} <a href ="../artists/{{ userinfo.artist_id }}">{{ userinfo.artist_name}}</a> {% endif %}
-		</h4>
-	</div>
+		<div class="page-content-flex-subcontainer">
 
-	<div class = "page-content-container"> 
-		<h4>
-			Created on: {{ userinfo.created_on }}
-		</h4>
+
+			<div class="page-content-container">
+				<h4>Pending Transactions</h4>
+				{% if pending_transactions|length > 0 %}
+				<table class="transaction-table">
+					<tr class="transaction-table-row">
+						<th class="transaction-table-column">Transaction Hash</th>
+						<th class="transaction-table-column">Purchase</th>
+						<th class="transaction-table-column">Submitted on</th>
+						<th class="transaction-table-column">Status</th>
+					</tr>
+				{% for pending_transaction in pending_transactions %}
+					<tr class="transaction-table-row">
+						<th class="transaction-table-column">{{ pending_transaction.transaction_hash }}</th>
+						<th class="transaction-table-column">{{ pending_transaction.purchase_description }}</th>
+						<th class="transaction-table-column">{{ pending_transaction.started_on }}</th>
+						<th class="transaction-table-column">Pending</th>
+					</tr>
+				{% endfor %}
+				</table>
+				{% else %}
+				<span>You do not have any pending transactions.</span>
+				{% endif %}
+			</div>
+
+			<div class="page-content-container">
+				<h4>Latest Transactions</h4>
+				{% if transaction_history|length > 0 %}
+				<table class="transaction-table">
+					<tr class="transaction-table-row">
+						<th class="transaction-table-column">Transaction Hash</th>
+						<th class="transaction-table-column">Purchase</th>
+						<th class="transaction-table-column">Submitted on</th>
+						<th class="transaction-table-column">Status</th>
+						<th class="transaction-table-column">Remove</th>
+					</tr>
+				{% for transaction in transaction_history %}
+					<tr class="transaction-table-row">
+						<th class="transaction-table-column">{{ transaction.transaction_hash }}</th>
+						<th class="transaction-table-column">{{ transaction.purchase_description }}</th>
+						<th class="transaction-table-column">{{ transaction.started_on }}</th>
+						<th class="transaction-table-column">Confirmed</th>
+						<th class="transaction-table-column">
+							<a class="remove-txn-btn" href="#" data-transaction-hash="{{ transaction.transaction_hash }}">
+							<svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-x-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+							  <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+							  <path fill-rule="evenodd" d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+							</svg>
+							</a>
+						</th>
+					</tr>
+				{% endfor %}
+				</table>
+				{% else %}
+				<span>You have not made any transactions.</span>
+				{% endif %}
+			</div>
+		</div>
+
 	</div>
 
 
@@ -40,5 +106,5 @@
 
 </div>
 
-
+<script type="text/javascript" src="{{ url_for('static', filename='js/show_account.js') }}"></script>
 {% endblock %}
