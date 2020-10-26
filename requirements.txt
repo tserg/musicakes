@@ -64,7 +64,6 @@ pycountry==19.8.18
 pycparser==2.20
 pycryptodome==3.9.8
 pyparsing==2.4.7
-pypiwin32==223
 pyrsistent==0.17.3
 pytest==5.4.2
 python-dateutil==2.8.1
