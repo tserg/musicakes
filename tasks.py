@@ -7,8 +7,8 @@ load_dotenv()
 
 # Environment variables for Celery and Redies
 
-CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'Does not exist')
-CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'Does not exist')
+CELERY_BROKER_URL = os.getenv('REDIS_URL', 'Does not exist')
+CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'Does not exist')
 
 def make_celery(app):
 	celery = Celery(
