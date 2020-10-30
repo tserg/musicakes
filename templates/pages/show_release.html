@@ -4,25 +4,20 @@
 
 <div class="page-content-wrap">
 
-  <div class="page-content-container">
-    <h1>If you have submitted a transaction, do not refresh your page until the transaction is confirmed.</h1>
+  <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
+  <meta id="chain_id" data-value="{{ chain_id }}">
 
-    <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
-    <meta id="chain_id" data-value="{{ chain_id }}">
+  <!-- proxy element to store and query payment token address for window.appConfig --->
+  <meta id="payment_token_address" data-value="{{ release.payment_token_address }}">
 
-    <!-- proxy element to store and query payment token address for window.appConfig --->
-    <meta id="payment_token_address" data-value="{{ release.payment_token_address }}">
+  <!-- proxy element to store and query release price for window.appConfig --->
+  <meta id="price" data-value="{{ release.price }}">
 
-    <!-- proxy element to store and query release price for window.appConfig --->
-    <meta id="price" data-value="{{ release.price }}">
+  <!-- proxy element to store and query release id for window.appConfig --->
+  <meta id="release-id" data-value="{{ release.id }}">        
 
-    <!-- proxy element to store and query release id for window.appConfig --->
-    <meta id="release-id" data-value="{{ release.id }}">        
-  
-    <!-- proxy element to store and query smart contract address for window.appConfig --->
-    <meta id="smart_contract_address" data-value="{{ release.smart_contract_address }}">
-
-  </div>
+  <!-- proxy element to store and query smart contract address for window.appConfig --->
+  <meta id="smart_contract_address" data-value="{{ release.smart_contract_address }}">
 
   <div class="page-content-flex-container">
 
