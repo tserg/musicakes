@@ -103,6 +103,16 @@ CREATE DATABASE musicakes_test;
 ```
 4. Change the database path for TEST_DATABASE_PATH in .env to your test database path.
 
+5. Run the app by running:
+```
+flask run
+```
+
+6. In a new terminal, run the following command to start a Celery worker
+```
+celery -A app.celery worker
+```
+
 #### Ropsten Testnet
 
 Contract factory addresses on Ropsten testnet are:
