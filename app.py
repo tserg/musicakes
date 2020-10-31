@@ -1567,57 +1567,6 @@ def create_app(test_config=None):
 
         return render_template('pages/show_purchases.html', userinfo=data)
 
-    '''
-    @flask_app.route('/releases/<int:release_id>/purchase', methods=['POST'])
-    @requires_log_in
-    def purchase_release(release_id):
-        logged_in = session.get('token', None)
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user is None:
-
-                abort(404)
-
-        else:
-
-            abort(404)
-
-        try:
-
-            transaction_hash = request.get_json()['transaction_hash']
-            wallet_address = request.get_json()['wallet_address']
-            paid = request.get_json()['paid']
-
-            # task = check_transaction_hash_confirmed.apply_async(args=(transaction_hash,), countdown=1)
-
-            purchase = Purchase(
-                    user_id = user.id,
-                    release_id = release_id,
-                    paid = paid,
-                    wallet_address = wallet_address,
-                    transaction_hash = transaction_hash
-                )
-
-            purchase.insert()
-
-            return jsonify({
-                'success': True,
-                'release_id': purchase.release_id,
-                'paid': purchase.paid,
-                'wallet_address': purchase.wallet_address,
-                'transaction_hash': purchase.transaction_hash
-            })
-
-        except Exception as e:
-            print(e)
-
-            abort(404)
-    '''
-
     @flask_app.route('/releases/<int:release_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_release(release_id):
