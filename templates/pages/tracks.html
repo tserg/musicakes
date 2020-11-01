@@ -1,42 +1,55 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Musicakes | Tracks{% endblock %}
 {% block content %}
-<div class="page-content-wrap">
-	<div class="page-content-container">
-		<meta id="page" data-page="{{ request.args.get('page')|int }}">
-		<h3>Tracks</h3>
-			{% if not tracks %}
-				<h2>There are no tracks currently listed.</h2>
-			{% endif %}
 
-		<div class="list-grid-container">
+<div class="album py-5">
+	<meta id="page" data-page="{{ request.args.get('page')|int }}">
+	<div class="container">
+		<h3>Tracks</h3>
+
+		<div class="row">
 			{% for track in tracks %}
-				
-			<div class="list-grid-item">
-			    <div class="display-picture">
-			    	<a href="../tracks/{{ track.id }}">
+	       	<div class="col-md-3">
+	          <div class="card mb-4 shadow-sm">
+	          	<div class="bd-placeholder-img card-img-top mx-auto d-block mt-5">
+			    	<a class="img-fluid" href="/tracks/{{ track.id }}">
 				        {% if track.release_cover_art is none %}
-				          <img id="preview" src="/static/img/musicakes.png" />
+				          <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
 				        {% else %}
-				          <img src="{{ track.release_cover_art }}" />
+				          <img class="img-fluid rounded" src="{{ track.release_cover_art }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
 				        {% endif %}
 				    </a>
-			    </div>
-				<a href="../tracks/{{ track.id }}"><h5>{{ track.artist_name }} - {{ track.track_name }}</h5></a>
-			</div>
-				
-			{% endfor %}
+				</div>
+	            <div class="card-body">
+	              <p class="card-text font-weight-bold">{{ track.artist_name }}</p>
+	              <p class="card-text">{{ track.track_name }}</p>
+	              <div class="d-flex justify-content-between align-items-center">
+	                <div class="btn-group">
+	                  <a type="button" class="btn btn-sm btn-outline-secondary" href="/tracks/{{ track.id }}">View</a>
+	                </div>
+	                <small class="text-muted">{{ track.created_on }}</small>
+	              </div>
+	            </div>
+	          </div>
+	        </div>
+	        {% endfor %}
 		</div>
+
+		<div class="row">
+			<div class="col">
+			{% if (request.args.get('page')|int > 1) %}
+				<button class="btn btn-sm btn-outline-secondary" type="button" id ="previous-page-btn" value="Previous Page">Previous Page</button>
+			{% endif %}
+			
+			{% if (tracks|length == 12) %}
+				<button class="btn btn-sm btn-outline-secondary" type="button" id="next-page-btn" value="Next Page">Next Page</button>
+			{% endif %}
+			
+			</div>
+		</div>
+
 	</div>
 
-	<div class="page-content-container">
-		{% if (request.args.get('page')|int > 1) %}
-	  <button type="button" id ="previous-page-btn" value="Previous Page">Previous Page</button>
-	  	{% endif %}
-	  	{% if (tracks|length == 10) %}
-	  <button type="button" id="next-page-btn" value="Next Page">Next Page</button>
-	  {% endif %}
-	</div>
 </div>
 
 <script type="text/javascript">

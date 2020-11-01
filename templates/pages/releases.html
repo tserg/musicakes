@@ -69,52 +69,6 @@
 
 </div>
 
-<!-- 
-<div class="page-content-wrap">
-	<div class="page-content-container">
-		<meta id="page" data-page="{{ request.args.get('page')|int }}">
-		<h3>Releases</h3>
-
-
-		{% if not releases %}
-			<h2>There are no releases currently listed.</h2>
-		{% endif %}
-		<div class="list-grid-container">
-		{% for release in releases %}
-
-			<div class="list-grid-item">
-			    <div class="display-picture">
-			    	<a href="/releases/{{ release.id }}">
-				        {% if release.cover_art is none %}
-				          <img id="preview" src="/static/img/musicakes.png" />
-				        {% else %}
-				          <img src="{{ release.cover_art }}" />
-				        {% endif %}
-				    </a>
-			    </div>
-				<a href="/releases/{{ release.id }}">
-					<div>
-						<h5>{{ release.artist_name }} - {{ release.release_name }}</h5>
-					</div>
-				</a>
-			</div>
-
-		{% endfor %}
-		</div>
-	</div>
-
-	<div class="page-content-container">
-		{% if (request.args.get('page')|int > 1) %}
-	  <button type="button" id ="previous-page-btn" value="Previous Page">Previous Page</button>
-	  	{% endif %}
-	  	{% if (releases|length == 10) %}
-	  <button type="button" id="next-page-btn" value="Next Page">Next Page</button>
-	  {% endif %}
-	</div>
-</div>
-!-->
-
-
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 <script type="text/javascript">
   window.appConfig = {
