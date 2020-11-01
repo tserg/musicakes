@@ -52,6 +52,19 @@
 	        {% endfor %}
 		</div>
 
+		<div class="row">
+			<div class="col">
+			{% if (request.args.get('page')|int > 1) %}
+				<button class="btn btn-sm btn-outline-secondary" type="button" id ="previous-page-btn" value="Previous Page">Previous Page</button>
+			{% endif %}
+			
+			{% if (releases|length == 12) %}
+				<button class="btn btn-sm btn-outline-secondary" type="button" id="next-page-btn" value="Next Page">Next Page</button>
+			{% endif %}
+			
+			</div>
+		</div>
+
 	</div>
 
 </div>

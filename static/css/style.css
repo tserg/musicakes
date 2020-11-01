@@ -29,6 +29,12 @@ button {
 	border-color: #8d9db6;
 }
 
+.btn-outline-secondary:click {
+	color: rgba(0, 0, 0, 0.7);
+	background-color: #bccad6;
+	border-color: #8d9db6;
+}
+
 /* Style for <a> button */
 
 a.button {

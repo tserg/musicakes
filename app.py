@@ -106,7 +106,7 @@ WEB3_INFURA_API_SECRET = os.getenv('WEB3_INFURA_API_SECRET', 'Does not exist')
 
 # Environment variables for app
 
-RELEASES_PER_PAGE = 10
+RELEASES_PER_PAGE = 12
 TRACKS_PER_PAGE = 10
 ARTISTS_PER_PAGE = 10
 
