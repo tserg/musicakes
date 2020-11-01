@@ -11,6 +11,24 @@ button {
 	font-family: "Montserrat", sans-serif;
 }
 
+.btn-primary {
+	color: black;
+	background-color: #bccad6;
+	border-color: #8d9db6;
+}
+
+.btn-primary:hover, .btn-primary:disabled {
+	color: rgba(0, 0, 0, 0.7);
+	background-color: #8d9db6;
+	border-color: #8d9db6;
+}
+
+.btn-outline-secondary:hover {
+	color: rgba(0, 0, 0, 0.7);
+	background-color: #8d9db6;
+	border-color: #8d9db6;
+}
+
 /* Style for <a> button */
 
 a.button {
@@ -137,9 +155,9 @@ a.button {
 
 /* Placeholder div for release cover art on release page */
 
-.card-img-top {
-	height: 200px;
-	width: 100px;
+.card-img-top, .bd-placeholder-img {
+	height: 148px;
+	width: 148px;
 }
 
 .release-cover-art, .card-img-top img {
@@ -228,3 +246,4 @@ a.button {
 	text-decoration: none;
 	font-size: 17px;
 }
+
