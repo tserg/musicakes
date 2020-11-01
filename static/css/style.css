@@ -12,6 +12,10 @@ button {
 	font-family: "Montserrat", sans-serif;
 }
 
+.jumbotron {
+	background-color: #8d9db6;
+}
+
 .btn-primary {
 	color: black;
 	background-color: #bccad6;

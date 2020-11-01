@@ -7,73 +7,84 @@
   </style>
 {% endblock %}
 {% block content %}
-<div class="page-content-wrap">
-	<div class="page-content-container">
 
-		<h2>Frequently Asked Questions</h2>
-		
-		<div class = "page-content-subcontainer">
+<div class="jumbotron">
+    <div class="container">
+      <h1 class="display-3">Frequently Asked Questions</h1>
+    </div>
+</div>
+
+<div class="container text-justify">
+	<div class="row py-2 mt-2">
+		<div class="col">
 			<h3>What is Musicakes?</h3>
-			<div class = "page-content-subcontainer">
-				<span>Musicakes is a simple, experimental web application for artists to sell their music, and to tokenise the revenue streams from their music sold on this platform.
+			<p>Musicakes is a simple, experimental web application for artists to sell their music, and to tokenise the revenue streams from their music sold on this platform.</p>
 
-				</span>
-			</div>
-			<div class="page-content-subcontainer">
-				 <span>To purchase music, a user will have to pay using the DAI token, a USD-pegged stablecoin, to a smart contract specific to that release.</span>
-			</div>
-			<div class="page-content-subcontainer">
-				<span>We enable the artist to determine how the payment should be split by representing shares to the proceeds as tokens (called Musicakes too). Payments to the release's smart contract will be allocated based on how the Musicakes for that release is distributed across wallet addresses. Each release will have 100 Musicakes tokens upon the creation of the smart contract. All 100 tokens will be sent to the artist's wallet address that was used at the time the release was created. We may implement a 2% fee in the future to cover operating costs for AWS storage.</span>
-				
-			</div>
+		 	<p>To purchase music, a user will have to pay using the DAI token, a USD-pegged stablecoin, to a smart contract specific to that release.</p>
 
-			<div class="page-content-subcontainer">
-				<span>In order to claim payment, a user will need to trigger a function in the smart contract using the Ethereum wallet address holding the Musicakes token. This will require payment of a gas fee to the Ethereum network.</span>
-			</div>
+			<p>We enable the artist to determine how the payment should be split by representing shares to the proceeds as tokens (called Musicakes too). Payments to the release's smart contract will be allocated based on how the Musicakes for that release is distributed across wallet addresses. Each release will have 100 Musicakes tokens upon the creation of the smart contract. All 100 tokens will be sent to the artist's wallet address that was used at the time the release was created. We may implement a 2% fee in the future to cover operating costs for AWS storage.</p>
+
+			<p>In order to claim payment, a user will need to trigger a function in the smart contract using the Ethereum wallet address holding the Musicakes token. This will require payment of a gas fee to the Ethereum network.</p>
+
 		</div>
+	</div>
 
-		<div class = "page-content-subcontainer">
+	<div class="row py-2 mt-2">
+
+		<div class ="col">
 			<h3>What do I need to use Musicakes?</h3>
-			<div class="page-content-subcontainer">
-				<p>To use Musicakes, you need to install <a href='https://metamask.io/'target="_blank">Metamask</a> and an Ethereum wallet address with DAI tokens.</p>
 
-				<p>You can purchase DAI using ETH at <a href="https://app.uniswap.org/#/swap" target="_blank">Uniswap</a>, a decentralised exchange on the Ethereum blockchain.</p>
-			</div>
+			<p>To use Musicakes, you need to install <a href='https://metamask.io/'target="_blank">Metamask</a> and an Ethereum wallet address with DAI tokens.</p>
+
+			<p>You can purchase DAI using ETH at <a href="https://app.uniswap.org/#/swap" target="_blank">Uniswap</a>, a decentralised exchange on the Ethereum blockchain.</p>
+
 		</div>
+	</div>
 
-		<div class = "page-content-subcontainer">
+	<div class="row py-2 mt-2">
+
+		<div class = "col">
 			<h3> What is DAI token?</h3>
-			<div class="page-content-subcontainer">
-				<span>DAI is a token on the Ethereum blockchain that is pegged to the value of one USD per token.</span>
-			</div>
-		</div>
+			<p>DAI is a token on the Ethereum blockchain that is pegged to the value of one USD per token.</p>
 
-		<div class = "page-content-subcontainer">
+		</div>
+	</div>
+
+	<div class="row py-2 mt-2">
+		<div class = "col">
 			<h3>Why is my purchase not showing up?</h3>
-			<div class="page-content-subcontainer">
-				<span>The transaction on the Ethereum network may take a while to be confirmed. You should not leave the release page until the transaction is confirmed. If you do, please send us your transaction hash and email account at musicakes [dot] team [at] gmail [dot] com so that we can update the database.</span>
-			</div>
-		</div>
 
-		<div class = "page-content-subcontainer">
+			<p>The transaction on the Ethereum network may take a while to be confirmed. You should not leave the release page until the transaction is confirmed. If you do, please send us your transaction hash and email account at musicakes [dot] team [at] gmail [dot] com so that we can update the database.</p>
+
+		</div>
+	</div>
+
+	<div class="row py-2 mt-2">
+		<div class = "col">
 			<h3>Can I use different wallet addresses?</h3>
-			<div class="page-content-subcontainer">
-				<span>Yes, you can. Your account is not tied to a wallet address.</span>
-			</div>
-		</div>
 
-		<div class = "page-content-subcontainer">
+			<p>Yes, you can. Your account is not tied to a wallet address.</p>
+
+		</div>
+	</div>
+
+	<div class="row py-2 mt-2">
+
+		<div class = "col">
 			<h3>Do you use decentralised file storage?</h3>
-			<div class="page-content-subcontainer">
-				<span>No. We are currently using AWS S3 to store the track files.</span>
-			</div>
-		</div>
 
-		<div class = "page-content-subcontainer">
+			<p>No. We are currently using AWS S3 to store the track files.</p>
+
+		</div>
+	</div>
+
+	<div class="row py-2 mt-2">
+
+		<div class = "col">
 			<h3>Do you have an email that I can reach out to?</h3>
-			<div class="page-content-subcontainer">
-				<span>You can address your queries to musicakes [dot] team [at] gmail [dot] com.</span>
-			</div>
+
+			<p>You can address your queries to musicakes [dot] team [at] gmail [dot] com.</p>
+
 		</div>
 
 	</div>
