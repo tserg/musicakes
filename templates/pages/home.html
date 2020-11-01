@@ -7,12 +7,27 @@
   </style>
 {% endblock %}
 {% block content %}
+
+<div class="jumbotron" style="background-color: #77a8a8;">
+    <div class="container">
+      <h1 class="display-3">Welcome back, {{ userinfo.username }}!</h1>
+    </div>
+
+    <div class="container">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class=flashes>
+      {% for message in messages %}
+        <li>{{ message }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+    </div>
+</div>
+
 <div class="page-content-wrap">
 	<div class = "page-content-container">
-		<div>
-		    <h2>Welcome back, {{ userinfo.username }}!</h2>
-		</div>
-
 		<div>
 
 			<h3>Latest Releases</h3>

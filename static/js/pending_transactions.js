@@ -44,6 +44,7 @@ async function getPendingTransactions() {
 
           	var link = document.createElement("A");
           	link.innerHTML = "Your purchase of " + data['data'][i]['purchase_description'] + " is pending confirmation.";
+            link.className = "dropdown-item";
 
             if (chainId === 1) {
           	  link.href = "https://etherscan.io/tx/" + data['data'][i]['transaction_hash'];

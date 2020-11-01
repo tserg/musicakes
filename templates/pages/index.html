@@ -8,46 +8,43 @@
 {% endblock %}
 {% block content %}
 
-<div class="page-content-wrap">
-  <div class="page-content-container">
-    <h1>Musicakes</h1>
-    <div class="page-content-subcontainer">
-      <span>Musicakes is a simple, experimental web application for artists to sell their music, and to tokenise the revenue streams from their music sold on this platform.</span>
-    </div>
-
-    <div class="page-content-subcontainer">
-
-      <span>We enable the artist to determine how the payment should be split by representing shares to the proceeds as tokens (called Musicakes too). Each release will have 100 Musicakes tokens upon the creation of the smart contract. All 100 tokens will be sent to the artist's wallet address that was used at the time the release was created. Any user with the Musicake tokens for a release can claim a proportional amount of the payments made to that release's smart contract.
-      </span>
-    </div>
-
-    <div class="page-content-subcontainer">
-
-
-      <span>We may implement a 2% fee in the future to cover operating costs for AWS storage.</span>
+<div class="container">
+  <div class="row pt-4 mt-4">
+    <div class="col">
+      <h1>Musicakes</h1>
+      <p>
+        Musicakes is a simple, experimental web application for artists to sell their music, and to tokenise the revenue streams from their music sold on this platform.
+      </p>
+      <p>We enable the artist to determine how the payment should be split by representing shares to the proceeds as tokens (called Musicakes too). Each release will have 100 Musicakes tokens upon the creation of the smart contract. All 100 tokens will be sent to the artist's wallet address that was used at the time the release was created. Any user with the Musicake tokens for a release can claim a proportional amount of the payments made to that release's smart contract.
+      </p>
     </div>
   </div>
 
-
+  <div class="row pt-3 mt-3">
+    <div class="col-md-4 text-center">
+      <h2>For Artists</h2>
+        <svg width="12em" height="12em" viewBox="0 0 16 16" class="bi bi-file-earmark-music-fill my-3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M2 2a2 2 0 0 1 2-2h5.293A1 1 0 0 1 10 .293L13.707 4a1 1 0 0 1 .293.707V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm7.5 1.5v-2l3 3h-2a1 1 0 0 1-1-1zM11 6.64a1 1 0 0 0-1.243-.97l-1 .25A1 1 0 0 0 8 6.89v4.306A2.572 2.572 0 0 0 7 11c-.5 0-.974.134-1.338.377-.36.24-.662.628-.662 1.123s.301.883.662 1.123c.364.243.839.377 1.338.377.5 0 .974-.134 1.338-.377.36-.24.662-.628.662-1.123V8.89l2-.5V6.64z"/>
+        </svg>
+      <p class="text-justify">If you co-produced an album with another artist, you can share the revenue stream of that album by transferring 50 out of 100 Musicakes to the other artist.</p>
+    </div>
+    <div class="col-md-4 text-center">
+      <h2>For Labels</h2>
+      <svg width="12em" height="12em" viewBox="0 0 16 16" class="bi bi-collection-play-fill my-3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M1.5 14.5A1.5 1.5 0 0 1 0 13V6a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 16 6v7a1.5 1.5 0 0 1-1.5 1.5h-13zm5.265-7.924A.5.5 0 0 0 6 7v5a.5.5 0 0 0 .765.424l4-2.5a.5.5 0 0 0 0-.848l-4-2.5zM2 3a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 0-1h-11A.5.5 0 0 0 2 3zm2-2a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 0-1h-7A.5.5 0 0 0 4 1z"/>
+      </svg>
+      <p class="text-justify">If you are a label releasing a Various Artists compilation, you can equally split the revenue stream of that album by sending an equal amount of Musicakes to each contributing artist</p>
+    </div>
+    <div class="col-md-4 text-center">
+      <h2>For Fans</h2>
+        <svg width="12em" height="12em" viewBox="0 0 16 16" class="bi bi-music-player-fill my-3" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm2 1a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V3zm7 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+          <circle cx="8" cy="11" r="1"/>
+        </svg>
+      <p class="text-justify">By utilising the Ethereum blockchain for payment, you can eliminate hidden transaction and card fees. You only pay for the purchase price and a gas fee.</p>
+    </div>
+  </div>
   
-
-  <div class="page-content-container">
-
-    
-    <h1>What can I do with Musicakes?</h1>
-    <div class="page-content-subcontainer">
-      <span>There are countless possibilities with what you can achieve with Musicakes.</span>
-    </div>
-    <div class="page-content-subcontainer">
-
-      <span>If you are a label releasing a Various Artists compilation, you can equally split the revenue stream of that album by sending an equal amount of Musicakes to each contributing artist</span>
-    </div>
-
-    <div class="page-content-subcontainer">
-
-      <span>If you co-produced an album with another artist, you can share the revenue stream of that album by transferring 50 out of 100 Musicakes to the other artist.</span>
-    </div>
-  </div>
 </div>
 
 {% endblock %}
