@@ -402,7 +402,7 @@ def create_app(test_config=None):
 
             return redirect(url_for('create_user_form'))
 
-        latest_releases = Release.query.order_by(Release.created_on.desc()).limit(5).all()
+        latest_releases = Release.query.order_by(Release.created_on.desc()).limit(4).all()
 
         latest_releases_data = [release.short_public() for release in latest_releases]
 
