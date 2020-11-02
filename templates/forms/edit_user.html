@@ -7,34 +7,30 @@
   <div class="row pt-4 mt-4">
     <div class="col">
 
-      <div class="form-wrapper">
-        <form method="post" class="form" enctype="multipart/form-data">
-          {{ form.hidden_tag() }}
-          <h3 class="form-heading">Edit profile picture</h3>
+      <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <h3 class="form-heading">Edit profile picture</h3>
 
-          <p> Current Profile Picture
+        <p> Current Profile Picture
 
-          <div class="my-3 card-img-top">
+        <div class="my-3 card-img-top">
 
-            {% if userinfo.profile_picture is none %}
-              <img id="preview" src="/static/img/musicakes.png" />
-            {% else %}
-              <img src="{{ userinfo.profile_picture }}" />
-            {% endif %}
+          {% if userinfo.profile_picture is none %}
+            <img id="preview" src="/static/img/musicakes.png" />
+          {% else %}
+            <img src="{{ userinfo.profile_picture }}" />
+          {% endif %}
 
-          </div>
+        </div>
 
-          <div class="form-group">
-              <label for="profile_picture"></label>
-              {{ form.profile_picture(class = 'form-control-file') }}
+        <div class="form-group">
+            <label for="profile_picture"></label>
+            {{ form.profile_picture(class = 'form-control-file') }}
 
-          </div>
+        </div>
 
-          <input type="submit" value="Update profile picture">
-        </form>
-      </div>
- 
-
+        <input type="submit" value="Update profile picture" class="btn btn-sm btn-outline-secondary mt-3">
+      </form>
 
     </div>
   </div>
