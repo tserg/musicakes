@@ -76,7 +76,7 @@ class User(db.Model):
             'username': self.username,
             'artist_id': artist_info,
             'profile_picture': self.profile_picture,
-            'created_on': self.created_on
+            'created_on': self.created_on.strftime('%#d %B %Y')
         }
 
     def short_public(self):

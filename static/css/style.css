@@ -119,24 +119,12 @@ a.button {
 }
 
 .border-right {
-	padding-right: 5px;
-	border-right: 1px solid #ccc;
+	border-color: #8d9db6;
 }
 
-.border-bottom {
-	padding-bottom: 5px;
-	border-bottom: 1px solid #ccc;
-}
 
-.transaction-table, .transaction-table-column, .transaction-table-row {
-	border: 1px solid #ccc;
-	border-collapse: collapse;
-	text-align: left;
-	font-weight:normal;
-}
-
-.transaction-table-column, .transaction-table-row {
-	padding: 8px;
+.table-bordered {
+	border-color: #8d9db6;
 }
 
 /* Artist page */

@@ -1,85 +1,98 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div class = "page-content-wrap">
+<div class="album py-5">
+	<meta id="page" data-page="{{ request.args.get('page')|int }}">
+	<div class="container">
 
-	<div class="page-content-container">
-
-		<h4>Purchases: </h4>
-
-	</div>
-
-
-	{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) or (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
+		<h4>Purchases</h4>
 
 
 
-	{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) %}
-	<div class="page-content-container">
-		<div>
 
-			<h5> Releases</h5>
+		{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) or (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
 
-		</div>
-		<div class="list-grid-container">
+		<h5 class="my-4">Releases</h5>
+
+		<div class="row">
+
+		{% if (userinfo.purchased_releases is defined and userinfo.purchased_releases) %}
 
 			{% for release in userinfo.purchased_releases %}
-			<div class="list-grid-item">
+	       	<div class="col-md-3">
+	          <div class="card mb-4 shadow-sm">
+	          	<div class="bd-placeholder-img card-img-top mx-auto d-block mt-5">
+			    	<a class="img-fluid" href="/releases/{{ release.id }}">
+				        {% if release.cover_art is none %}
+				          <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
+				        {% else %}
+				          <img class="img-fluid rounded" src="{{ release.cover_art }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
+				        {% endif %}
+				    </a>
+				</div>
+	            <div class="card-body">
+	              <p class="card-text font-weight-bold">{{ release.artist_name }}</p>
+	              <p class="card-text">{{ release.release_name }}</p>
+	              <div class="d-flex justify-content-between align-items-center">
+	                <div class="btn-group">
+	                  <a type="button" class="btn btn-sm btn-outline-secondary" href="/releases/{{ release.id }}">View</a>
 
-			    <div class="display-picture">
-			        {% if release.cover_art is none %}
-			          <img id="preview" src="/static/img/musicakes.png" />
-			        {% else %}
-			          <img src="{{ release.cover_art }}" />
-			        {% endif %}
-			    </div>
+	                  <a type="button" id="{{ release.release_id }}" class="btn btn-sm btn-outline-secondary download-release-btn">Download</a>
+	                </div>
+	              </div>
+	            </div>
+	          </div>
+	        </div>
 
-				<a href="../releases/{{ release.release_id }}">{{ release.release_name }}</a>
-				 / 
-				<button type="button" class="download-release-btn" id="{{ release.release_id }}">Download</button>
-			</div>
 			{% endfor %}
 
 		</div>
-	</div>
+
 
 	{% endif %}
 
 
 	{% if (userinfo.purchased_tracks is defined and userinfo.purchased_tracks) %}
-	<div class="page-content-container">
-		<div>
-			<h5> Tracks</h5>
-		</div>
 
-		<div class="list-grid-container">
-			{% for track in userinfo.purchased_tracks %}
-			<div class="list-grid-item">
 
-			    <div class="display-picture">
-			        {% if track.release_cover_art is none %}
-			          <img id="preview" src="/static/img/musicakes.png" />
-			        {% else %}
-			          <img src="{{ track.release_cover_art }}" />
-			        {% endif %}
-			    </div>
+		<h5 class="my-4">Tracks</h5>
+		<div class="row">
+		{% for track in userinfo.purchased_tracks %}
+			<div class="col-md-3">
+	          	<div class="card mb-4 shadow-sm">
+		          	<div class="bd-placeholder-img card-img-top mx-auto d-block mt-5">
+				    	<a class="img-fluid" href="/tracks/{{ track.track_id }}">
+					        {% if track.release_cover_art is none %}
+					          <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
+					        {% else %}
+					          <img class="img-fluid rounded" src="{{ track.release_cover_art }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
+					        {% endif %}
+					    </a>
+					</div>
+		            <div class="card-body">
+		              <p class="card-text font-weight-bold">{{ track.artist_name }}</p>
+		              <p class="card-text">{{ track.track_name }}</p>
+		              <div class="d-flex justify-content-between align-items-center">
+		                <div class="btn-group">
+		                  <a type="button" class="btn btn-sm btn-outline-secondary" href="/tracks/{{ track.track_id }}">View</a>
 
-				<a href="../tracks/{{ track.track_id }}">>{{ track.track_name }}</a>
-				 / 
-				<button type="button" class="download-track-btn" id="{{ track.track_id }}">Download</button>
+		                  <a type="button" id="{{ track.track_id }}" class="btn btn-sm btn-outline-secondary download-track-btn">Download</a>
+		                </div>
+		              </div>
+		            </div>
+	          	</div>
+	        </div>
+        {% endfor %}
+    	</div>
+	{% endif %}
 
-			</div>
-			{% endfor %}
-		{% endif %}
-		</div>
-	</div>
 
 	{% else %}
-	<div class="page-content-container">
 
 		<h4>You have not purchased any music yet.</h4>
-	</div>
+
 	{% endif %}
+	</div>
 
 </div>
 
