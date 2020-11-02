@@ -132,7 +132,6 @@ a.button {
 .artist-page-icon {
 	max-width: 32px;
 	max-height: 32px;
-	padding-left: 20px;
 }
 
 .artist-page-icon iframe, img {
@@ -160,8 +159,6 @@ a.button {
 .display-picture {
 	height:200px;
 	width:200px;
-	padding-top: 20px;
-	padding-bottom: 20px;
 }
 
 .display-picture img {
