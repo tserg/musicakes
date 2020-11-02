@@ -1,26 +1,44 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Edit your profile{% endblock %}
 {% block content %}
-<div class="page-content-wrap">
-  <div class="page-content-container">
-    <div class="form-wrapper">
-      <form method="post" class="form" enctype="multipart/form-data">
-        {{ form.hidden_tag() }}
-        <h3 class="form-heading">Edit profile picture</h3>
 
-        <div class="form-group">
-            <label for="profile_picture">Profile Picture</label>
-            {{ form.profile_picture(class = 'form-control-file') }}
+<div class = "container">
 
-        </div>
+  <div class="row pt-4 mt-4">
+    <div class="col">
 
-        <div>
-          <img id="preview" src="/static/img/musicakes.png" />
-        </div>
+      <div class="form-wrapper">
+        <form method="post" class="form" enctype="multipart/form-data">
+          {{ form.hidden_tag() }}
+          <h3 class="form-heading">Edit profile picture</h3>
 
-        <input type="submit" value="Update profile picture">
-      </form>
+          <p> Current Profile Picture
+
+          <div class="my-3 card-img-top">
+
+            {% if userinfo.profile_picture is none %}
+              <img id="preview" src="/static/img/musicakes.png" />
+            {% else %}
+              <img src="{{ userinfo.profile_picture }}" />
+            {% endif %}
+
+          </div>
+
+          <div class="form-group">
+              <label for="profile_picture"></label>
+              {{ form.profile_picture(class = 'form-control-file') }}
+
+          </div>
+
+          <input type="submit" value="Update profile picture">
+        </form>
+      </div>
+ 
+
+
     </div>
   </div>
 </div>
+
+
 {% endblock %}
