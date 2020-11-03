@@ -150,9 +150,8 @@ class EditReleaseForm(FlaskForm):
 	release_description = TextAreaField('Description of release',
 			widget=TextArea(),
 			render_kw={
-				'class': 'release-text-input',
-				'rows': 4,
-				'cols': 50
+				'class': 'release-text-input form-control',
+				'rows': 4
 			}
 		)
 

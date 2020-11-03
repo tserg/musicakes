@@ -2,88 +2,117 @@
 {% extends 'layouts/layout.html' %}
 {% block title %}Edit your release{% endblock %}
 {% block content %}
-<div class="page-content-wrap">
 
-  <div class="page-content-container">
-    <h4>
-      Artist: {{ artist.name }}
-    </h4>
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col">
 
-    <meta id="artist-id" data-id="{{ artist.id }}">
+        <h2>Edit release</h2>
 
-    <div class="form-wrapper">
-      <form method="post" class="form" action="{{ url_for('edit_release_form', release_id=release.id) }}">
-        {{ form.hidden_tag() }}
-        <div class="form-sub-group">
-	        <fieldset>
-	        <legend>Release Information</legend>
-	          	<div class="form-sub-group">
-	            	<label for="release_name">Release Name</label>
-	          	</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-	          	<div class="form-sub-group">
+<div class = "container">
+
+  	<div class="row pt-4 mt-4">
+
+    	<div class="col">
+	    <meta id="artist-id" data-id="{{ artist.id }}">
+
+
+		<form method="post" action="{{ url_for('edit_release_form', release_id=release.id) }}">
+		    {{ form.hidden_tag() }}
+		    <fieldset>
+	    	<legend>Release Information</legend>
+	    	<div class="form-group row mt-5">
+	            <label for="release_name" class="col-sm-2 col-form-label">Name of release</label>
+
+	          	<div class="col-sm-4">
 	            	{{ form.release_name(class_ = 'form-control', autofocus = true) }}
 	          	</div>
+	        </div>
 
-	          	<div class="form-sub-group">
-	          		Release Cover Art
-	          	</div>
-	          	<div class="form-sub-group">
-		        	<div class = "release-cover-art">
-		          		<img src={{ release.cover_art }} />
+
+          	<div class="form-group row">
+
+          		<p class="col-sm-2 col-form-label">Cover Art</p>
+          		<div class="col-sm-4">
+	          		<div class = "release-cover-art">
+		          		<img src="{{ release.cover_art }}" />
 		        	</div>
-		      	<div class="form-sub-group">
+		        </div>
+          	</div>
 
-	          	<div class="form-sub-group">
-	            	<label for="release_price">Release Price</label>
-	          	</div>
-	          	<div class="form-sub-group">
-	            	{{ form.release_price(class_ = 'form-control', autofocus = true) }}
-	          	</div>
+          	<div class="form-group row">
+            	<label for="release_description" class="col-sm-2 col-form-label">Description of release</label>
+          		<div class="col-sm-4">
+            		{{ form.release_description(class_ = 'form-control', autofocus = true) }}
+            	</div>
+          	</div>
 
-	          	<div class="form-sub-group">
-	            	<label for="release_description">Release Description</label>
-	          	</div>
-	          	<div class="form-sub-group textarea">
-	            	{{ form.release_description(class_ = 'form-control', autofocus = true) }}
-	          	</div>
+          	<div class="form-group row">
+            	<label for="release_price" class="col-sm-2 col-form-label">Price of release</label>
 
-	          	<br>
-	          
-	        </fieldset>
+          		<div class="col-sm-1">
+            	{{ form.release_price(class_ = 'form-control', autofocus = true) }}
+            	</div>
+          	</div>
+          	</fieldset>
 	    </div>
+	</div>
+</div>
 
-	    <div class="form-sub-group">
+<div class = "container">
 
-	        <fieldset>
-	          <legend>Track(s) Information</legend>
-	          {% for track_form in form.tracks %}
-	          <fieldset>
-	          	
-	          	{{ track_form.hidden_tag() }}
-	          	{% for field in track_form if field.widget.input_type != 'hidden' %}
-	          	<div class="form-sub-group">
-	          		{{ field.label }}
-	          	<div class="form-sub-group">
-	          	<div class="form-sub-group">
-	          		{{ field }}
-	          	<div class="form-sub-group">
-	          	{% endfor %}
+  	<div class="row pt-4 mt-4">
 
-	          </fieldset>
-	          {% endfor %}
-	          
-	        </fieldset>
+    	<div class="col">
+
+
+		    <fieldset>
+		    <legend>Track(s) Information</legend>
+
+	        <div class="form-group row">
+	          <label class="col-sm-4 col-form-label">Track name</label>
+	          <label class="col-sm-1 col-form-label">Track price</label>
+	          <label class="col-sm-4 col-form-label">YouTube URL</label>
+	        </div>
+
+		    {% for track_form in form.tracks %}
+		    <div class="form-group row">
+		      	{{ track_form.hidden_tag() }}
+		      	<div class="col-sm-4">
+		      		{{ track_form.track_name(class_ = 'form-control', autofocus = true) }}
+		      	</div>
+		      	<div class="col-sm-1">
+		      		{{ track_form.track_price(class_ = 'form-control', autofocus = true) }}
+		      	</div>
+		      	<div class="col-sm-4">
+		      		{{ track_form.track_youtube_url(class_ = 'form-control', autofocus = true) }}
+		      	</div>
+		    </div>
+		    {% endfor %}
+
+		    </fieldset>
 	    </div>
-        
-        <div class = "form-sub-group">
+	</div>
+</div>
 
-        	<input type="submit" value="Update release information">
-      	</div>
-      </form>
-    </div>
+<div class = "container">
 
-  </div>
+	<div class="row py-4 my-4">
+
+	    <div class="col text-center">
+
+	    	<input type="submit" value="Update" class="btn btn-sm btn-outline-secondary">
+	  	</div>
+	</form>
+
+
+  	</div>
 
 </div>
 
