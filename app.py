@@ -27,6 +27,7 @@ from flask import (
 )
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 from flask_cors import CORS
 from flask_wtf import (
     Form, 
@@ -402,7 +403,10 @@ def create_app(test_config=None):
 
             return redirect(url_for('create_user_form'))
 
-        latest_releases = Release.query.order_by(Release.created_on.desc()).limit(4).all()
+        latest_releases = Release.query.join(Release.tracks) \
+                            .having(func.count(Track.id) > 0) \
+                            .group_by(Release.id) \
+                            .order_by(Release.created_on.desc()).limit(4).all()
 
         latest_releases_data = [release.short_public() for release in latest_releases]
 
