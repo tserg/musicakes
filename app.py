@@ -1829,7 +1829,10 @@ def create_app(test_config=None):
             start = (page-1)*RELEASES_PER_PAGE
             end = start + RELEASES_PER_PAGE
 
-            all_releases = Release.query.order_by(Release.created_on.desc()).all()
+            all_releases = Release.query.join(Release.tracks) \
+                            .having(func.count(Track.id) > 0) \
+                            .group_by(Release.id) \
+                            .order_by(Release.created_on.desc()).all()
 
             formatted_all_releases = [release.short_public()
                                       for release in all_releases]
