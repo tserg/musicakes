@@ -55,7 +55,7 @@
             <label for="release_text" class="col-sm-2 col-form-label">Description of release</label>
 
             <div class="col-sm-4">
-              <textarea class="release-text-input form-control" rows="4"></textarea>
+              <textarea id="release-text-input" class="release-text-input form-control" rows="4"></textarea>
             </div>
           </div>
 
@@ -79,7 +79,7 @@
   <div class="row pt-4 mt-4">
 
     <div class="col">
-      <fieldset>
+      <fieldset class="track-count-group">
         <legend>Track(s) information</legend>
 
         <div class="form-group row">
@@ -104,10 +104,11 @@
             <progress id="upload-progress-1" value="0" max="100">0%</progress>
           </div>
         </div>
+      </fieldset>
 
       {% for track_number in track_count %}
 
-
+      <fieldset class="track-count-group">
         <div class="form-group row">
           
           <div class="col-sm-4">
@@ -131,10 +132,10 @@
           </div>
         </div>
 
-
+      </fieldset>
 
       {% endfor %}
-      </fieldset>
+      
     </div>
   </div>
 </div>

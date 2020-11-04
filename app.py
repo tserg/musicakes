@@ -2114,8 +2114,11 @@ def create_app(test_config=None):
 
                 contract_factory_address = MusicakesContractFactory.query.get(1).smart_contract_address
 
-                return render_template('pages/deploy_release.html', release=release_data, userinfo=data,
-                                        contract_factory_address=contract_factory_address)
+                return render_template('pages/deploy_release.html', 
+                                        release=release_data, 
+                                        userinfo=data,
+                                        contract_factory_address=contract_factory_address,
+                                        chain_id=ETHEREUM_CHAIN_ID)
 
             else:
 

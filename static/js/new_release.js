@@ -1,4 +1,4 @@
-var tracks_count = $('.track-form-group').length;
+var tracks_count = $('.track-count-group').length;
 
 /* sanity check */
 
@@ -156,10 +156,13 @@ function addReleaseToServer(file_name, release_name, release_price, release_text
 
         response = JSON.parse(xhr.response);
 
+        console.log(response);
+
         const release_id = response['release_id'];
         console.log("Release is created with ID");
         console.log(release_id);
         addTracks(release_id);
+        console.log("addtracks triggered");
 
       }
       else{
@@ -178,6 +181,8 @@ function addTracks(release_id) {
   const track_file_placeholder = "track-file-input"
   const track_price_placeholder = "track-price-input"  
 
+  console.log("addtracks function");
+
   for (i=1; i<=tracks_count; i++) {
 
     var track_name_id = track_name_placeholder + "-" + i.toString();
@@ -195,6 +200,8 @@ function addTracks(release_id) {
     var track_price = document.getElementById(track_price_id).value;
 
     getSignedRequestTrack(track_file, track_name, track_price, release_id, i);
+
+    console.log("signed request triggered");
 
   }
 

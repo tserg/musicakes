@@ -2,72 +2,77 @@
 {% block title %}Create a new release{% endblock %}
 {% block content %}
 
-<div class="page-content-wrap">
-  {% if userinfo.artist_name is none %} 
-  <h4> You have not created an artist profile yet.</h4> 
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col">
 
-  {% else %} 
-
-  <div class = "page-content-container" id="release-dashboard">
-
-      <div>
-        <h4>
-          Release: {{ release.release_name }}
-        </h4>
-
-        <h4>
-          Artist: {{ release.artist_name }}
-        </h4>
-        <h4>
-          Price: {{ release.price }}
-        </h4>
-        <h4>
-          Tracks: 
-        </h4>
-    
-        <ol>
-          {% for track in release.tracks %}
-          <li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
-          {% endfor %}
-        </ol>
-        
-
-
-        <div>
-          <span>Created on: {{ release.created_on }}</span>
-        </div>
+        <h2>Create a new release</h2>
+        <h4>Step 3 of 3: Deploy your Musicakes smart contract</h4>
 
       </div>
-
-  </div>
-  <div class="page-content-container">
-    <div>
-
-        <h3 class="form-heading">Create a new release</h3>
-
-        <!-- proxy element to store and query release id for window.appConfig --->
-        <meta id="release-id" data-address="{{ release.id }}">
-        <meta id="contract-factory-address" data-address="{{ contract_factory_address }}">      
-        <h3>Step 3: Deploy your Musicakes smart contract</h3>
-
-        <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
-
-        <div>
-          <button type="button" value="Deploy contract" class="btn btn-primary btn-lg btn-block" id="deploy-contract-btn">Deploy smart contract</button>
-        </div>
-
     </div>
   </div>
-  {% endif %}
+</div>
+
+<div class = "container">
+
+  <div class="row pt-4 mt-4">
+
+    <div class="col">
+
+      {% if userinfo.artist_name is none %} 
+      <h4> You have not created an artist profile yet.</h4> 
+
+      {% else %} 
+
+      <h4>
+        Release: {{ release.release_name }}
+      </h4>
+
+      <h4>
+        Artist: {{ release.artist_name }}
+      </h4>
+      <h4>
+        Price: {{ release.price }}
+      </h4>
+      <h4>
+        Tracks: 
+      </h4>
+
+      <ol>
+        {% for track in release.tracks %}
+        <li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
+        {% endfor %}
+      </ol>
+
+      <p>Created on: {{ release.created_on }}</p>
+
+
+      <!-- proxy element to store and query release id for window.appConfig --->
+      <meta id="release-id" data-address="{{ release.id }}">
+      <meta id="contract-factory-address" data-address="{{ contract_factory_address }}">   
+
+      <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
+      <meta id="chain_id" data-value="{{ chain_id }}">   
+
+      <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
+
+      <button type="button" value="Deploy contract" class="btn btn-sm btn-outline-secondary" id="deploy-contract-btn">Deploy smart contract</button>
+      {% endif %}
+    </div>
+  </div>
+
 
 </div>
 
 <script type="text/javascript">
   window.appConfig = {
     release_id: $('#release-id').data(),
-    contract_factory_address: $('#contract-factory-address').data()
+    contract_factory_address: $('#contract-factory-address').data(),
+    chain_id: $('#chain_id').data()
   }
 </script>
-
+<script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/deploy_release.js') }}"></script>
 {% endblock %}

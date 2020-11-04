@@ -1,3 +1,5 @@
+const ethereumChainId = parseInt(window.appConfig.chain_id.value);
+
 const release_id = parseInt(window.appConfig.release_id.address);
 const contract_factory_address = window.appConfig.contract_factory_address.address;
 console.log(contract_factory_address);
@@ -93,6 +95,52 @@ var _abi = [
       "type": "function"
     }
 ]
+
+// Initialise Metamask
+
+window.addEventListener('load', async () => {
+
+  window.provider = await detectEthereumProvider();
+
+  if (provider) {
+
+    console.log('Ethereum successfully detected!');
+
+    ethereum.on('accountsChanged', function(accounts) {
+      loadInterface();
+    });
+
+    // From now on, this should always be true:
+    // provider === window.ethereum
+
+    // Access the decentralized web!
+
+    // Legacy providers may only have ethereum.sendAsync
+    const chainId = await provider.request({
+      method: 'eth_chainId'
+    })
+
+    window.currentChainId = parseInt(chainId);
+
+    if (currentChainId != ethereumChainId) {
+
+      if (ethereumChainId == 1) {
+        alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+      } else if (ethereumChainId == 3) {
+        alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+      } else {
+        alert('You are connected to the wrong network.')
+      }
+      
+    }
+
+  } else {
+
+    // if the provider is not detected, detectEthereumProvider resolves to null
+    alert('Please install MetaMask to continue!');
+  }
+
+})
 
 
 const musicakesFactoryContractAddress = contract_factory_address;
