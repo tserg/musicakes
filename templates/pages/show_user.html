@@ -1,53 +1,94 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-<div class="page-content-wrap">
 
-	<div class = "page-content-flex-container"> 
-		<div class="page-content-flex-subcontainer">
-			<div class="page-content-container">
-				<h4>
-					Username: {{ userinfo.username }}
-				</h4>
-				<h4>
+<div class = "container">
 
-					Profile Picture
-				</h4>
+	<div class="row pt-4 mt-4">
+		<div class="col-md-2 border-right">
+
+			<h4>
+				Username
+			</h4>
+
+			<p>{{ userinfo.username }}</p>
+
+			<h4>
+				Profile Picture
+			</h4>
+
+			<div class = "card-img-top my-4"> 
+			{% if userinfo.profile_picture is none %}
+				<img id="preview" src="/static/img/musicakes.png" />
+			{% else %}
+				<img src="{{ userinfo.profile_picture }}" />
+			{% endif %}
 			</div>
 
-			<div class = "page-content-container">
-				<div class = "profile-picture"> 
-				{% if userinfo.profile_picture is none %}
-					<img id="preview" src="/static/img/musicakes.png" />
-				{% else %}
-					<img src="{{ userinfo.profile_picture }}" />
-				{% endif %}
-				</div>
-			</div>
+			<small>
+				Member since {{ userinfo.created_on }}
+			</small>
 
-			<div class = "page-content-container"> 
-				<h4>
-					Created on: {{ userinfo.created_on }}
-				</h4>
-			</div>
 		</div>
 
-		<div class="page-content-flex-subcontainer">
-			<div class="page-content-container">
-				<h4>Purchases: </h4>
+		<div class="col-md-10">
+			<h4>Purchases </h4>
+			<div class="row">
+				
 				{% for release in user.purchased_releases %}
-				<div class="list-grid-item">
-					<div class="display-picture">
-					{% if release.cover_art is none %}
-						<img id="preview" src="/static/img/musicakes.png" />
-					{% else %}
-						<img src="{{ release.cover_art }}" />
-					{% endif %}
+		       	<div class="col-md-3">
+		          <div class="card mb-2 shadow-sm">
+		          	<div class="bd-placeholder-img card-img-top mx-auto d-block mt-5">
+				    	<a class="img-fluid" href="/releases/{{ release.id }}">
+					        {% if release.cover_art is none %}
+					          <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
+					        {% else %}
+					          <img class="img-fluid rounded" src="{{ release.release_cover_art }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
+					        {% endif %}
+					    </a>
 					</div>
-					<a href="../releases/{{ release.release_id }}">{{ release.release_name }}</a>
-				</div>
+		            <div class="card-body">
+		              <p class="card-text font-weight-bold">{{ release.artist_name }}</p>
+		              <p class="card-text">{{ release.release_name }}</p>
+		              <div class="d-flex justify-content-between align-items-center">
+		                <div class="btn-group">
+		                  <a type="button" class="btn btn-sm btn-outline-secondary" href="/releases/{{ release.id }}">View</a>
+
+		                </div>
+		              </div>
+		            </div>
+		          </div>
+		        </div>
 
 				{% endfor %}
+
+				{% for track in user.purchased_tracks %}
+		       	<div class="col-md-3">
+		          <div class="card mb-2 shadow-sm">
+		          	<div class="bd-placeholder-img card-img-top mx-auto d-block mt-5">
+				    	<a class="img-fluid" href="/tracks/{{ track.track_id }}">
+					        {% if track.release_cover_art is none %}
+					          <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
+					        {% else %}
+					          <img class="img-fluid rounded" src="{{ track.release_cover_art }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
+					        {% endif %}
+					    </a>
+					</div>
+		            <div class="card-body">
+		              <p class="card-text font-weight-bold">{{ track.artist_name }}</p>
+		              <p class="card-text">{{ track.track_name }}</p>
+		              <div class="d-flex justify-content-between align-items-center">
+		                <div class="btn-group">
+		                  <a type="button" class="btn btn-sm btn-outline-secondary" href="/tracks/{{ track.track_id }}">View</a>
+
+		                </div>
+		              </div>
+		            </div>
+		          </div>
+		        </div>
+
+				{% endfor %}
+
 			</div>
 		</div>
 	</div>

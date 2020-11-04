@@ -135,6 +135,16 @@ button {
 	width: 100%;
 }
 
+.display-picture-thumbnail {
+	width: 40px;
+	height: 40px;
+}
+
+.display-picture-thumbnail > img {
+	height: 100%;
+	width: 100%;
+}
+
 /* Placeholder div for release cover art on release page */
 
 .card-img-top, .bd-placeholder-img {
@@ -142,7 +152,12 @@ button {
 	width: 148px;
 }
 
-.release-cover-art, .card-img-top img {
+.release-cover-art {
+	height: 256px;
+	width: 256px;
+}
+
+.card-img-top img {
 	max-width:100%;
 	max-height:100%;
 	width: 100%;

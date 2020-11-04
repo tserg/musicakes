@@ -1,175 +1,186 @@
 {% extends "layouts/layout.html" %}
 {% block title %}{% endblock %}
 {% block content %}
-
-<div class="page-content-wrap">
-
-  <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
-  <meta id="chain_id" data-value="{{ chain_id }}">
-
-  <!-- proxy element to store and query payment token address for window.appConfig --->
-  <meta id="payment_token_address" data-value="{{ release.payment_token_address }}">
-
-  <!-- proxy element to store and query release price for window.appConfig --->
-  <meta id="price" data-value="{{ release.price }}">
-
-  <!-- proxy element to store and query release id for window.appConfig --->
-  <meta id="release-id" data-value="{{ release.id }}">        
-
-  <!-- proxy element to store and query smart contract address for window.appConfig --->
-  <meta id="smart_contract_address" data-value="{{ release.smart_contract_address }}">
-
-  <div class="page-content-flex-container">
-
-    <div class="page-content-flex-subcontainer" id="release-dashboard">
-
-      <div>
-        <h4>
-          Release: {{ release.release_name }}
-        </h4>
-
-        <h4>
-          Artist: {{ release.artist_name }}
-        </h4>
-        <h4>
-          Price: {{ release.price }} DAI
-        </h4>
-        <h4>
-          Tracks: 
-        </h4>
-    
-        <ol>
-          {% for track in release.tracks %}
-          <li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
-          {% endfor %}
-        </ol>
-        
-
-
-        <div>
-          <span>Created on: {{ release.created_on }}</span>
+<div class="jumbotron">
+    <div class="container">
+      <div class="row">
+        <div class="col-xl-3">
+        <div class="display-picture">
+            {% if artist.artist_picture is none %}
+              <img id="preview" src="/static/img/musicakes.png" />
+            {% else %}
+              <img src="{{ artist.artist_picture }}" />
+            {% endif %}
+        </div>
         </div>
 
-      </div>
+        <div class="col">
+        <h5>
+          {{ artist.name }}
+        </h5>
 
-    </div>
+        <p>
+          {{ artist.country }}
+        </p>
 
-    <div class="page-content-flex-subcontainer" id="release-dashboard-2">
-      <h4>Cover Art</h4>
-      <div>
-        <div class = "release-cover-art">
-          <img src={{ release.cover_art }} />
-        </div>
+        <div class="d-flex flex-row">
+          {% if artist.soundcloud_url|length > 0 %}
+          <div class="artist-page-icon mr-2">
+            
 
-        <h4>
-          Description: <pre>{{ release.description }}</pre>
-        </h4>
-
-      </div>
-      <div>
-        <h4>
-          Purchasers:
-          {% for purchaser in release.purchasers %}
-          <ol>
-            <a href="../users/{{ purchaser.user_id }}">{{ purchaser.username }}</a>
-          </ol>
-          {% endfor %}
-        </h4>
-      </div>
-
-    </div>
-
-    <div class="page-content-flex-subcontainer" id="smart-contract-dashboard">
-
-      {% if release.smart_contract_address|length == 2 %}
-        <span><h4>The smart contract has not been deployed yet.</h4></span>
-      {% endif %}
-
-      {% if userinfo and creator is true and release.smart_contract_address|length == 2 %}
-
-      <form action="{{ url_for('show_release_for_deployment', release_id=release.id) }}">
-          <input type="submit" value="Deploy Smart Contract" />
-      </form>
-      {% endif %}
-
-      <div id = "user-dashboard" class="page-content-subcontainer">
-
-        <span><h3>User Dashboard</h3></span>
-
-        <div id="wallet_display">
-          <span>Current wallet: </span>
-          <span id ="account-address"></span>
-        </div>
-
-        <div id="eth_balance_display">
-          <span>Current ETH balance: </span>
-          <span id = "account-balance"></span>
-        </div>
-
-        <br>
-        <button id="enable-ethereum-button">Connect your Metamask wallet</button>
-      </div>
-
-      <div id ="payment-token-dashboard" class="page-content-subcontainer">
-        {% if release.smart_contract_address|length > 2 %}
-        <h3>DAI Dashboard</h3>
-        <div id="payment-token-balance-display">
-          <span>Current DAI balance: </span>
-          <span id ="payment-token-balance"></span>
-        </div>
-        
-
-          {% if userinfo and userinfo.purchased is none %}
-
-          <form action="" method="post" >
-
-              <div>
-                <label for="pay-contract-amount">Buy release with DAI: </label>
-                <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}"></input>
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-              </div>
-              <div>
-                <button type="button" id="btn-pay-contract">Buy now</button>
-              </div>
-
-          </form>
-
-          {% elif userinfo and userinfo.purchased is not none %}
-
-          <form action="/purchase" method="post" hidden>
-              <div>
+              <iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2F{{ artist.soundcloud_url }}&color=black_white&size=32"></iframe>
 
             
-              <label for="pay-contract-amount">Buy release with DAI: </label>
-              <input type="number" size=50 id="pay-contract-amount">
-              <br>
-              <button type="button" id="btn-pay-contract">Buy now</button></input>
-              </div>
-          </form>
-
-          <span>You have already purchased this release.</span>
-
-          {% else %}
-
-          <form action="/purchase" method="post" hidden>
-              <div>
-
-            
-              <label for="pay-contract-amount">Buy release with DAI: </label>
-              <input type="number" size=50 id="pay-contract-amount">
-              <br>
-              <button type="button" id="btn-pay-contract">Buy now</button></input>
-              </div>
-          </form>
-
+          </div>
           {% endif %}
+          {% if artist.facebook_url|length > 0 %}
+          <div class="artist-page-icon mr-2">
+            
+
+              <a href="{{ artist.facebook_url }}" target="_blank"><img id="facebook-icon" src="/static/img/fb_logo.png" /></a>
+
+          </div>
+          {% endif %}
+          {% if artist.instagram_url|length > 0 %}
+          <div class="artist-page-icon mr-2">
+
+              <a href="{{ artist.instagram_url }}" target="_blank"><img id="instagram-icon" src="/static/img/glyph-logo_May2016.png" /></a>
+
+          </div>
+          {% endif %}
+          
+        </div>
+
+      </div>
+    </div>
+
+    </div>
+
+</div>
+
+<div class="container mt-2 mb-5"> 
+  <div class="row">
+    <div class="col-sm-3" id="release-dashboard">
+
+      <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
+      <meta id="chain_id" data-value="{{ chain_id }}">
+
+      <!-- proxy element to store and query payment token address for window.appConfig --->
+      <meta id="payment_token_address" data-value="{{ release.payment_token_address }}">
+
+      <!-- proxy element to store and query release price for window.appConfig --->
+      <meta id="price" data-value="{{ release.price }}">
+
+      <!-- proxy element to store and query release id for window.appConfig --->
+      <meta id="release-id" data-value="{{ release.id }}">        
+
+      <!-- proxy element to store and query smart contract address for window.appConfig --->
+      <meta id="smart_contract_address" data-value="{{ release.smart_contract_address }}">
+
+      <div class = "release-cover-art justify-content-center mb-3">
+          <img src={{ release.cover_art }} />
+      </div>
+
+      <h5>
+        Release: {{ release.release_name }}
+      </h5>
+
+      <h5>
+        Price: {{ release.price }} DAI
+      </h5>
+      <h5>
+        Tracks: 
+      </h5>
+      
+      <ol>
+        {% for track in release.tracks %}
+        <li><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></li>
+        {% endfor %}
+      </ol>
+
+      <p>
+        <pre>{{ release.description }}</pre>
+      </p>
+      <p>Created on {{ release.created_on }}</p>
+    </div>
+
+    <div class="col-sm-3" id="smart-contract-dashboard">
+
+
+
+      <div id = "user-dashboard">
+
+        <h5>User Dashboard</h5>
+
+
+        <p>Current wallet: </p>
+        <p id ="account-address"></p>
+
+        <p>Current ETH balance: </p>
+        <p id = "account-balance"></p>
+
+        {% if release.smart_contract_address|length == 2 %}
+        <h5>The smart contract has not been deployed yet.</h5>
         {% endif %}
 
+        {% if userinfo and creator is true and release.smart_contract_address|length == 2 %}
+
+        <form action="{{ url_for('show_release_for_deployment', release_id=release.id) }}">
+          <input type="submit" value="Deploy Smart Contract" class="btn btn-sm btn-outline-secondary" />
+        </form>
+        {% endif %}
+
+        {% if release.smart_contract_address|length > 2 %}
+
+        <p>Current DAI balance: </p>
+        <p id ="payment-token-balance"></p>
+
+        <button id="enable-ethereum-button" class="btn btn-sm btn-outline-secondary">Connect your Metamask wallet</button>
+
+        {% if userinfo and userinfo.purchased is none %}
+
+        <form action="" method="post" >
+
+
+          <label for="pay-contract-amount">Buy release with DAI: </label>
+          <p>
+            <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" />
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          </p>
+          <p>
+            <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
+          </p>
+        </form>
+
+        {% elif userinfo and userinfo.purchased is not none %}
+
+        <form action="/purchase" method="post" hidden>
+            <label for="pay-contract-amount">Buy release with DAI: </label>
+            <input type="number" size=50 id="pay-contract-amount" />
+
+            <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
+        </form>
+
+        <p>You have already purchased this release.</p>
+
+        {% else %}
+
+        <form action="/purchase" method="post" hidden>
+
+            <label for="pay-contract-amount">Buy release with DAI: </label>
+            <input type="number" size=50 id="pay-contract-amount" />
+            <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
+
+        </form>
+
+        {% endif %}
+
+        {% endif %}
       </div>
 
       {% if release.smart_contract_address|length > 2 %}
 
-      <div id = "musicakes-dashboard" class="page-content-subcontainer hidden">
+      <div id = "musicakes-dashboard" class="hidden">
         <h3>Musicakes Dashboard</h3>
         <div id = "musicakes-contract-address-display">
           <span>Contract address: {{ release.smart_contract_address }}</span>
@@ -199,16 +210,16 @@
         </div>
 
         <div id="claim-dividends-section"  class="page-content-subcontainer">
-          <button type="button" id="btn-claim-dividends">Claim Dividends</button>
+          <button type="button" id="btn-claim-dividends" class="btn btn-sm btn-outline-secondary">Claim Dividends</button>
         </div>
 
         <div id="update-dividends-section" class="page-content-subcontainer">
-          <button type="button" id="btn-update-dividends">Update Dividends</button>
+          <button type="button" id="btn-update-dividends" class="btn btn-sm btn-outline-secondary">Update Dividends</button>
         </div>
 
       </div>
 
-      <div id = "musicakes-management-dashboard" class="page-content-subcontainer hidden">
+      <div id = "musicakes-management-dashboard" class="hidden">
 
         <div>
 
@@ -218,7 +229,6 @@
 
         
         <div>
-
 
             Address to transfer Musicakes: 
             <br>
@@ -232,7 +242,7 @@
 
         <div class="page-content-subcontainer">
           
-          <button type="button" id="btn-transfer-musicakes">Transfer</button>
+          <button type="button" id="btn-transfer-musicakes" class="btn btn-sm btn-outline-secondary">Transfer</button>
         </div>
 
       </div>
@@ -250,14 +260,40 @@
 
     </div>
 
-    <div class="page-content-flex-subcontainer" id="release-dashboard-3">
+    <div class="col-sm-3" id="release-dashboard-3">
       {% if release.youtube_embed_url is not none %}
-      <div class="page-content-subcontainer">
-      <iframe id="ytplayer" type="text/html" width="360" height="240"
-        src="{{ release.youtube_embed_url }}"
-        frameborder="0"></iframe>
+      <div>
+        <iframe id="ytplayer" type="text/html" width="360" height="240"
+          src="{{ release.youtube_embed_url }}"
+          frameborder="0"></iframe>
       </div>
       {% endif %}
+
+      {% if release.purchasers|length > 0 %}
+      <h5>
+        Purchasers
+      </h5>
+
+      <div class="row">
+
+          {% for purchaser in release.purchasers %}
+          <div class="col">
+            <a href="../users/{{ purchaser.user_id }}">
+            <div class="display-picture-thumbnail">
+            {% if purchaser.profile_picture is none %}
+              <img id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}">
+            {% else %}
+              <img src="{{ purchaser.profile_picture }}" />
+            {% endif %}
+            </div>
+            </a>
+          </div>
+          {% endfor %}
+        {% endif %}
+
+      </div>
+
+
     </div>
 
   </div>
