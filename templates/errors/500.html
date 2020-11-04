@@ -1,6 +1,17 @@
 {% extends 'layouts/layout.html' %}
 {% block content %}
-<h1>Oops ...</h1>
-<p>Something went wrong.</p>
-<p><a href="{{url_for('index')}}">Back</a></p>
+
+<div class="container">
+	<div class="row">
+		<div class="col mt-5">
+			<h1>Oops ...</h1>
+			<p>Something went wrong.</p>
+		  	<p><a href="{{url_for('index')}}" class="btn btn-sm btn-outline-secondary">Back</a></p>
+
+		</div>
+	</div>
+</div>
+
+
+
 {% endblock %}
