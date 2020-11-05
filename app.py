@@ -989,6 +989,7 @@ def create_app(test_config=None):
             pending_purchases = PurchaseCeleryTask.query.filter(
                                             PurchaseCeleryTask.user_id == user.id) \
                                             .filter(PurchaseCeleryTask.is_confirmed == False) \
+                                            .filter(PurchaseCeleryTask.is_visible == True) \
                                             .order_by(PurchaseCeleryTask.started_on.desc()) \
                                             .all()
 
