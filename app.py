@@ -2479,10 +2479,19 @@ def create_app(test_config=None):
 
             print(formatted_track_data['youtube_embed_url'])
 
+            # Retrieve artist data
+
+            current_artist = Artist.query.get(track.artist_id)
+            if current_artist is None:
+                abort(404)
+
+            artist_data = current_artist.short()
+
             return render_template('pages/show_track.html',
                                     track=formatted_track_data,
                                     userinfo=data,
-                                    chain_id=ETHEREUM_CHAIN_ID)
+                                    chain_id=ETHEREUM_CHAIN_ID,
+                                    artist=artist_data)
 
         except:
 

@@ -110,6 +110,11 @@
 
       <div id = "user-dashboard">
 
+        {% if release.smart_contract_address|length == 2 %}
+        <h5>The smart contract has not been deployed yet.</h5>
+
+        {% else %}
+        
         <h5>User Dashboard</h5>
 
 
@@ -119,8 +124,6 @@
         <p>Current ETH balance: </p>
         <p id = "account-balance"></p>
 
-        {% if release.smart_contract_address|length == 2 %}
-        <h5>The smart contract has not been deployed yet.</h5>
         {% endif %}
 
         {% if userinfo and creator is true and release.smart_contract_address|length == 2 %}
@@ -135,7 +138,9 @@
         <p>Current DAI balance: </p>
         <p id ="payment-token-balance"></p>
 
-        <button id="enable-ethereum-button" class="btn btn-sm btn-outline-secondary">Connect your Metamask wallet</button>
+        <p>
+          <button id="enable-ethereum-button" class="btn btn-sm btn-outline-secondary">Connect your Metamask wallet</button>
+        </p>
 
         {% if userinfo and userinfo.purchased is none %}
 
@@ -143,10 +148,12 @@
 
 
           <label for="pay-contract-amount">Buy release with DAI: </label>
-          <p>
-            <input type="number" size=50 id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" />
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          </p>
+          <div class="form-row">
+            <p class="col-sm-2">
+              <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" />
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            </p>
+          </div>
           <p>
             <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
           </p>
@@ -156,7 +163,7 @@
 
         <form action="/purchase" method="post" hidden>
             <label for="pay-contract-amount">Buy release with DAI: </label>
-            <input type="number" size=50 id="pay-contract-amount" />
+            <input type="number" id="pay-contract-amount" />
 
             <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
         </form>
@@ -168,7 +175,7 @@
         <form action="/purchase" method="post" hidden>
 
             <label for="pay-contract-amount">Buy release with DAI: </label>
-            <input type="number" size=50 id="pay-contract-amount" />
+            <input type="number" class="form-control" id="pay-contract-amount" />
             <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
 
         </form>
@@ -182,40 +189,40 @@
 
       <div id = "musicakes-dashboard" class="hidden">
         <h3>Musicakes Dashboard</h3>
-        <div id = "musicakes-contract-address-display">
+        <p id = "musicakes-contract-address-display">
           <span>Contract address: {{ release.smart_contract_address }}</span>
 
           <span id = "musicakes-address"></span>
-        </div>
+        </p>
 
-        <div id = "musicakes-supply-display">
+        <p id = "musicakes-supply-display">
           <span>Total supply of Musicakes: </span>
           <span id = "musicakes-supply"></span>
-        </div>
+        </p>
 
-        <div id = "user-token-balance-display">
+        <p id = "user-token-balance-display">
           <span>Number of Musicakes held in this wallet: </span>
           <span id = "user-musicakes-balance"></span>
-        </div>
+        </p>
 
 
-        <div id = "musicakes-payment-token-display">
+        <p id = "musicakes-payment-token-display">
           <span>DAI balance in Musicakes contract: </span>
           <span id = "musicakes-payment-token-balance"></span>
-        </div>
+        </p>
 
-        <div id="account-unclaimed-dividends-display">
+        <p id="account-unclaimed-dividends-display">
           <span>Dividends unclaimed: </span>
           <span id="account-unclaimed-dividends"></span>
-        </div>
+        </p>
 
-        <div id="claim-dividends-section"  class="page-content-subcontainer">
+        <p>
           <button type="button" id="btn-claim-dividends" class="btn btn-sm btn-outline-secondary">Claim Dividends</button>
-        </div>
+        </p>
 
-        <div id="update-dividends-section" class="page-content-subcontainer">
+        <p>
           <button type="button" id="btn-update-dividends" class="btn btn-sm btn-outline-secondary">Update Dividends</button>
-        </div>
+        </p>
 
       </div>
 
@@ -232,18 +239,20 @@
 
             Address to transfer Musicakes: 
             <br>
-            <input type="text" size=50 id="transfer-musicakes-address">
+            <input type="text"  class="form-control" id="transfer-musicakes-address">
         </div>
         <div>
-            Number of Musicakes to transfer: 
-            <br>
-            <input type="text" size=50 id="transfer-musicakes-amount">
+          Number of Musicakes to transfer: 
+          <div class="form-row">
+            <p class="col-sm-2">
+            <input type="text" class="form-control" size=50 id="transfer-musicakes-amount">
+            </p>
+          </div>
         </div>
 
-        <div class="page-content-subcontainer">
-          
+        <p>
           <button type="button" id="btn-transfer-musicakes" class="btn btn-sm btn-outline-secondary">Transfer</button>
-        </div>
+        </p>
 
       </div>
 
