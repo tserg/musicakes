@@ -4,19 +4,22 @@ const pendingTransactionPlaceholder = document.querySelector('#pending-transacti
 
 const csrf_token = window.appConfig.csrf_token.value;
 
-pendingTransactionsButton.addEventListener('click', () => {
+if (pendingTransactionsButton != null) {
 
-	pendingTransactionPlaceholder.innerHTML = "";
+  pendingTransactionsButton.addEventListener('click', () => {
+
+  	pendingTransactionPlaceholder.innerHTML = "";
 
 
 
-	if (pendingTransactionPlaceholder.style.display != "block") {
-    getPendingTransactions();
-		pendingTransactionPlaceholder.style.display = "block";
-	} else {
-		pendingTransactionPlaceholder.style.display = "none";
-	}
-});
+  	if (pendingTransactionPlaceholder.style.display != "block") {
+      getPendingTransactions();
+  		pendingTransactionPlaceholder.style.display = "block";
+  	} else {
+  		pendingTransactionPlaceholder.style.display = "none";
+  	}
+  });
+}
 
 async function getPendingTransactions() {
 
