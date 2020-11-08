@@ -630,8 +630,6 @@ var _musicakesAbi = [
 
 const paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
 
-console.log(musicakesAddress);
-
 if (musicakesAddress.length > 2) {
   window.musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
 } else {

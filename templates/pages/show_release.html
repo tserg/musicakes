@@ -151,7 +151,6 @@
           <div class="form-row">
             <p class="col-sm-2">
               <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" />
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             </p>
           </div>
           <p>
@@ -161,28 +160,11 @@
 
         {% elif userinfo and userinfo.purchased is not none %}
 
-        <form action="/purchase" method="post" hidden>
-            <label for="pay-contract-amount">Buy release with DAI: </label>
-            <input type="number" id="pay-contract-amount" />
-
-            <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
-        </form>
-
         <p>You have already purchased this release.</p>
 
-        {% else %}
-
-        <form action="/purchase" method="post" hidden>
-
-            <label for="pay-contract-amount">Buy release with DAI: </label>
-            <input type="number" class="form-control" id="pay-contract-amount" />
-            <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
-
-        </form>
-
         {% endif %}
 
-        {% endif %}
+      {% endif %}
       </div>
 
       {% if release.smart_contract_address|length > 2 %}

@@ -656,8 +656,6 @@ window.addEventListener('load', async () => {
 
   window.provider = await detectEthereumProvider();
 
-  console.log(provider);
-
   if (provider) {
 
     console.log('Ethereum successfully detected!');
