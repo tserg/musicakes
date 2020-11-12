@@ -63,6 +63,8 @@ async function getPendingTransactions() {
           var link = document.createElement("A");
 
           link.innerHTML = "You do not have any pending transactions.";
+          link.className = "dropdown-item";
+          link.style.fontSize = "80%";
           pendingTransactionPlaceholder.appendChild(link);
         }
 
