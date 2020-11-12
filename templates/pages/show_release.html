@@ -101,7 +101,7 @@
       <p>
         <pre>{{ release.description }}</pre>
       </p>
-      <p>Created on {{ release.created_on }}</p>
+      <p>Created on {{ release.created_on.strftime('%#d %B %Y') }}</p>
     </div>
 
     <div class="col-sm-3" id="smart-contract-dashboard">

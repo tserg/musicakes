@@ -122,6 +122,7 @@ button {
 
 .card {
 	background-color:#FFFAFA;
+	border: none;
 }
 
 /* Styles for grids */
@@ -149,8 +150,8 @@ button {
 /* Placeholder div for release cover art on release page */
 
 .card-img-top, .bd-placeholder-img {
-	height: 148px;
-	width: 148px;
+	height: 192px;
+	width: 192px;
 }
 
 .release-cover-art {
