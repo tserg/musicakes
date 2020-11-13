@@ -73,7 +73,7 @@
 			{% for release in artist.releases %}
 	       	<div class="col-md-auto col-xs-12">
 	          <div class="card mb-4 shadow-sm">
-	          	<div class="bd-placeholder-img card-img-top mx-auto d-block mt-5">
+	          	<div class="bd-placeholder-img card-img-top mx-auto d-block p-2">
 			    	<a class="img-fluid" href="/releases/{{ release.id }}">
 				        {% if release.release_cover_art is none %}
 				          <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
