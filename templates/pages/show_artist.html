@@ -62,7 +62,7 @@
 <div class="album py-5">
 	<meta id="page" data-page="{{ request.args.get('page')|int }}">
 	<div class="container">
-		<h3>Releases</h3>
+		<h3 class="mb-4">Releases</h3>
 
 		{% if not artist.releases %}
 		<p>There are no releases currently listed.</p>
@@ -71,7 +71,7 @@
 
 		<div class="row">
 			{% for release in artist.releases %}
-	       	<div class="col-md-3">
+	       	<div class="col-md-auto col-xs-12">
 	          <div class="card mb-4 shadow-sm">
 	          	<div class="bd-placeholder-img card-img-top mx-auto d-block mt-5">
 			    	<a class="img-fluid" href="/releases/{{ release.id }}">
@@ -83,8 +83,12 @@
 				    </a>
 				</div>
 	            <div class="card-body">
-	            	<p class="card-text font-weight-bold">{{ release.artist_name }}</p>
-	            	<p class="card-text">{{ release.release_name }}</p>
+	            	<p class="card-text">
+	            		<div class="font-weight-bold">{{ release.release_name }}</div>
+	            		<div>{{ release.artist_name }}</div>
+	            		<div><small class="text-muted">{{ release.created_on.strftime('%B %Y') }}</small></div>
+	            	</p>
+
 	            	<div class="d-flex justify-content-between align-items-center">
 		                <div class="btn-group">
 		                  	<a type="button" class="btn btn-sm btn-outline-secondary" href="/releases/{{ release.release_id }}">View</a>
@@ -93,7 +97,7 @@
 							<a type="button" class="btn btn-sm btn-outline-secondary" href="../releases/{{ release.release_id }}/edit" class="button">Edit release</a>
 							{% endif %}
 		                </div>
-	                <small class="text-muted">{{ release.created_on }}</small>
+
 	              </div>
 	            </div>
 	          </div>

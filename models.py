@@ -127,6 +127,7 @@ class Artist(db.Model):
                                "release_name": release.name,
                                "release_price": release.price,
                                "release_cover_art": release.cover_art,
+                               "created_on": release.created_on,
                                "tracks": [{"track_name": track.name,
                                            "track_id": track.id,
                                            "track_price": track.price}
