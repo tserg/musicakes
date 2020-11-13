@@ -77,28 +77,6 @@ button {
 	min-height: 70vh;
 }
 
-.page-content-wrap {
-	padding-bottom: 1 rem;
-}
-
-.page-content-container {
-	padding: 20px;
-}
-
-.page-content-subcontainer {
-	padding-top:10px;
-	padding-bottom:10px;
-}
-
-.page-content-flex-container {
-	display: flex;
-	flex-direction: row;
-}
-
-.page-content-flex-subcontainer {
-	padding: 25px;
-}
-
 .border-right {
 	border-color: #8d9db6;
 }
@@ -106,6 +84,17 @@ button {
 
 .table-bordered {
 	border-color: #8d9db6;
+}
+
+
+.card {
+	max-width:192px;
+	
+}
+
+.card-img-top, .bd-placeholder-img {
+	height: 192px;
+	width: 192px;
 }
 
 /* Artist page */
@@ -125,7 +114,7 @@ button {
 	border: none;
 }
 
-/* Styles for grids */
+/* Styles for image placeholders */
 
 .display-picture {
 	height:128px;
@@ -147,17 +136,6 @@ button {
 	width: 100%;
 }
 
-/* Placeholder div for release cover art on release page */
-
-.card {
-	max-width:192px;
-}
-
-.card-img-top, .bd-placeholder-img {
-	height: 192px;
-	width: 192px;
-}
-
 .release-cover-art {
 	height: 256px;
 	width: 256px;
@@ -175,16 +153,6 @@ button {
 .release-text-input {
 	resize: none;
 	white-space: pre-wrap;
-}
-
-/* Styles for dashboards */
-
-#musicakes-dashboard, #musicakes-management-dashboard {
-	display: none;
-}
-
-#smart-contract-dashboard {
-	min-width: 470px;
 }
 
 /* Styles for footer */
