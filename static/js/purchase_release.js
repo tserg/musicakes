@@ -1,7 +1,11 @@
-const ethereumButton = document.querySelector('#enable-ethereum-button');
-const showAccountAddress = document.querySelector('#account-address');
-const showAccountBalance = document.querySelector('#account-balance');
-const showAccountPaymentTokenBalance = document.querySelector('#payment-token-balance');
+// const ethereumButton = document.querySelector('#btn-enable-ethereum');
+// const showAccountAddress = document.querySelector('#account-address');
+// const showAccountBalance = document.querySelector('#account-balance');
+
+// const showAccountPaymentTokenBalance = document.querySelector('#payment-token-balance');
+
+const manageMusicakesButton = document.querySelector('#btn-manage-musicakes');
+
 const showMusicakesTotalSupply = document.querySelector('#musicakes-supply');
 const showAccountMusicakesBalance = document.querySelector('#user-musicakes-balance');
 const showMusicakesPaymentTokenBalance = document.querySelector('#musicakes-payment-token-balance');
@@ -17,13 +21,11 @@ const musicakesTransferButton = document.querySelector('#btn-transfer-musicakes'
 const musicakesTransferAddress = document.querySelector('#transfer-musicakes-address');
 const musicakesTransferAmount = document.querySelector('#transfer-musicakes-amount');
 
-const enableEthereumButton = document.querySelector('#enable-ethereum-button');
-
 const seeMoreButton = document.querySelector('#btn-see-more');
 const seeMoreArrow = document.querySelector('#icon-see-more');
 const seeMoreText = document.querySelector('#text-see-more');
 const musicakesDashboard = document.querySelector('#musicakes-dashboard');
-const musicakesManagementDashboard = document.querySelector('#musicakes-management-dashboard');
+// const musicakesManagementDashboard = document.querySelector('#musicakes-management-dashboard');
 
 const ethereumChainId = parseInt(window.appConfig.chain_id.value);
 
@@ -687,7 +689,9 @@ window.addEventListener('load', async () => {
 
 function startApp() {
 
-  ethereumButton.addEventListener('click', () => {
+
+  manageMusicakesButton.addEventListener('click', () => {
+    console.log(123);
     if (provider) {
 
       if (currentChainId != ethereumChainId) {
@@ -707,6 +711,7 @@ function startApp() {
       alert('Please install MetaMask to continue!');
     }
   });
+
 
   if (musicakesPayButton != null) {
 
@@ -819,14 +824,14 @@ async function getAccount() {
 async function loadInterface() {
 
   const account = ethereum.selectedAddress;
-	showAccountAddress.innerHTML = account;
+	// showAccountAddress.innerHTML = account;
 
 	// Get ETH balance of current address
 
 	var accountWeiBalance = web3.eth.getBalance(account, function(error, result) {
 		if (!error) {
   		var accountBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-  		showAccountBalance.innerHTML = accountBalance;
+  		// showAccountBalance.innerHTML = accountBalance;
   		} else {
 			console.log(error);
 		}
@@ -837,7 +842,7 @@ async function loadInterface() {
 	var accountPaymentTokenBalance = paymentTokenContract.methods.balanceOf(account).call(function(error, result) {
 		if (!error) {
 			var accountPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-			showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
+			// showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
 		} else {
 			console.log(error);
 		}
@@ -1012,16 +1017,18 @@ async function transferMusicakes() {
   });
 }
 
+/*
 seeMoreButton.addEventListener('click', () => {
     if (seeMoreArrow.className == "arrow down") {
       seeMoreArrow.className = "arrow up";
       seeMoreText.innerHTML = "  See less";
       musicakesDashboard.style.display = "block";
-      musicakesManagementDashboard.style.display = "block";
+      // musicakesManagementDashboard.style.display = "block";
     } else {
       seeMoreArrow.className = "arrow down";
       seeMoreText.innerHTML = "  See more";
       musicakesDashboard.style.display = "none";
-      musicakesManagementDashboard.style.display = "none";
+      // musicakesManagementDashboard.style.display = "none";
     }
 });
+*/

@@ -1,7 +1,10 @@
-const ethereumButton = document.querySelector('#enable-ethereum-button');
-const showAccountAddress = document.querySelector('#account-address');
-const showAccountBalance = document.querySelector('#account-balance');
-const showAccountPaymentTokenBalance = document.querySelector('#payment-token-balance');
+// const ethereumButton = document.querySelector('#enable-ethereum-button');
+// const showAccountAddress = document.querySelector('#account-address');
+// const showAccountBalance = document.querySelector('#account-balance');
+// const showAccountPaymentTokenBalance = document.querySelector('#payment-token-balance');
+
+const manageMusicakesButton = document.querySelector('#btn-manage-musicakes');
+
 const showMusicakesTotalSupply = document.querySelector('#musicakes-supply');
 const showAccountMusicakesBalance = document.querySelector('#user-musicakes-balance');
 const showMusicakesPaymentTokenBalance = document.querySelector('#musicakes-payment-token-balance');
@@ -37,20 +40,6 @@ const csrf_token_purchase = window.appConfig.csrf_token.value;
 if (csrf_token_purchase) {
   console.log("CSRF Token is loaded");
 }
-
-seeMoreButton.addEventListener('click', () => {
-    if (seeMoreArrow.className == "arrow down") {
-      seeMoreArrow.className = "arrow up";
-      seeMoreText.innerHTML = "  See less";
-      musicakesDashboard.style.display = "block";
-      musicakesManagementDashboard.style.display = "block";
-    } else {
-      seeMoreArrow.className = "arrow down";
-      seeMoreText.innerHTML = "  See more";
-      musicakesDashboard.style.display = "none";
-      musicakesManagementDashboard.style.display = "none";
-    }
-});
 
 /* Payment token contract */
 
@@ -701,7 +690,7 @@ window.addEventListener('load', async () => {
 
 function startApp() {
 
-  ethereumButton.addEventListener('click', () => {
+  manageMusicakesButton.addEventListener('click', () => {
     if (provider) {
 
       if (currentChainId != ethereumChainId) {
@@ -830,14 +819,14 @@ async function getAccount() {
 async function loadInterface() {
 
   const account = ethereum.selectedAddress;
-	showAccountAddress.innerHTML = account;
+	// showAccountAddress.innerHTML = account;
 
 	// Get ETH balance of current address
 
 	var accountWeiBalance = web3.eth.getBalance(account, function(error, result) {
 		if (!error) {
   		var accountBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-  		showAccountBalance.innerHTML = accountBalance;
+  		// showAccountBalance.innerHTML = accountBalance;
   		} else {
 			console.log(error);
 		}
@@ -848,7 +837,7 @@ async function loadInterface() {
 	var accountPaymentTokenBalance = paymentTokenContract.methods.balanceOf(account).call(function(error, result) {
 		if (!error) {
 			var accountPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-			showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
+			// showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
 		} else {
 			console.log(error);
 		}

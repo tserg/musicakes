@@ -61,7 +61,217 @@
 
 <div class="container mt-2 mb-5"> 
   <div class="row">
-    <div class="col-sm-3" id="track-dashboard">
+    <div class="col-sm-3">
+
+      <h3>
+        {{ track.track_name }}
+      </h3>
+
+      <h5>
+        Price: {{ track.price }} DAI
+      </h5>
+    </div>
+
+    <div class="col-sm-6">
+
+      {% if track.smart_contract_address|length == 2 %}
+        
+        {% if userinfo and creator is true %}
+
+        <form action="{{ url_for('show_release_for_deployment', release_id=track.release_id) }}">
+          <input type="submit" value="Deploy Smart Contract" />
+        </form>
+        {% else %}
+
+        <h4>This track is not available for purchase yet.</h4>
+        <div>
+          Please wait for the artist to deploy the smart contract.
+        </div>
+
+        {% endif %}
+
+      {% else %}
+
+      <!-- 
+
+      <h5>User Dashboard</h5>
+
+      <p>Current wallet: </p>
+      <p id ="account-address"></p>
+
+      <p>Current ETH balance: </p>
+      <p id = "account-balance"></p>
+
+      -->
+
+      {% endif %}
+
+      {% if track.smart_contract_address|length > 2 %}
+        
+
+        {% if userinfo and userinfo.purchased is not none %}
+
+        <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
+          Download
+        </a>
+
+        {% else %}
+
+        <!-- Launch modal for purchase of track -->
+
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-track-modal">
+          Buy track
+        </button>
+
+        {% endif %}
+
+        <!--
+        <p>Current DAI balance: </p>
+        <p id ="payment-token-balance"></p>
+
+        <p>
+          <button id="enable-ethereum-button" class="btn btn-sm btn-outline-secondary">Connect your Metamask wallet</button>
+        </p>
+        -->
+
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#manage-musicakes-modal" id="btn-manage-musicakes">
+          Manage
+        </button>
+
+        <!--
+
+        <div id = "musicakes-management-dashboard"  class="hidden">
+
+          <div>
+
+            <h3>Transfer your Musicakes</h3>
+
+          </div>
+
+        
+          <p>
+              Address to transfer Musicakes: 
+              <input type="text" class="form-control" id="transfer-musicakes-address">
+          </p>
+          <p>
+              Number of Musicakes to transfer: 
+              <div class="form-row">
+                <p class="col-sm-2">
+                <input type="text" class="form-control" id="transfer-musicakes-amount">
+                </p>
+              </div>
+          </p>
+
+          <p>
+            
+            <button type="button" id="btn-transfer-musicakes" class="btn btn-sm btn-outline-secondary">Transfer</button>
+          </p>
+
+        </div>
+          -->
+      {% endif %}
+
+      <!-- Modal for purchase of track -->
+
+      <div class="modal fade" id="buy-track-modal" tabindex="-1" role="dialog" aria-labelledby="#buy-track-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="buy-track-modal-title">Buy Track with DAI</h5>
+            </div>
+
+            {% if userinfo is none %}
+            <div class="modal-body">
+
+              <form action="" method="post" >
+              <label for="pay-contract-amount">Amount: </label>
+              <div class="form-row">
+                <p class="col-sm-2">
+                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ track.price }}" />
+                </p>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
+            </form>
+            </div>
+
+            {% elif userinfo and userinfo.purchased is none %}
+        
+            <div class="modal-body">
+
+              <form action="" method="post" >
+              <label for="pay-contract-amount">Amount: </label>
+              <div class="form-row">
+                <p class="col-sm-2">
+                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ track.price }}" />
+                </p>
+              </div>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
+            </form>
+            </div>
+
+            {% endif %}
+        
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal for Musicakes dashboard -->
+      <div class="modal fade" id="manage-musicakes-modal" tabindex="-1" role="dialog" aria-labelledby="#manage-musicakes-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="manage-musicakes-modal-title">Musicakes Dashboard</h5>
+            </div>
+
+            <div class="modal-body">
+
+              <p id = "musicakes-contract-address-display">
+                <span>Contract address: {{ track.smart_contract_address }}</span>
+                <span id = "musicakes-address"></span>
+              </p>
+
+
+              <p id = "musicakes-supply-display">
+                <span>Total supply of Musicakes: </span>
+                <span id = "musicakes-supply"></span>
+              </p>
+
+              <p id = "user-token-balance-display">
+                <span>Number of Musicakes held in this wallet: </span>
+                <span id = "user-musicakes-balance"></span>
+              </p>
+
+              <p id = "musicakes-payment-token-display">
+                <span>DAI balance in Musicakes contract: </span>
+                <span id = "musicakes-payment-token-balance"></span>
+              </p>
+
+              <p id="account-unclaimed-dividends-display">
+                <span>Dividends unclaimed: </span>
+                <span id="account-unclaimed-dividends"></span>
+              </p>
+            </div>
+
+            <div class="modal-footer">
+
+              <button type="button" id="btn-claim-dividends" class="btn btn-sm btn-outline-secondary">Claim Dividends</button>
+
+              <button type="button" id="btn-update-dividends" class="btn btn-sm btn-outline-secondary">Update Dividends</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-3">
 
       <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
       <meta id="chain_id" data-value="{{ chain_id }}">
@@ -85,178 +295,18 @@
           <img src={{ track.release_cover_art }} />
       </div>
 
-      <h4>
-        Track: {{ track.track_name }}
-      </h4>
-
-      <h4>
-        Price: {{ track.price }} DAI
-      </h4>
-
-      <h4>
-        Release: <a href="/releases/{{ track.release_id }}">{{ track.release_name }}</a>
-      </h4>
-   
       <p>
-        Created on {{ track.created_on.strftime('%#d %B %Y') }}
+        <small>Released on {{ track.created_on.strftime('%#d %B %Y') }}</small>
       </p>
-
-
     </div>
 
-    <div class="col-sm-3" id="smart-contract-dashboard">
-
-      <div id = "user-dashboard">
-
-        {% if track.smart_contract_address|length == 2 %}
-          <h5>The smart contract has not been deployed yet.</h5>
-
-        {% else %}
-
-        <h5>User Dashboard</h5>
-
-        <p>Current wallet: </p>
-        <p id ="account-address"></p>
-
-        <p>Current ETH balance: </p>
-        <p id = "account-balance"></p>
-
-        {% endif %}
-
-        {% if userinfo and creator is true and track.smart_contract_address|length == 2 %}
-
-        <form action="{{ url_for('show_release_for_deployment', release_id=track.release_id) }}">
-          <input type="submit" value="Deploy Smart Contract" />
-        </form>
-        {% endif %}
-
-        {% if track.smart_contract_address|length > 2 %}
-        
-        <p>Current DAI balance: </p>
-        <p id ="payment-token-balance"></p>
-
-        <p>
-          <button id="enable-ethereum-button" class="btn btn-sm btn-outline-secondary">Connect your Metamask wallet</button>
-        </p>
-
-        {% if userinfo and userinfo.purchased is none %}
-
-        <form action="" method="post" >
-          <label for="pay-contract-amount">Buy track with DAI: </label>
-          <div class="form-row">
-            <p class="col-sm-2">
-              <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ track.price }}" />
-            </p>
-          </div>
-          <p>
-            <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
-          </p>
-        </form>
-
-        {% elif userinfo and userinfo.purchased is not none %}
-        
-        <p>You have already purchased this track.</p>
-
-        {% endif %}
-        
-      {% endif %}
-
-      </div>
-
-      {% if track.smart_contract_address|length > 2 %}
-
-      <div id = "musicakes-dashboard" class="hidden">
-        <h5>Musicakes Dashboard</h5>
-
-        <p id = "musicakes-contract-address-display">
-          <span>Contract address: {{ track.smart_contract_address }}</span>
-          <span id = "musicakes-address"></span>
-        </p>
-
-
-        <p id = "musicakes-supply-display">
-          <span>Total supply of Musicakes: </span>
-          <span id = "musicakes-supply"></span>
-        </p>
-
-        <p id = "user-token-balance-display">
-          <span>Number of Musicakes held in this wallet: </span>
-          <span id = "user-musicakes-balance"></span>
-        </p>
-
-        <p id = "musicakes-payment-token-display">
-          <span>DAI balance in Musicakes contract: </span>
-          <span id = "musicakes-payment-token-balance"></span>
-        </p>
-
-        <p id="account-unclaimed-dividends-display">
-          <span>Dividends unclaimed: </span>
-          <span id="account-unclaimed-dividends"></span>
-        </p>
-
-        <p>
-          <button type="button" id="btn-claim-dividends" class="btn btn-sm btn-outline-secondary">Claim Dividends</button>
-        </p>
-
-        <p>
-          <button type="button" id="btn-update-dividends" class="btn btn-sm btn-outline-secondary">Update Dividends</button>
-        </p>
-
-      </div>
-
-      <!--
-
-      <div id = "musicakes-management-dashboard"  class="hidden">
-
-        <div>
-
-          <h3>Transfer your Musicakes</h3>
-
-        </div>
-
-        
-        <p>
-            Address to transfer Musicakes: 
-            <input type="text" class="form-control" id="transfer-musicakes-address">
-        </p>
-        <p>
-            Number of Musicakes to transfer: 
-            <div class="form-row">
-              <p class="col-sm-2">
-              <input type="text" class="form-control" id="transfer-musicakes-amount">
-              </p>
-            </div>
-        </p>
-
-        <p>
-          
-          <button type="button" id="btn-transfer-musicakes" class="btn btn-sm btn-outline-secondary">Transfer</button>
-        </p>
-
-      </div>
-
-    -->
-
-
-      <div>
-        <p>
-          <button class="button" id="btn-see-more">
-          <p>
-            <span class="arrow down" id="icon-see-more"></span>
-            <span id ="text-see-more">  See more</span>
-          </p>
-          </button>
-        </p>
-      </div>
-      {% endif %}
-    </div>
 
 
 
     <div class="col-sm-3" id="release-dashboard-3">
       {% if track.youtube_embed_url is not none %}
       <div>
-        <iframe id="ytplayer" type="text/html" width="360" height="240"
+        <iframe id="ytplayer" type="text/html" width="384" height="256"
           src="{{ track.youtube_embed_url }}"
           frameborder="0"></iframe>
       </div>
