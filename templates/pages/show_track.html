@@ -5,7 +5,7 @@
 <div class="jumbotron">
     <div class="container">
       <div class="row">
-        <div class="col-xl-3">
+        <div class="col-sm-3">
         <div class="display-picture">
             {% if artist.artist_picture is none %}
               <img id="preview" src="/static/img/musicakes.png" />
@@ -15,7 +15,7 @@
         </div>
         </div>
 
-        <div class="col">
+        <div class="col-sm-3">
         <h5>
           {{ artist.name }}
         </h5>
@@ -72,7 +72,7 @@
       </h5>
     </div>
 
-    <div class="col-sm-6">
+    <div class="col-xl-6">
 
       {% if track.smart_contract_address|length == 2 %}
         
@@ -271,7 +271,7 @@
   </div>
 
   <div class="row">
-    <div class="col-sm-3">
+    <div class="col-xl-3">
 
       <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
       <meta id="chain_id" data-value="{{ chain_id }}">
@@ -303,7 +303,7 @@
 
 
 
-    <div class="col-sm-3" id="release-dashboard-3">
+    <div class="col-xl-3" id="release-dashboard-3">
       {% if track.youtube_embed_url is not none %}
       <div>
         <iframe id="ytplayer" type="text/html" width="384" height="256"
