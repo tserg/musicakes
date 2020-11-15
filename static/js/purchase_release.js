@@ -689,28 +689,32 @@ window.addEventListener('load', async () => {
 
 function startApp() {
 
+  if (manageMusicakesButton != null) {
 
-  manageMusicakesButton.addEventListener('click', () => {
-    console.log(123);
-    if (provider) {
+    manageMusicakesButton.addEventListener('click', () => {
+      console.log(123);
+      if (provider) {
 
-      if (currentChainId != ethereumChainId) {
+        if (currentChainId != ethereumChainId) {
 
-        if (ethereumChainId == 1) {
-          alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
-        } else if (ethereumChainId == 3) {
-          alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+          if (ethereumChainId == 1) {
+            alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+          } else if (ethereumChainId == 3) {
+            alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+          } else {
+            alert('You are connected to the wrong network.')
+          }
+          
         } else {
-          alert('You are connected to the wrong network.')
+          getAccount();
         }
-        
       } else {
-        getAccount();
+        alert('Please install MetaMask to continue!');
       }
-    } else {
-      alert('Please install MetaMask to continue!');
-    }
-  });
+    });
+  }
+
+
 
 
   if (musicakesPayButton != null) {
