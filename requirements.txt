@@ -41,7 +41,6 @@ et-xmlfile==1.0.1
 eth-hash==0.2.0
 eth-typing==2.2.1
 eth-utils==1.8.4
-eth2deposit==0.2.1
 fastcache==1.1.0
 filelock==3.0.12
 Flask==1.0.3
