@@ -1,9 +1,21 @@
+*.pyc
+
+.pytest_cache/
+
 # ignore Flask environment variables
 .env
 
 # ignore pycache
 __pycache__/
 
-# ignore node_modules
+# instance
 
-node_modules/
+instance/
+
+# musicakes
+
+*/__pycache__/
+*/node_modules/
+
+*.egg-info/
+

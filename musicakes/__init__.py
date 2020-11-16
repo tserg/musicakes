@@ -34,14 +34,13 @@ from flask_wtf import (
     CSRFProtect
 )
 
-from tasks import *
-
 from datetime import timedelta
-
-from forms import *
 from jose import jwt
 
-from models import (
+from .tasks import *
+from .forms import *
+
+from .models import (
     setup_db,
     User,
     Artist,
@@ -119,7 +118,12 @@ class AuthError(Exception):
 def create_app(test_config=None):
 
     # create and configure the app
-    flask_app = Flask(__name__)
+    flask_app = Flask(__name__, instance_relative_config=True)
+
+    try: 
+        os.makedirs(flask_app.instance_path)
+    except OSError:
+        pass
 
     flask_app.config.from_object('config')
     flask_app.config['CELERY_BROKER_URL'] = CELERY_BROKER_URL
@@ -2418,5 +2422,3 @@ def create_app(test_config=None):
     return flask_app
 
 
-app = create_app()
-celery = make_celery(app)
