@@ -2421,6 +2421,6 @@ def create_app(test_config=None):
 
     return flask_app
 
-if __name__ == '__main__':
-    app = create_app()
-    celery = make_celery(app)
+
+app = create_app()
+celery = make_celery(app)
