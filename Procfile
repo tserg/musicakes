@@ -1,2 +1,2 @@
-web: gunicorn app:app
+web: gunicorn musicakes:app
 worker: celery -A app.celery worker --loglevel=INFO
