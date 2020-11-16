@@ -24,7 +24,6 @@ cffi==1.13.2
 chardet==3.0.4
 Click==7.0
 cloudpickle==1.2.2
-clyent==1.2.2
 colorama==0.4.3
 comtypes==1.1.7
 contextlib2==0.6.0.post1
