@@ -70,6 +70,10 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Secret key
+
+SECRET_KEY = os.getenv('SECRET_KEY', 'Does not exist')
+
 # Environment variables for Auth0
 
 AUTH0_DOMAIN = os.getenv('AUTH0_DOMAIN', 'Does not exist')
@@ -125,7 +129,7 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    flask_app.config.from_object('config')
+    flask_app.config['SECRET_KEY'] = SECRET_KEY
     flask_app.config['CELERY_BROKER_URL'] = CELERY_BROKER_URL
     flask_app.config['CELERY_RESULT_BACKEND'] = CELERY_RESULT_BACKEND
     flask_app.config['CELERY_SEND_EVENTS'] = True
