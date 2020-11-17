@@ -173,6 +173,13 @@ def create_app(test_config=None):
             return f(*args, **kwargs)
         return decorated
 
+    ###################################################
+
+    # Routes
+
+    ###################################################
+
+
     # /server.py
 
     # Here we're using the /callback route.
@@ -210,30 +217,47 @@ def create_app(test_config=None):
         params = {'returnTo': url_for('index', _external=True), 'client_id': AUTH0_CLIENT_ID}
         return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
 
-    @flask_app.route('/')
-    def index():
+    def get_user_data(return_user_id=False):
 
-        logged_in = session.get('token', None)
+        """
+        Helper function to obtain user data and User model object for rendering of page
+        """
 
-        if logged_in:
+        try:
+
+            logged_in = session.get('token', None)
 
             auth_id = session['jwt_payload']['sub'][6:]
-
             user = User.query.filter(User.auth_id==auth_id).one_or_none()
 
-            if user:
-                data = user.short_private()
+            data = user.short_private()
 
-            else: 
+        except:
 
-                data = None
-
-            return redirect(url_for('home'))
-
-        else:
+            """
+            Key error is thrown if user is not logged in 
+            """
 
             data = None
 
+        else:
+
+            if return_user_id:
+
+                return user, data
+
+            else:
+
+                return data
+
+    @flask_app.route('/')
+    def index():
+
+        data = get_user_data()
+
+        if data is not None:
+
+            return redirect(url_for('home'))
 
         return render_template('pages/index.html', userinfo=data)
 
@@ -243,15 +267,10 @@ def create_app(test_config=None):
     @flask_app.route('/home', methods=['GET'])
     @requires_log_in
     def home():
+        
+        data = get_user_data()
 
-        auth_id = session['jwt_payload']['sub'][6:]
-
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        if user:
-            data = user.short_private()
-
-        else:
+        if data is None:
 
             return redirect(url_for('create_user_form'))
 
@@ -612,23 +631,7 @@ def create_app(test_config=None):
     @flask_app.route('/about', methods=['GET'])
     def show_about_us():
 
-        logged_in = session.get('token', None)
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-                data = user.short_private()
-
-            else: 
-
-                data = None
-
-        else:
-
-            data = None
+        data = get_user_data()
             
         return render_template('pages/about.html', userinfo=data)
 
@@ -636,71 +639,21 @@ def create_app(test_config=None):
     @flask_app.route('/faq', methods=['GET'])
     def show_faq():
 
-        logged_in = session.get('token', None)
-
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-                data = user.short_private()
-
-            else: 
-
-                data = None
-
-        else:
-
-            data = None
+        data = get_user_data()
             
         return render_template('pages/faq.html', userinfo=data)
 
     @flask_app.route('/terms', methods=['GET'])
     def show_terms_of_use():
 
-        logged_in = session.get('token', None)
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-                data = user.short_private()
-
-            else: 
-
-                data = None
-
-        else:
-
-            data = None
+        data = get_user_data()
             
         return render_template('pages/terms.html', userinfo=data)
 
     @flask_app.route('/privacy', methods=['GET'])
     def show_privacy_policy():
 
-        logged_in = session.get('token', None)
-
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-                data = user.short_private()
-
-            else: 
-
-                data = None
-
-        else:
-
-            data = None
+        data = get_user_data()
             
         return render_template('pages/privacy.html', userinfo=data)
 
@@ -715,14 +668,9 @@ def create_app(test_config=None):
     @requires_log_in
     def show_account():
 
-        auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        if user:
-            data = user.short_private()
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -761,28 +709,23 @@ def create_app(test_config=None):
     @requires_log_in
     def edit_user_form():
 
-        auth_id = session['jwt_payload']['sub'][6:]
+        data = get_user_data()
 
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        if user:
-            data = user.short_private()
-
-        else:
+        if data is None:
 
             abort(404)
 
         form = EditUserForm()
 
-        return render_template('forms/edit_user.html', form = form, userinfo=data)
+        return render_template('forms/edit_user.html',
+                                form=form, 
+                                userinfo=data)
 
     @flask_app.route('/account/edit', methods=['POST'])
     @requires_log_in
     def edit_user_submission():
 
-        auth_id = session['profile']['user_id'][6:]
-
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        user, data = get_user_data
 
         form = EditUserForm()
 
@@ -825,14 +768,9 @@ def create_app(test_config=None):
         Retrieves a list of pending transactions when user clicks on notifications button
         """
 
-        auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        if user:
-            data = user.short_private()
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -865,14 +803,9 @@ def create_app(test_config=None):
         Hides a transaction from a user's transaction history
         """
 
-        auth_id = session['jwt_payload']['sub'][6:]
+        data = get_user_data()
 
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        if user:
-            data = user.short_private()
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -900,14 +833,9 @@ def create_app(test_config=None):
         Updates a pending transaction's status 
         """
 
-        auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        if user:
-            data = user.short_private()
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -964,25 +892,7 @@ def create_app(test_config=None):
     @flask_app.route('/users/<int:user_id>', methods=['GET'])
     def show_user(user_id):
         try:
-            logged_in = session.get('token', None)
-            if logged_in:
-
-
-
-                auth_id = session['jwt_payload']['sub'][6:]
-
-                user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-                if user:
-                    user_data = user.short_private()
-
-                else:
-
-                    user_data = None
-
-            else:
-
-                user_data=None
+            user_data = get_user_data()
 
             current_user = User.query.get(user_id)
             if current_user is None:
@@ -1088,23 +998,8 @@ def create_app(test_config=None):
 
     @flask_app.route('/artists', methods=['GET'])
     def get_artists():
-        logged_in = session.get('token', None)
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-                data = user.short_private()
-
-            else: 
-
-                data = None
-
-        else:
-
-            data = None
+        
+        data = get_user_data()
 
         try:
 
@@ -1137,32 +1032,13 @@ def create_app(test_config=None):
 
     @flask_app.route('/artists/<int:artist_id>', methods=['GET'])
     def show_artist(artist_id):
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        creator = False
 
-            if user:
-                data = user.short_private()
-
-                # Checks if current user is the artist
-
-                if user.artist.id == artist_id:
-                    creator = True
-                else:
-                    creator = False
-
-            else: 
-
-                data = None
-                creator = False
-
-        else:
-
-            data = None
-            creator = False
+        if user.artist.id == artist_id:
+            creator = True
 
         try:
 
@@ -1186,23 +1062,8 @@ def create_app(test_config=None):
     @flask_app.route('/artists/create', methods=['GET'])
     @requires_log_in
     def create_artist_form():
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-                data = user.short_private()
-
-            else:
-
-                data = None
-
-        else:
-
-            data = None
+        user, data = get_user_data(True)
 
         artist = Artist.query.filter(Artist.user_id==user.id).one_or_none()
 
@@ -1226,8 +1087,8 @@ def create_app(test_config=None):
 
         form = ArtistForm(request.form)
 
-        auth_id = session['jwt_payload']['sub'][6:]
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        user, data = get_user_data(True)
+
         user_id = user.id
 
         try:
@@ -1267,23 +1128,11 @@ def create_app(test_config=None):
     @flask_app.route('/artists/<int:artist_id>/edit', methods=['GET'])
     @requires_log_in
     def edit_artist(artist_id):
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-                data = user.short_private()
-
-            else: 
-
-                data = None
-
-        else:
-
-            data = None
+        if user.artist.id != artist_id:
+            abort(401)
 
         try:
 
@@ -1315,16 +1164,15 @@ def create_app(test_config=None):
     @requires_log_in
     def edit_artist_picture(artist_id):
 
-        logged_in = session.get('token', None)
-        if logged_in:
+        user, data = get_user_data(True)
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        if user.artist is None:
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+            abort(404)
 
-            if user.artist is None:
-
-                abort(404)
+        if user.artist.id != artist_id:
+            
+            abort(401)
 
         try:
 
@@ -1351,6 +1199,16 @@ def create_app(test_config=None):
     @requires_log_in
     def edit_artist_details(artist_id):
         form = EditArtistForm(request.form)
+
+        user, data = get_user_data(True)
+
+        if user.artist is None:
+
+            abort(404)
+
+        if user.artist.id != artist_id:
+            
+            abort(401)
 
         try:
 
@@ -1400,14 +1258,9 @@ def create_app(test_config=None):
     @requires_log_in
     def show_purchases():
 
-        auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        if user:
-            data = user.short_private()
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -1450,18 +1303,10 @@ def create_app(test_config=None):
     @flask_app.route('/releases/<int:release_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_release(release_id):
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user is None:
-
-                abort(404)
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -1509,17 +1354,10 @@ def create_app(test_config=None):
     @flask_app.route('/tracks/<int:track_id>/purchase', methods=['POST'])
     @requires_log_in
     def purchase_track(track_id):
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-            if user is None:
-
-                abort(404)
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -1561,18 +1399,10 @@ def create_app(test_config=None):
     @flask_app.route('/tracks/<int:track_id>/download', methods=['GET'])
     @requires_log_in
     def download_purchased_track(track_id):
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user is None:
-
-                abort(404)
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -1624,19 +1454,9 @@ def create_app(test_config=None):
     @requires_log_in
     def download_purchased_release(release_id):
 
-        logged_in = session.get('token', None)
+        user, data = get_user_data(True)
 
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user is None:
-
-                abort(404)
-
-        else:
+        if data is None:
 
             abort(404)
 
@@ -1696,6 +1516,8 @@ def create_app(test_config=None):
     @flask_app.route('/releases', methods=['GET'])
     def get_releases():
 
+        data = get_user_data()
+
         try:
 
             # page count
@@ -1712,23 +1534,6 @@ def create_app(test_config=None):
 
             formatted_all_releases = [release.short_public()
                                       for release in all_releases]
-            logged_in = session.get('token', None)
-            if logged_in:
-
-                auth_id = session['jwt_payload']['sub'][6:]
-
-                user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-                if user:
-                    data = user.short_private()
-
-                else: 
-
-                    data = None
-
-            else:
-
-                data = None
 
             releases_count = len(formatted_all_releases)
 
@@ -1746,29 +1551,7 @@ def create_app(test_config=None):
     @flask_app.route('/releases/<int:release_id>', methods=['GET'])
     def show_release(release_id):
 
-        logged_in = session.get('token', None)
-
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-
-                data = user.short_private()
-
-                purchased_current_release = Purchase.query.filter(Purchase.release_id==release_id). \
-                        filter(Purchase.user_id==user.id). \
-                        join(Release).one_or_none()
-
-                data['purchased'] = purchased_current_release
-
-            else:
-
-                data = None
-        else:
-            data = None
+        user, data = get_user_data(True)
 
         try:
 
@@ -1810,22 +1593,25 @@ def create_app(test_config=None):
 
             print(release_data['youtube_embed_url'])
 
-            if logged_in:
-
-                if current_release.artist.user.id == user.id:
-                    creator = True
-
-                else:
-                    creator=False
-
-            else:
-                creator=False
 
             current_artist = Artist.query.get(current_release.artist_id)
             if current_artist is None:
                 abort(404)
 
             artist_data = current_artist.short()
+
+            if data is not None:
+
+                purchased_current_release = Purchase.query.filter(Purchase.release_id==release_id). \
+                        filter(Purchase.user_id==user.id). \
+                        join(Release).one_or_none()
+
+                data['purchased'] = purchased_current_release
+
+                creator=False
+
+                if current_release.artist.user.id == user.id:
+                    creator = True
 
             return render_template('pages/show_release.html',
                                     release=release_data, 
