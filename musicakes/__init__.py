@@ -1629,6 +1629,7 @@ def create_app(test_config=None):
     @flask_app.route('/releases/create', methods=['GET'])
     @requires_log_in
     def create_release_presubmission_form():
+
         logged_in = session.get('token', None)       
         if logged_in:
 
@@ -1658,28 +1659,12 @@ def create_app(test_config=None):
     @flask_app.route('/releases/create', methods=['POST'])
     @requires_log_in
     def create_release_presubmission():
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        if user.artist is None:
 
-            if user.artist is None:
-
-                abort(404)
-
-            if user:
-                data = user.short_private()
-
-            else:
-
-                data = None
-
-        else:
-
-            data = None
-
+            abort(404)
 
         presubmission_form = ReleasePresubmissionForm(request.form)
 
@@ -1698,16 +1683,12 @@ def create_app(test_config=None):
     @flask_app.route('/releases/create_2', methods=['POST'])
     @requires_log_in
     def create_release_submission():
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        if user.artist is None:
 
-            if user.artist is None:
-
-                abort(404)
+            abort(404)
 
         try:
 
@@ -1746,28 +1727,21 @@ def create_app(test_config=None):
     @flask_app.route('/releases/<int:release_id>/deploy', methods=['GET'])
     @requires_log_in
     def show_release_for_deployment(release_id):
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        if user.artist is None:
 
-            if user:
-
-                data = user.short_private()
-
-            else:
-
-                data = None
-        else:
-            data = None
+            abort(404)
 
         try:
 
             current_release = Release.query.get(release_id)
             if current_release is None:
                 abort(404)
+
+            if user.artist.id != current_release.artist_id:
+                abort(401)
 
             if current_release.smart_contract_address is None:
 
@@ -1811,16 +1785,12 @@ def create_app(test_config=None):
     @flask_app.route('/releases/<int:release_id>/deploy', methods=['POST'])
     @requires_log_in
     def deploy_release_smart_contract(release_id):
-        logged_in = session.get('token', None)
-        if logged_in:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        user, data = get_user_data(True)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        if user.artist is None:
 
-            if user.artist is None:
-
-                abort(404)
+            abort(404)
 
         try:
 
@@ -1831,6 +1801,9 @@ def create_app(test_config=None):
             if release is None:
 
                 abort(404)
+
+            if user.artist.id != release.artist_id:
+                abort(401)
 
             release.smart_contract_address = smart_contract_address
             release.update()
@@ -1851,28 +1824,20 @@ def create_app(test_config=None):
     @requires_log_in
     def edit_release_form(release_id):
 
-        logged_in = session.get('token', None)
-        if logged_in:
+        user, data = get_user_data(True)
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        if user.artist is None:
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user:
-                data = user.short_private()
-
-            else: 
-
-                abort(401)
-
-        else:
-
-            abort(401)
+            abort(404)
 
         try:
 
             # Initialise form and populate with existing data
             release = Release.query.filter(Release.id==release_id).one_or_none()
+
+            if user.artist.id != release.artist_id:
+                abort(401)
+
             release_data = release.short_private()
             release_data['release_price'] = release.price
             release_data['release_description'] = release.description
@@ -1910,25 +1875,22 @@ def create_app(test_config=None):
     @requires_log_in
     def edit_release_form_submit(release_id):
 
-        form = EditReleaseForm(request.form)
+        user, data = get_user_data(True)
 
-        logged_in = session.get('token', None)
-        if logged_in:
+        if user.artist is None:
 
-            auth_id = session['jwt_payload']['sub'][6:]
+            abort(404)
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+        release = Release.query.filter(Release.id==release_id).one_or_none()
 
-            if user:
-                data = user.short_private()
+        if release is None:
 
-            else: 
+            abort(404)
 
-                abort(401)
-
-        else:
-
+        if user.artist.id != release.artist_id:
             abort(401)
+
+        form = EditReleaseForm(request.form)
 
         try:
 
@@ -1942,7 +1904,7 @@ def create_app(test_config=None):
 
                 # Update release information
 
-                release = Release.query.filter(Release.id==release_id).one_or_none()
+
                 release.name = release_name
                 release.price = release_price
                 release.description = release_description
@@ -1989,6 +1951,8 @@ def create_app(test_config=None):
     @flask_app.route('/tracks', methods=['GET'])
     def get_tracks():
 
+        data = get_user_data()
+
         try:
 
             # page count
@@ -2005,23 +1969,6 @@ def create_app(test_config=None):
             tracks_count = len(formatted_all_tracks)
 
             logged_in = session.get('token', None)
-
-            if logged_in:
-
-                auth_id = session['jwt_payload']['sub'][6:]
-
-                user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-                if user:
-                    data = user.short_private()
-
-                else: 
-
-                    data = None
-
-            else:
-
-                data = None
 
             if start + 1 <= tracks_count:
 
@@ -2043,46 +1990,31 @@ def create_app(test_config=None):
 
             abort(404)
 
-        logged_in = session.get('token', None)
+        user, data = get_user_data(True)
 
-        if logged_in:
+        release = Release.query.filter(Release.id==track.release_id).one_or_none()
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        if release is None:
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+            abort(404)
 
-            if user:
-                data = user.short_private()
+        if data is not None:
 
-                release = Release.query.filter(Release.id==track.release_id).one_or_none()
+            track_purchase = Purchase.query.filter(Purchase.track_id==track.id). \
+                                filter(Purchase.user_id==user.id). \
+                                join(Track).all()
 
-                if release is None:
+            release_purchase = Purchase.query.filter(Purchase.release_id==track.release_id). \
+                                filter(Purchase.user_id==user.id). \
+                                join(Release).all()
 
-                    abort(404)
+            if track_purchase or release_purchase:
 
-                track_purchase = Purchase.query.filter(Purchase.track_id==track.id). \
-                                    filter(Purchase.user_id==user.id). \
-                                    join(Track).all()
+                data['purchased'] = True
 
-                release_purchase = Purchase.query.filter(Purchase.release_id==track.release_id). \
-                                    filter(Purchase.user_id==user.id). \
-                                    join(Release).all()
+            else:
 
-                if track_purchase or release_purchase:
-
-                    data['purchased'] = True
-
-                else:
-
-                    data['purchased'] = None
-
-            else: 
-
-                data = None
-
-        else:
-
-            data = None
+                data['purchased'] = None
 
         try:
 
@@ -2140,17 +2072,11 @@ def create_app(test_config=None):
     @requires_log_in
     def create_track():
 
-        logged_in = session.get('token', None)
+        user, data = get_user_data(True)
 
-        if logged_in:
+        if user.artist is None:
 
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user.artist is None:
-
-                abort(404)
+            abort(404)
 
         try:
 
