@@ -1905,8 +1905,6 @@ def create_app(test_config=None):
 
             tracks_count = len(formatted_all_tracks)
 
-            logged_in = session.get('token', None)
-
             if start + 1 <= tracks_count:
 
                 return render_template('/pages/tracks.html', tracks=formatted_all_tracks[start:end], userinfo=data)
