@@ -900,44 +900,7 @@ def create_app(test_config=None):
 
             data = current_user.short_private()
 
-            purchased = Purchase.query.filter(Purchase.user_id==user_id). \
-                        join(Release).all() + Purchase.query.filter(Purchase.user_id==user_id). \
-                        join(Track).all()
-
-            temp_releases = []
-            temp_tracks = []
-
-            print(purchased)
-
-            for purchase in purchased:
-
-                if purchase.release_id is not None:
-
-                    release = Release.query.get(purchase.release_id)
-                    temp_dict = {}
-
-                    if release.name not in temp_releases:
-                        temp_dict['artist_name'] = release.artist.name
-                        temp_dict['release_id'] = release.id
-                        temp_dict['release_name'] = release.name
-                        temp_dict['release_cover_art'] = release.cover_art
-                        temp_releases.append(temp_dict)
-
-                elif purchase.track_id is not None:
-
-                    track = Track.query.get(purchase.track_id)
-                    release = Release.query.get(track.release_id)
-                    temp_dict = {}
-
-                    if track.name not in temp_tracks:
-                        temp_dict['artist_name'] = track.artist.name
-                        temp_dict['track_id'] = track.id
-                        temp_dict['track_name'] = track.name
-                        temp_dict['release_cover_art'] = release.cover_art
-                        temp_tracks.append(temp_dict)
-            print(temp_tracks)
-            data['purchased_releases'] = temp_releases
-            data['purchased_tracks'] = temp_tracks
+            data['purchased_releases'], data['purchased_tracks'] = current_user.get_purchases()
 
             return render_template('pages/show_user.html', user=data, userinfo=user_data)
 
