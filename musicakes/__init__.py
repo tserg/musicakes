@@ -1263,40 +1263,8 @@ def create_app(test_config=None):
         if data is None:
 
             abort(404)
-
-        purchased_releases = Purchase.query.filter(Purchase.user_id==user.id). \
-                    join(Release).all()
-
-        purchased_tracks = Purchase.query.filter(Purchase.user_id==user.id). \
-                            join(Track).all()
-
-        temp=[]
-
-        for purchased_release in purchased_releases:
-            release = Release.query.get(purchased_release.release_id)
-            temp_dict = {}
-
-            if release.name not in temp:
-                temp_dict['release_id'] = release.id
-                temp_dict['release_name'] = release.name
-                temp_dict['release_cover_art'] = release.cover_art
-                temp.append(temp_dict)
-
-        data['purchased_releases'] = temp
-
-        temp = []
-
-        for purchased_track in purchased_tracks:
-            track = Track.query.get(purchased_track.track_id)
-            temp_dict = {}
-
-            if track.name not in temp:
-                temp_dict['track_id'] = track.id
-                temp_dict['track_name'] = track.name
-                temp_dict['release_cover_art'] = track.release.cover_art
-                temp.append(temp_dict)
-
-        data['purchased_tracks'] = temp
+            
+        data['purchased_releases'], data['purchased_tracks'] =  user.get_purchases()
 
         return render_template('pages/show_purchases.html', userinfo=data)
 

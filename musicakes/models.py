@@ -48,8 +48,6 @@ class User(db.Model):
     artist = db.relationship('Artist', uselist=False, back_populates='user')
     profile_picture = Column(String, unique=False, nullable=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
-
-
     
     def insert(self):
         db.session.add(self)
@@ -61,7 +59,6 @@ class User(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-
 
     def short_private(self):
 
@@ -85,8 +82,47 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'profile_picture': self.profile_picture,
-            'created_on': self.created_on.strftime('%#d %B %Y'),
+            'created_on': self.created_on.strftime('%#d %B %Y')
         }
+
+    def get_purchases(self):
+
+        """
+        Helper function to retrieve information of all purchases of user
+        """
+
+        purchased_releases = Purchase.query.filter(Purchase.user_id==self.id). \
+                    join(Release).all()
+
+        purchased_tracks = Purchase.query.filter(Purchase.user_id==self.id). \
+                            join(Track).all()
+
+
+        formatted_purchased_releases=[]
+
+        for purchased_release in purchased_releases:
+            release = Release.query.get(purchased_release.release_id)
+            temp_dict = {}
+
+            if release.name not in formatted_purchased_releases:
+                temp_dict['release_id'] = release.id
+                temp_dict['release_name'] = release.name
+                temp_dict['release_cover_art'] = release.cover_art
+                formatted_purchased_releases.append(temp_dict)
+
+        formatted_purchased_tracks = []
+
+        for purchased_track in purchased_tracks:
+            track = Track.query.get(purchased_track.track_id)
+            temp_dict = {}
+
+            if track.name not in formatted_purchased_tracks:
+                temp_dict['track_id'] = track.id
+                temp_dict['track_name'] = track.name
+                temp_dict['release_cover_art'] = track.release.cover_art
+                formatted_purchased_tracks.append(temp_dict)
+
+        return formatted_purchased_releases, formatted_purchased_tracks
 
 class Artist(db.Model):
     __tablename__ = 'artists'
