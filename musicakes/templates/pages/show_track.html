@@ -70,7 +70,11 @@
       <h3>
         {{ track.track_name }}
       </h3>
-
+      <p>
+        <small>
+          from <a href="/releases/{{ track.release_id }}">{{ track.release_name }}</a>
+        </small>
+      <p>
       <h5>
         Price: {{ track.price }} DAI
       </h5>
