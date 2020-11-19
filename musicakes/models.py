@@ -306,7 +306,7 @@ class Release(db.Model):
         result = []
 
         for purchase in purchases:
-            
+
             purchaser_name = User.query.get(purchase.user_id).username
 
             if purchaser_name not in result:
@@ -371,6 +371,25 @@ class Track(db.Model):
             'youtube_url': self.youtube_url,
             'youtube_embed_url': youtube_embed_url
         }
+
+    def get_purchasers(self):
+
+        purchases = Purchase.query.filter(Purchase.track_id==self.id)
+
+        result = []
+
+        for purchase in purchases:
+            
+            purchaser_name = User.query.get(purchase.user_id).username
+
+            if purchaser_name not in result:
+                temp_dict = {}
+                temp_dict['user_id'] = purchase.user_id
+                temp_dict['username'] = purchaser_name
+                temp_dict['profile_picture'] = User.query.get(purchase.user_id).profile_picture
+                result.append(temp_dict)
+
+        return result
 
 class Purchase(db.Model):
     __tablename__ = 'purchases'

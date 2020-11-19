@@ -213,8 +213,20 @@ def create_app(test_config=None):
 
                 return data
 
-    def has_purchased_track(_userId, _trackId):
-        pass
+    def has_purchased_track(_userId, _trackId, _releaseId):
+
+        purchased_current_track = Purchase.query.filter(Purchase.track_id==_trackId). \
+                filter(Purchase.user_id==_userId). \
+                join(Release).one_or_none()
+
+        purchased_release_with_current_track = Purchase.query.filter(Purchase.release_id==_releaseId). \
+                filter(Purchase.user_id==_userId). \
+                join(Release).one_or_none()
+
+        if purchased_current_track or purchased_release_with_current_track:
+            return True
+
+        return False
 
     def has_purchased_release(_userId, _releaseId):
 
@@ -1909,83 +1921,58 @@ def create_app(test_config=None):
     @flask_app.route('/tracks/<int:track_id>', methods=['GET'])
     def show_track(track_id):
 
-        track = Track.query.get(track_id)
-
-        if track is None:
-
-            abort(404)
-
         user, data = get_user_data(True)
-
-        release = Release.query.filter(Release.id==track.release_id).one_or_none()
-
-        if release is None:
-
-            abort(404)
-
-        if data is not None:
-
-            track_purchase = Purchase.query.filter(Purchase.track_id==track.id). \
-                                filter(Purchase.user_id==user.id). \
-                                join(Track).all()
-
-            release_purchase = Purchase.query.filter(Purchase.release_id==track.release_id). \
-                                filter(Purchase.user_id==user.id). \
-                                join(Release).all()
-
-            if track_purchase or release_purchase:
-
-                data['purchased'] = True
-
-            else:
-
-                data['purchased'] = None
 
         try:
 
-            formatted_track_data = track.short_public()
+            current_track = Track.query.filter(Track.id==track_id).one_or_none()
 
-            purchases = Purchase.query.filter(Purchase.track_id==track_id). \
-                        join(Track).all()
+            if current_track is None:
 
-            temp=[]
+                abort(404)
 
-            for purchase in purchases:
-                purchaser_name = User.query.get(purchase.user_id).username
-                temp_dict = {}
+            current_release = Release.query.filter(Release.id==current_track.release_id).one_or_none()
 
-                if purchaser_name not in temp:
-                    temp_dict['user_id'] = purchase.user_id
-                    temp_dict['username'] = purchaser_name
-                    temp_dict['profile_picture'] = User.query.get(purchase.user_id).profile_picture
-                    temp.append(temp_dict)
+            if current_release is None:
 
-            formatted_track_data['purchasers'] = temp
+                abort(404)
+
+            formatted_track_data = current_track.short_public()
 
             payment_token_address = PaymentToken.query.get(1).smart_contract_address
             formatted_track_data['payment_token_address'] = payment_token_address
+
+            formatted_track_data['purchasers'] = current_track.get_purchasers()
 
             # Checks if smart contract address is in db
 
             if formatted_track_data['smart_contract_address'] is None:
                 formatted_track_data['smart_contract_address'] = "0x"
 
+            # Get YouTube playlist URL 
+
             if formatted_track_data['youtube_embed_url'] == 'https://youtube.com/embed/':
                 formatted_track_data['youtube_embed_url'] = None
 
-            print(formatted_track_data['youtube_embed_url'])
-
             # Retrieve artist data
 
-            current_artist = Artist.query.get(track.artist_id)
+            current_artist = Artist.query.filter(Artist.id==current_track.artist_id).one_or_none()
+
             if current_artist is None:
                 abort(404)
 
             artist_data = current_artist.short()
 
+            if data is not None:
+
+                data['has_purchased'] = has_purchased_track(user.id, track_id, current_release.id)
+
+                creator = (current_release.artist.user.id == user.id)
+
             return render_template('pages/show_track.html',
                                     track=formatted_track_data,
                                     userinfo=data,
+                                    creator=creator,
                                     chain_id=ETHEREUM_CHAIN_ID,
                                     artist=artist_data)
 
