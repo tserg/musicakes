@@ -109,7 +109,7 @@
 
       {% if release.smart_contract_address|length > 2 %}
 
-        {% if userinfo and userinfo.purchased is not none %}
+        {% if userinfo and userinfo.has_purchased %}
         <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
           Download
         </a>
@@ -210,7 +210,7 @@
             </form>
             </div>
 
-            {% elif userinfo and userinfo.purchased is none %}
+            {% elif userinfo and not userinfo.has_purchased %}
             <div class="modal-body">
             <form action="" method="post" >
 

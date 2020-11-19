@@ -173,6 +173,60 @@ def create_app(test_config=None):
             return f(*args, **kwargs)
         return decorated
 
+
+    ###################################################
+
+    # Auth
+
+    ###################################################
+
+    def get_user_data(return_user_id=False):
+
+        """
+        Helper function to obtain user data and User model object for rendering of page
+        """
+
+        try:
+
+            logged_in = session.get('token', None)
+
+            auth_id = session['jwt_payload']['sub'][6:]
+            user = User.query.filter(User.auth_id==auth_id).one_or_none()
+
+            data = user.short_private()
+
+        except:
+
+            """
+            Key error is thrown if user is not logged in 
+            """
+
+            data = None
+
+        else:
+
+            if return_user_id:
+
+                return user, data
+
+            else:
+
+                return data
+
+    def has_purchased_track(_userId, _trackId):
+        pass
+
+    def has_purchased_release(_userId, _releaseId):
+
+        purchased_current_release = Purchase.query.filter(Purchase.release_id==_releaseId). \
+                filter(Purchase.user_id==_userId). \
+                join(Release).one_or_none()
+
+        if purchased_current_release is not None:
+            return True
+
+        return False
+
     ###################################################
 
     # Routes
@@ -216,39 +270,6 @@ def create_app(test_config=None):
         # Redirect user to logout endpoint
         params = {'returnTo': url_for('index', _external=True), 'client_id': AUTH0_CLIENT_ID}
         return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
-
-    def get_user_data(return_user_id=False):
-
-        """
-        Helper function to obtain user data and User model object for rendering of page
-        """
-
-        try:
-
-            logged_in = session.get('token', None)
-
-            auth_id = session['jwt_payload']['sub'][6:]
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            data = user.short_private()
-
-        except:
-
-            """
-            Key error is thrown if user is not logged in 
-            """
-
-            data = None
-
-        else:
-
-            if return_user_id:
-
-                return user, data
-
-            else:
-
-                return data
 
     @flask_app.route('/')
     def index():
@@ -998,10 +1019,7 @@ def create_app(test_config=None):
 
         user, data = get_user_data(True)
 
-        creator = False
-
-        if user.artist.id == artist_id:
-            creator = True
+        creator = (user.artist.id == artist_id)
 
         try:
 
@@ -1507,10 +1525,8 @@ def create_app(test_config=None):
             if release_data['youtube_embed_url'] == 'https://youtube.com/embed/':
                 release_data['youtube_embed_url'] = None
 
-            print(release_data['youtube_embed_url'])
-
-
             current_artist = Artist.query.filter(Artist.id==current_release.artist_id).one_or_none()
+
             if current_artist is None:
                 abort(404)
 
@@ -1518,16 +1534,9 @@ def create_app(test_config=None):
 
             if data is not None:
 
-                purchased_current_release = Purchase.query.filter(Purchase.release_id==release_id). \
-                        filter(Purchase.user_id==user.id). \
-                        join(Release).one_or_none()
+                data['has_purchased'] = has_purchased_release(user.id, release_id)
 
-                data['purchased'] = purchased_current_release
-
-                creator=False
-
-                if current_release.artist.user.id == user.id:
-                    creator = True
+                creator = (current_release.artist.user.id == user.id)
 
             return render_template('pages/show_release.html',
                                     release=release_data, 
