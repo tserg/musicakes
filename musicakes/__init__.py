@@ -1005,7 +1005,7 @@ def create_app(test_config=None):
 
         try:
 
-            current_artist = Artist.query.get(artist_id)
+            current_artist = Artist.query.filter(Artist.id==artist_id).one_or_none()
             if current_artist is None:
                 abort(404)
 
@@ -1486,7 +1486,7 @@ def create_app(test_config=None):
 
         try:
 
-            current_release = Release.query.get(release_id)
+            current_release = Release.query.filter(Release.id==release_id).one_or_none()
             if current_release is None:
                 abort(404)
 
@@ -1495,22 +1495,7 @@ def create_app(test_config=None):
             payment_token_address = PaymentToken.query.get(1).smart_contract_address
             release_data['payment_token_address'] = payment_token_address
 
-            purchases = Purchase.query.filter(Purchase.release_id==release_id). \
-                        join(Release).all()
-
-            temp=[]
-
-            for purchase in purchases:
-                purchaser_name = User.query.get(purchase.user_id).username
-                temp_dict = {}
-
-                if purchaser_name not in temp:
-                    temp_dict['user_id'] = purchase.user_id
-                    temp_dict['username'] = purchaser_name
-                    temp_dict['profile_picture'] = User.query.get(purchase.user_id).profile_picture
-                    temp.append(temp_dict)
-
-            release_data['purchasers'] = temp
+            release_data['purchasers'] = current_release.get_purchasers()
 
             # Checks if smart contract address is in db
 
@@ -1525,7 +1510,7 @@ def create_app(test_config=None):
             print(release_data['youtube_embed_url'])
 
 
-            current_artist = Artist.query.get(current_release.artist_id)
+            current_artist = Artist.query.filter(Artist.id==current_release.artist_id).one_or_none()
             if current_artist is None:
                 abort(404)
 
