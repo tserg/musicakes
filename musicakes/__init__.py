@@ -1818,8 +1818,7 @@ def create_app(test_config=None):
 
                     current_track_id = track_data['track_id']
                     current_track = Track.query.filter(Track.id==current_track_id).one_or_none()
-                    print(current_track)
-                    print(track_data['track_name'], track_data['track_price'])
+
                     current_track.name = track_data['track_name']
                     current_track.price = track_data['track_price']
 
