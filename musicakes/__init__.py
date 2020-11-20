@@ -711,13 +711,11 @@ def create_app(test_config=None):
 
         if artist:
 
-            artist_name = artist.name
+            data['artist_name'] = artist.name
 
         else: 
 
-            artist_name = None
-
-        data['artist_name'] = artist_name
+            data['artist_name'] = None
 
         pending_transactions = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.user_id==user.id) \
                                 .filter(PurchaseCeleryTask.is_confirmed==False) \
@@ -728,8 +726,6 @@ def create_app(test_config=None):
                                 .filter(PurchaseCeleryTask.is_confirmed==True) \
                                 .filter(PurchaseCeleryTask.is_visible==True) \
                                 .order_by(PurchaseCeleryTask.started_on.desc()).limit(10).all()
-
-        print(transaction_history)
 
         return render_template(
             'pages/show_account.html',
@@ -1062,13 +1058,11 @@ def create_app(test_config=None):
 
         if artist:
 
-            artist_name = artist.name
+            data['artist_name'] = artist.name
 
         else:
 
-            artist_name = None
-
-        data['artist_name'] = artist_name
+            data['artist_name'] = None
 
         form = ArtistForm()
 
@@ -1082,8 +1076,6 @@ def create_app(test_config=None):
 
         user, data = get_user_data(True)
 
-        user_id = user.id
-
         try:
 
             if form.validate():
@@ -1095,7 +1087,7 @@ def create_app(test_config=None):
                 new_artist = Artist(
                     name = form.artist_name.data,
                     country = form.artist_country.data,
-                    user_id = user_id,
+                    user_id = user.id,
                     soundcloud_url = artist_soundcloud_url,
                     facebook_url = form.artist_facebook_url.data
                 )
@@ -1215,8 +1207,6 @@ def create_app(test_config=None):
                 facebook_url = form.artist_facebook_url.data
                 instagram_url = form.artist_instagram_url.data
 
-                print(soundcloud_url, facebook_url, instagram_url)
-
                 # Split soundcloud url to get username in order to input into widget
 
                 soundcloud_url_processed = str(soundcloud_url).split("/")[-1]
@@ -1273,8 +1263,6 @@ def create_app(test_config=None):
 
         try:
 
-            print("purchase release triggered")
-
             transaction_hash = request.get_json()['transaction_hash']
             wallet_address = request.get_json()['wallet_address']
 
@@ -1283,7 +1271,6 @@ def create_app(test_config=None):
                                 user.id))
 
             purchase_description = Release.query.filter(Release.id == release_id).one_or_none().purchase_description()
-            print("Purchase description: " + purchase_description)
 
             purchase_celery_task = PurchaseCeleryTask(
                 task_id = task.id,
@@ -1376,15 +1363,11 @@ def create_app(test_config=None):
 
             abort(404)
 
-        track_purchase = Purchase.query.filter(Purchase.track_id==track.id). \
-                            filter(Purchase.user_id==user.id). \
-                            join(Track).all()
+        track_purchase = has_purchased_track(user.id, track.id, release.id)
 
-        release_purchase = Purchase.query.filter(Purchase.release_id==track.release_id). \
-                            filter(Purchase.user_id==user.id). \
-                            join(Release).all()
+        release_purchase = has_purchased_release(user.id, release.id)
 
-        if track_purchase is None and release_purchase is None:
+        if track_purchase is False and release_purchase is False:
 
             abort(404)
 
@@ -1429,11 +1412,9 @@ def create_app(test_config=None):
 
             abort(404)
 
-        release_purchase = Purchase.query.filter(Purchase.release_id==release_id). \
-                            filter(Purchase.user_id==user.id). \
-                            join(Release).all()
+        release_purchase = has_purchased_release(user.id, release.id)
 
-        if release_purchase is None:
+        if release_purchase is False:
 
             abort(404)
 
