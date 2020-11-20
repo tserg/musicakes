@@ -1548,27 +1548,11 @@ def create_app(test_config=None):
     @requires_log_in
     def create_release_presubmission_form():
 
-        logged_in = session.get('token', None)       
-        if logged_in:
+        user, data = get_user_data(True)
 
-            auth_id = session['jwt_payload']['sub'][6:]
+        if user.artist is None:
 
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user.artist is None:
-
-                abort(404)
-
-            if user:
-                data = user.short_private()
-
-            else:
-
-                data = None
-
-        else:
-
-            data = None
+            abort(404)
 
         form = ReleasePresubmissionForm()
 
@@ -1629,7 +1613,6 @@ def create_app(test_config=None):
             )
 
             new_release.insert()
-            print(new_release.id)
 
             return jsonify({
                 'success': True,
