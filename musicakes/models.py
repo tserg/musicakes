@@ -137,6 +137,7 @@ class Artist(db.Model):
                              cascade='all, delete', lazy=True)
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     user = db.relationship('User', back_populates='artist')
+    wallet_address = Column(String, unique=False, nullable=True)
 
     # External links
 
