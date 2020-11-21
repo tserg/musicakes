@@ -201,7 +201,13 @@ def create_app(test_config=None):
             Key error is thrown if user is not logged in 
             """
 
-            data = None
+            if return_user_id:
+
+                return None, None
+
+            else:
+
+                return None
 
         else:
 
@@ -1531,6 +1537,9 @@ def create_app(test_config=None):
 
                 creator = (current_release.artist.user.id == user.id)
 
+            else:
+                creator = False
+
             return render_template('pages/show_release.html',
                                     release=release_data, 
                                     userinfo=data,
@@ -1929,6 +1938,9 @@ def create_app(test_config=None):
                 data['has_purchased'] = has_purchased_track(user.id, track_id, current_release.id)
 
                 creator = (current_release.artist.user.id == user.id)
+
+            else:
+                creator = False
 
             return render_template('pages/show_track.html',
                                     track=formatted_track_data,
