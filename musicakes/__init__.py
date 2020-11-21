@@ -1033,7 +1033,13 @@ def create_app(test_config=None):
 
         user, data = get_user_data(True)
 
-        creator = (user.artist.id == artist_id)
+        if user:
+
+            creator = (user.artist.id == artist_id)
+
+        else:
+
+            creator = False
 
         try:
 
