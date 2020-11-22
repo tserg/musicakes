@@ -1049,10 +1049,14 @@ def create_app(test_config=None):
 
             artist_data = current_artist.short()
 
+            payment_token_address = PaymentToken.query.get(1).smart_contract_address
+
             return render_template('pages/show_artist.html',
                                     artist=artist_data,
                                     userinfo=data,
-                                    creator=creator)
+                                    creator=creator,
+                                    chain_id=ETHEREUM_CHAIN_ID,
+                                    payment_token_address=payment_token_address)
 
         except Exception as e:
             print(e)
@@ -1148,6 +1152,8 @@ def create_app(test_config=None):
                 form.artist_facebook_url.data = current_artist.facebook_url
             if current_artist.instagram_url is not None:
                 form.artist_instagram_url.data = current_artist.instagram_url
+            if current_artist.wallet_address is not None:
+                form.artist_wallet_address.data = current_artist.wallet_address
 
             return render_template('forms/edit_artist.html', form=form, artist=artist_data, userinfo=data)
 
@@ -1215,6 +1221,10 @@ def create_app(test_config=None):
 
             if form.validate():
 
+                wallet_address = form.artist_wallet_address.data
+
+                print(wallet_address)
+
                 soundcloud_url = form.artist_soundcloud_url.data
                 facebook_url = form.artist_facebook_url.data
                 instagram_url = form.artist_instagram_url.data
@@ -1226,6 +1236,7 @@ def create_app(test_config=None):
                 current_artist.soundcloud_url = soundcloud_url_processed
                 current_artist.facebook_url = facebook_url
                 current_artist.instagram_url = instagram_url
+                current_artist.wallet_address = wallet_address
                 current_artist.update()
 
                 return redirect(url_for('edit_artist', artist_id=artist_id))

@@ -3,21 +3,7 @@
 {% block content %}
 
 
-{% with messages = get_flashed_messages() %}
-{% if messages %}
 
-<div class="jumbotron">
-
-	<div class="container">
-	  <ul class=flashes>
-	  {% for message in messages %}
-	    <li>{{ message }}</li>
-	  {% endfor %}
-	  </ul>	
-	</div>
-</div>
-{% endif %}
-{% endwith %}
 
 <div class="album py-5">
 	<meta id="page" data-page="{{ request.args.get('page')|int }}">

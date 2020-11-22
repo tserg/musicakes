@@ -66,13 +66,26 @@
 
     <div class="col">
 
-
-
       <meta id="artist-id" data-id="{{ artist.id }}">
-
 
       <form method="post" action="{{ url_for('edit_artist_details', artist_id=artist.id) }}">
         {{ form.hidden_tag() }}
+        <h3 class="mb-4">Wallet Address</h3>
+        <div class="form-group row">
+  
+          <div class="col">
+            {{ form.artist_wallet_address(class_ = 'form-control', autofocus = true) }}
+          </div>
+        </div>
+
+    </div>
+
+  </div>
+
+  <div class="row pt-4 mt-4">
+
+    <div class="col">
+
         <h3 class="mb-4">External Links</h3>
         <div class="form-group row">
           <label for="artist_soundcloud_url" class="col-sm-2 col-form-label">Soundcloud URL</label>
@@ -98,7 +111,23 @@
           </div>
         </div>
 
-        <input type="submit" value="Update external links" class="btn btn-sm btn-outline-secondary mt-3">
+        <input type="submit" value="Update Profile" class="btn btn-sm btn-outline-secondary mt-3">
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        <div class="form-group-row mt-4">
+
+          <div class="col">
+            <ul>
+            {% for message in messages %}
+              <li>{{ message }}</li>
+            {% endfor %}
+            </ul> 
+          </div>
+        </div>
+        {% endif %}
+        {% endwith %}
 
       </form>
 

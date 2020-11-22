@@ -4,6 +4,9 @@
 
 // const showAccountPaymentTokenBalance = document.querySelector('#payment-token-balance');
 
+const supportArtistButton = document.querySelector('#btn-support-artist');
+const supportArtistValue = document.querySelector('#support-artist-amount');
+
 const manageMusicakesButton = document.querySelector('#btn-manage-musicakes');
 
 const showMusicakesTotalSupply = document.querySelector('#musicakes-supply');
@@ -39,6 +42,8 @@ const csrf_token_purchase = window.appConfig.csrf_token.value;
 if (csrf_token_purchase) {
   console.log("CSRF Token loaded");
 }
+
+const artistWalletAddress = window.appConfig.artist_wallet_address.value;
 
 /* Payment token contract */
 
@@ -689,10 +694,34 @@ window.addEventListener('load', async () => {
 
 function startApp() {
 
+
+  if (supportArtistButton != null) {
+    supportArtistButton.addEventListener('click', () => {
+      if (provider) {
+
+        if (currentChainId != ethereumChainId) {
+
+          if (ethereumChainId == 1) {
+            alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+          } else if (ethereumChainId == 3) {
+            alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+          } else {
+            alert('You are connected to the wrong network.')
+          }
+          
+        } else {
+          supportArtist();
+        }
+      } else {
+        alert('Please install MetaMask to continue!');
+      }
+    });
+  }
+
+
   if (manageMusicakesButton != null) {
 
     manageMusicakesButton.addEventListener('click', () => {
-      console.log(123);
       if (provider) {
 
         if (currentChainId != ethereumChainId) {
@@ -893,6 +922,26 @@ async function loadInterface() {
 			console.log(error);
 		}
 	})
+
+}
+
+async function supportArtist() {
+
+  getAccount();
+
+  const account = ethereum.selectedAddress;
+
+  var supportAmount = supportArtistValue.value;
+
+  var supportAmountFormatted = web3.utils.toWei(supportAmount);
+
+  paymentTokenContract.methods.transfer(artistWalletAddress, supportAmountFormatted).send({from: account})
+  .once('transactionHash', function(hash) {
+    console.log(hash);
+  })
+  .catch(error => {
+    console.log(error);
+  });
 
 }
 

@@ -198,7 +198,8 @@ class Artist(db.Model):
             'soundcloud_url': soundcloud_url,
             'facebook_url': facebook_url,
             'instagram_url': instagram_url,
-            'releases': formatted_releases
+            'releases': formatted_releases,
+            'wallet_address': self.wallet_address
         }
 
 

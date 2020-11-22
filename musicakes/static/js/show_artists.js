@@ -1,7 +1,9 @@
-const page = parseInt(window.appConfig.page.page);
+const page = parseInt(window.appConfig.page.value);
 
 const previousPageButton = document.querySelector('#previous-page-btn');
 const nextPageButton = document.querySelector('#next-page-btn');
+
+
 
 if (nextPageButton) {
 
@@ -30,4 +32,5 @@ if (page>1) {
 		window.location.href = "/artists?page=" + previous_page.toString();
 	});
 }
+
 

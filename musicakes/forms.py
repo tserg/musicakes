@@ -19,6 +19,7 @@ from wtforms import (
 
 from wtforms.widgets import (
 	html5,
+	TextInput,
 	TextArea
 )
 
@@ -93,6 +94,13 @@ class EditUserForm(FlaskForm):
 	])
 
 class EditArtistForm(FlaskForm):
+
+	artist_wallet_address = StringField('Wallet Address',
+		validators=[Length(0, 42, "You have provided an invalid Ethereum address.")],
+		render_kw={
+			'placeholder': '0x'
+		}
+	)
 	
 	artist_soundcloud_url = URLField(
 		validators=[URL(), Optional()]
