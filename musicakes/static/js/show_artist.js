@@ -151,7 +151,6 @@ window.addEventListener('load', async () => {
 	if (supportArtistButton != null) {
 		supportArtistButton.addEventListener('click', () => {
 
-			console.log(1234);
 		  if (provider) {
 
 		    if (currentChainId != ethereumChainId) {
@@ -177,80 +176,8 @@ window.addEventListener('load', async () => {
 
 async function getAccount() {
 	await ethereum.enable();
-  loadInterface();
-}
-
-async function loadInterface() {
-
-  const account = ethereum.selectedAddress;
-	// showAccountAddress.innerHTML = account;
-
-	// Get ETH balance of current address
-
-	var accountWeiBalance = web3.eth.getBalance(account, function(error, result) {
-		if (!error) {
-  		var accountBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-  		// showAccountBalance.innerHTML = accountBalance;
-  		} else {
-			console.log(error);
-		}
-	});
-
-	// Get payment token balance of current address
-
-	var accountPaymentTokenBalance = paymentTokenContract.methods.balanceOf(account).call(function(error, result) {
-		if (!error) {
-			var accountPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-			// showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
-		} else {
-			console.log(error);
-		}
-	});
-
-	// Get total supply of Musicakes
-	
-	var musicakesTotalSupply = musicakesContract.methods.totalSupply().call(function(error, result) {
-		if (!error) {
-			showMusicakesTotalSupply.innerHTML = result;
-		} else {
-			console.log(error);
-		}
-	});
-
-	// Get Musicakes balance of current account
-
-	var accountMusicakesBalance = musicakesContract.methods.balanceOf(account).call(function(error, result) {
-		if (!error) {
-			showAccountMusicakesBalance.innerHTML = result;
-		} else {
-			console.log(error);
-		}
-	});
-
-	// Get payment token balance in Musicakes contract
-
-	var musicakesPaymentTokenBalance = paymentTokenContract.methods.balanceOf(musicakesAddress).call(function(error, result) {
-		if (!error) {
-			var musicakesPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-			showMusicakesPaymentTokenBalance.innerHTML = musicakesPaymentTokenBalanceFormatted;
-		} else {
-			console.log(error);
-		}
-	});
-
-	// Get unclaimed dividends of current account
-
-	var accountUnclaimedDividends = musicakesContract.methods.withdrawableFundsOf(account).call(function(error, result) {
-		if (!error) {
-			accountUnclaimedDividendsFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-			showAccountUnclaimedDividends.innerHTML = accountUnclaimedDividendsFormatted;
-		} else {
-			console.log(error);
-		}
-	})
 
 }
-
 
 async function supportArtist() {
 
