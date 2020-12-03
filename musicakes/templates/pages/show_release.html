@@ -124,11 +124,13 @@
 
       {% if release.smart_contract_address|length > 2 %}
 
-        {% if userinfo and userinfo.has_purchased %}
+        {% if userinfo %}
+
+          {% if userinfo.has_purchased %}
         <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
           Download
         </a>
-        {% else %}
+          {% else %}
 
         <!-- Launch modal for purchase of release -->
 
@@ -136,8 +138,14 @@
           Buy release
         </button>
 
-        {% endif %}
+          {% endif %}
 
+        {% else %}
+
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-release-modal" disabled>
+          Buy release
+        </button>
+        {% endif %}
         <!--
         <p>Current DAI balance: </p>
         <p id ="payment-token-balance"></p>

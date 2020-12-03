@@ -129,13 +129,15 @@
       {% if track.smart_contract_address|length > 2 %}
         
 
-        {% if userinfo and userinfo.purchased is not none %}
+        {% if userinfo %}
+
+          {% if userinfo.purchased is not none %}
 
         <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
           Download
         </a>
 
-        {% else %}
+          {% else %}
 
         <!-- Launch modal for purchase of track -->
 
@@ -143,6 +145,12 @@
           Buy track
         </button>
 
+          {% endif %}
+
+        {% else %}
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-track-modal" disabled>
+          Buy track
+        </button>
         {% endif %}
 
         <!--
