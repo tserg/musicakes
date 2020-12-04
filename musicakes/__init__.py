@@ -2019,10 +2019,13 @@ def create_app(test_config=None):
     def auth_error(AuthError):
         return render_template('errors/401.html'), 401
 
+    @flask_app.errorhandler(400)
+    def bad_request_error(error):
+        return render_template('errors/400.html'), 400
+
     @flask_app.errorhandler(401)
     def unathorised_error(error):
         return render_template('errors/401.html'), 401
-
 
     @flask_app.errorhandler(404)
     def not_found_error(error):
