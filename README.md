@@ -8,6 +8,8 @@ Artists will have all 100 Musicakes tokens minted to their wallet addresses.
 
 In the future, we may implement a 2% fee for artists with five or more tracks to cover AWS costs. This will be implemented by having 98 Musicakes tokens minted to their wallet address, and 2 Musicakes tokens minted to the platform, representing a 2% fee.
 
+This application has been deployed at https://musicakes.herokuapp.com
+
 ## Getting Started
 
 For local deployment, please follow the steps below.
@@ -56,7 +58,7 @@ DATABASE_PATH = postgres://<<USERNAME>>:<<PASSWORD>>@localhost:5432/musicakes
 To run the server, execute:
 
 ```bash
-export FLASK_APP=app
+export FLASK_APP=musicakes
 export FLASK_ENV=development
 flask run
 ```
@@ -64,7 +66,7 @@ flask run
 For Windows, navigate to the flaskr directory and execute:
 
 ```
-set FLASK_APP=app.py
+set FLASK_APP=musicakes
 set FLASK_ENV=development
 flask run
 ```
@@ -84,11 +86,11 @@ The staging environment has been deployed at `https://musicakes-staging.herokuap
 1. Set the environment variables for Flask then run `flask run`
 For Linux:
 ```
-export FLASK_APP=app.py
+export FLASK_APP=musicakes
 ```
 For Windows:
 ```
-set FLASK_APP=app.py
+set FLASK_APP=musicakes
 ```
 2. Navigate to Auth0 login URL: "`http://localhost:5000`"
 3. Create the database in psql by running:
@@ -110,7 +112,7 @@ flask run
 
 6. In a new terminal, run the following command to start a Celery worker
 ```
-celery -A app.celery worker
+celery -A musicakes.celery worker
 ```
 
 #### Ropsten Testnet
