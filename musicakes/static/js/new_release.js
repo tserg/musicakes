@@ -211,13 +211,16 @@ function addTracks(release_id) {
 
 function getSignedRequestTrack(file, track_name, track_price, release_id, html_id){
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/sign_s3_upload?file_name="+file.name+"&file_type="+file.type);
+
+  var file_name = html_id.toString() + "_" + track_name + ".wav"
+
+  xhr.open("GET", "/sign_s3_upload?file_name="+file_name+"&file_type="+file.type+"&release_id="+release_id.toString());
   xhr.onreadystatechange = function(){
     if(xhr.readyState === 4){
       if(xhr.status === 200){
         var response = JSON.parse(xhr.responseText);
 
-        uploadFileTrack(file, response.data, response.url, file.name, track_name, track_price, release_id, html_id);
+        uploadFileTrack(file, response.data, response.url, file_name, track_name, track_price, release_id, html_id);
       }
       else{
         alert("Could not get signed URL.");

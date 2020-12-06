@@ -528,31 +528,29 @@ def create_app(test_config=None):
     @requires_log_in
     def sign_s3_upload():
 
-        logged_in = session.get('token', None)
+        user, data = get_user_data(True)
 
-        if logged_in:
-
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user is None:
-
-                abort(404)
-
-        else:
-
+        if not user:
             abort(404)
 
         file_name = secure_filename(request.args.get('file_name'))
+
         file_type = request.args.get('file_type')
+
+        release_id = request.args.get('release_id')
 
         s3_client = boto3.client('s3',
                                 region_name='us-east-1',
                                 aws_access_key_id=S3_KEY,
                                 aws_secret_access_key=S3_SECRET)
 
-        key = user.auth_id + "/" + file_name
+        if release_id == None:
+
+            key = user.auth_id + "/" + file_name
+
+        else:
+
+            key = user.auth_id + "/" + release_id + "/" + file_name
 
         if "image" in file_type:
 
@@ -1622,7 +1620,7 @@ def create_app(test_config=None):
 
             release_name = request.get_json()['release_name']
             release_price = request.get_json()['release_price']
-            release_cover_art_file_name = S3_LOCATION + auth_id + "/" + secure_filename(request.get_json()['file_name'])
+            release_cover_art_file_name = S3_LOCATION + user.auth_id + "/" + secure_filename(request.get_json()['file_name'])
             release_text = request.get_json()['release_text']
 
             print("release cover art URL: ")
@@ -1984,7 +1982,7 @@ def create_app(test_config=None):
 
             track_name = request.get_json()['track_name']
             track_price = request.get_json()['track_price']
-            track_file_name = S3_LOCATION + auth_id + "/" + request.get_json()['file_name']
+            track_file_name = S3_LOCATION + user.auth_id + "/" + request.get_json()['file_name']
             track_release_id = request.get_json()['release_id']
 
             # Create new release in database
