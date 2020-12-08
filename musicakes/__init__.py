@@ -1620,11 +1620,11 @@ def create_app(test_config=None):
 
             release_name = request.get_json()['release_name']
             release_price = request.get_json()['release_price']
-            release_cover_art_file_name = S3_LOCATION + user.auth_id + "/" + secure_filename(request.get_json()['file_name'])
+            #release_cover_art_file_name = S3_LOCATION + user.auth_id + "/" + secure_filename(request.get_json()['file_name'])
             release_text = request.get_json()['release_text']
 
-            print("release cover art URL: ")
-            print(release_cover_art_file_name)
+            #print("release cover art URL: ")
+            #print(release_cover_art_file_name)
 
             # Create new release in database
 
@@ -1633,7 +1633,7 @@ def create_app(test_config=None):
                 name=release_name,
                 price=release_price,
                 description=release_text,
-                cover_art=release_cover_art_file_name
+                #cover_art=release_cover_art_file_name
             )
 
             new_release.insert()
@@ -1641,6 +1641,39 @@ def create_app(test_config=None):
             return jsonify({
                 'success': True,
                 'release_id': new_release.id
+            })
+
+        except Exception as e:
+            print(e)
+            return jsonify({
+                'success': False
+            })
+
+    @flask_app.route('/releases/<int:release_id>/update_cover_art', methods=['POST'])
+    @requires_log_in
+    def update_release_cover_art(release_id):
+
+        user, data = get_user_data(True)
+
+        if user.artist is None:
+
+            abort(404)
+        try:
+
+            current_release = Release.query.filter(Release.id==release_id).one_or_none()
+            if current_release is None:
+                abort(404)
+
+            release_cover_art_file_path = S3_LOCATION + user.auth_id + "/" + secure_filename(request.get_json()['file_path'])
+            print("release cover art URL: ")
+            print(release_cover_art_file_path)
+
+            current_release.cover_art = release_cover_art_file_path
+
+            current_release.update()
+
+            return jsonify({
+                'success': True,
             })
 
         except Exception as e:
@@ -1982,8 +2015,8 @@ def create_app(test_config=None):
 
             track_name = request.get_json()['track_name']
             track_price = request.get_json()['track_price']
-            track_file_name = S3_LOCATION + user.auth_id + "/" + request.get_json()['file_name']
             track_release_id = request.get_json()['release_id']
+            track_file_name = S3_LOCATION + user.auth_id + "/" + str(track_release_id) + "/" + request.get_json()['file_name']
 
             # Create new release in database
 

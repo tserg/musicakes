@@ -86,58 +86,14 @@ async function validateForm() {
 
 function addRelease(release_name, release_price, release_cover_art, release_text) {
 
-  getSignedRequestCoverArt(release_cover_art, release_name, release_price, release_text);
+  addReleaseToServer(release_cover_art, release_name, release_price, release_text);
 }
 
-function getSignedRequestCoverArt(file, release_name, release_price, release_text){
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/sign_s3_upload?file_name="+file.name+"&file_type="+file.type);
-  xhr.onreadystatechange = function(){
-    if(xhr.readyState === 4){
-      if(xhr.status === 200){
-        var response = JSON.parse(xhr.responseText);
-
-        uploadFileCoverArt(file, response.data, response.url, file.name, release_name, release_price, release_text);
-      }
-      else{
-        alert("Could not get signed URL.");
-      }
-    }
-  };
-  xhr.send();
-}
-
-function uploadFileCoverArt(file, s3Data, url, file_name, release_name, release_price, release_text){
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", s3Data.url);
-
-  var postData = new FormData();
-  for(key in s3Data.fields){
-    postData.append(key, s3Data.fields[key]);
-  }
-  postData.append('file', file);
-
-  xhr.onreadystatechange = function(error, result) {
-    if(xhr.readyState === 4){
-      if(xhr.status === 200 || xhr.status === 204){
-        alert("Cover art uploaded")
-        addReleaseToServer(file_name, release_name, release_price, release_text);
-      }
-      else{
-        console.log(error);
-        alert("Could not upload file.");
-      }
-   }
-  };
-  xhr.send(postData);
-}
-
-function addReleaseToServer(file_name, release_name, release_price, release_text) {
+function addReleaseToServer(release_cover_art_file, release_name, release_price, release_text) {
 
   var csrf_token = document.getElementById('csrf_token').value;
 
   var data = JSON.stringify({
-    file_name: file_name,
     release_name: release_name,
     release_price: release_price,
     release_text: release_text
@@ -161,6 +117,7 @@ function addReleaseToServer(file_name, release_name, release_price, release_text
         const release_id = response['release_id'];
         console.log("Release is created with ID");
         console.log(release_id);
+        getSignedRequestCoverArt(release_cover_art_file, release_id);
         addTracks(release_id);
         console.log("addtracks triggered");
 
@@ -174,6 +131,87 @@ function addReleaseToServer(file_name, release_name, release_price, release_text
   xhr.send(data);
 
 }
+
+function getSignedRequestCoverArt(file, release_id) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "/sign_s3_upload?file_name="+file.name+"&file_type="+file.type+"&release_id="+release_id.toString());
+  xhr.onreadystatechange = function(){
+    if(xhr.readyState === 4){
+      if(xhr.status === 200){
+        var response = JSON.parse(xhr.responseText);
+        console.log("signed request: " + release_id.toString());
+        uploadFileCoverArt(file, response.data, response.url, release_id);
+      }
+      else{
+        alert("Could not get signed URL.");
+      }
+    }
+  };
+  xhr.send();
+}
+
+function uploadFileCoverArt(file, s3Data, url, release_id){
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", s3Data.url);
+
+  var postData = new FormData();
+  for(key in s3Data.fields){
+    postData.append(key, s3Data.fields[key]);
+  }
+  postData.append('file', file);
+
+  console.log("prepare for upload: " + release_id.toString());
+
+  xhr.onreadystatechange = function(error, result) {
+    if(xhr.readyState === 4){
+      if(xhr.status === 200 || xhr.status === 204){
+        updateReleaseCoverArt(key, release_id);
+      }
+      else{
+        console.log(error);
+        alert("Could not upload file.");
+      }
+   }
+  };
+  xhr.send(postData);
+}
+
+function updateReleaseCoverArt(file_path, release_id) {
+
+  var csrf_token = document.getElementById('csrf_token').value;
+
+  var data = JSON.stringify({
+    file_path: file_path,
+    release_id: release_id
+  });
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", '/releases/' + release_id.toString() + '/update_cover_art', false);
+
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.setRequestHeader("Accept", "application/json");
+  xhr.setRequestHeader('X-CSRFToken', csrf_token)
+
+  xhr.onreadystatechange = function(error, result) {
+    if(xhr.readyState === 4){
+      if(xhr.status === 200){
+
+        response = JSON.parse(xhr.response);
+
+        console.log(response);
+        console.log("Cover art uploaded");
+
+      }
+      else{
+        console.log(error);
+        alert("Your cover art could not be uploaded.");
+      }
+   }
+  };
+  xhr.send(data);
+
+}
+
 
 function addTracks(release_id) {
 
