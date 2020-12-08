@@ -1664,11 +1664,9 @@ def create_app(test_config=None):
             if current_release is None:
                 abort(404)
 
-            release_cover_art_file_path = S3_LOCATION + user.auth_id + "/" + secure_filename(request.get_json()['file_path'])
-            print("release cover art URL: ")
-            print(release_cover_art_file_path)
+            release_cover_art_file_name = S3_LOCATION + user.auth_id + "/" + str(release_id) + "/" + secure_filename(request.get_json()['file_name'])
 
-            current_release.cover_art = release_cover_art_file_path
+            current_release.cover_art = release_cover_art_file_name
 
             current_release.update()
 

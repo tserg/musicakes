@@ -115,11 +115,9 @@ function addReleaseToServer(release_cover_art_file, release_name, release_price,
         console.log(response);
 
         const release_id = response['release_id'];
-        console.log("Release is created with ID");
-        console.log(release_id);
+
         getSignedRequestCoverArt(release_cover_art_file, release_id);
         addTracks(release_id);
-        console.log("addtracks triggered");
 
       }
       else{
@@ -134,13 +132,15 @@ function addReleaseToServer(release_cover_art_file, release_name, release_price,
 
 function getSignedRequestCoverArt(file, release_id) {
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/sign_s3_upload?file_name="+file.name+"&file_type="+file.type+"&release_id="+release_id.toString());
+
+  var file_name = "cover." + file.type.slice(6);
+
+  xhr.open("GET", "/sign_s3_upload?file_name="+file_name+"&file_type="+file.type+"&release_id="+release_id.toString());
   xhr.onreadystatechange = function(){
     if(xhr.readyState === 4){
       if(xhr.status === 200){
         var response = JSON.parse(xhr.responseText);
-        console.log("signed request: " + release_id.toString());
-        uploadFileCoverArt(file, response.data, response.url, release_id);
+        uploadFileCoverArt(file, response.data, response.url, file_name, release_id);
       }
       else{
         alert("Could not get signed URL.");
@@ -150,7 +150,7 @@ function getSignedRequestCoverArt(file, release_id) {
   xhr.send();
 }
 
-function uploadFileCoverArt(file, s3Data, url, release_id){
+function uploadFileCoverArt(file, s3Data, url, file_name, release_id){
   var xhr = new XMLHttpRequest();
   xhr.open("POST", s3Data.url);
 
@@ -160,12 +160,10 @@ function uploadFileCoverArt(file, s3Data, url, release_id){
   }
   postData.append('file', file);
 
-  console.log("prepare for upload: " + release_id.toString());
-
   xhr.onreadystatechange = function(error, result) {
     if(xhr.readyState === 4){
       if(xhr.status === 200 || xhr.status === 204){
-        updateReleaseCoverArt(key, release_id);
+        updateReleaseCoverArt(file_name, release_id);
       }
       else{
         console.log(error);
@@ -176,12 +174,12 @@ function uploadFileCoverArt(file, s3Data, url, release_id){
   xhr.send(postData);
 }
 
-function updateReleaseCoverArt(file_path, release_id) {
+function updateReleaseCoverArt(file_name, release_id) {
 
   var csrf_token = document.getElementById('csrf_token').value;
 
   var data = JSON.stringify({
-    file_path: file_path,
+    file_name: file_name,
     release_id: release_id
   });
 
@@ -199,7 +197,6 @@ function updateReleaseCoverArt(file_path, release_id) {
         response = JSON.parse(xhr.response);
 
         console.log(response);
-        console.log("Cover art uploaded");
 
       }
       else{
@@ -219,8 +216,6 @@ function addTracks(release_id) {
   const track_file_placeholder = "track-file-input"
   const track_price_placeholder = "track-price-input"  
 
-  console.log("addtracks function");
-
   for (i=1; i<=tracks_count; i++) {
 
     var track_name_id = track_name_placeholder + "-" + i.toString();
@@ -238,8 +233,6 @@ function addTracks(release_id) {
     var track_price = document.getElementById(track_price_id).value;
 
     getSignedRequestTrack(track_file, track_name, track_price, release_id, i);
-
-    console.log("signed request triggered");
 
   }
 
@@ -328,9 +321,7 @@ function addTrackToServer(file_name, track_name, track_price, release_id) {
         response = JSON.parse(xhr.response);
 
         created_track_count += 1;
-        console.log(created_track_count);
-        console.log(tracks_count);
-        console.log(release_id);
+        
         if (created_track_count == tracks_count) {
           alert("All tracks have been successfully uploaded");
           window.location.replace('/releases/' + release_id.toString() + '/deploy');
