@@ -431,15 +431,10 @@ def create_app(test_config=None):
         :return: True if file was uploaded, else False
         """
 
-        # If S3 object_name was not specified, use file_name
-
-        # Upload the file
         s3_client = boto3.client('s3',
                                 region_name='us-east-1',
-                                endpoint_url=S3_LOCATION,
                                 aws_access_key_id=S3_KEY,
                                 aws_secret_access_key=S3_SECRET)
-
 
         try:
 
@@ -758,7 +753,7 @@ def create_app(test_config=None):
     @requires_log_in
     def edit_user_submission():
 
-        user, data = get_user_data
+        user, data = get_user_data(True)
 
         form = EditUserForm()
 
@@ -772,14 +767,13 @@ def create_app(test_config=None):
 
                 f = form.profile_picture.data
 
-                filename = secure_filename(f.filename)
+                filename = "profile_picture." + f.filename.split(".")[-1]
 
-                modified_filename = auth_id + "/" + filename
+                modified_filename = user.auth_id + "/" + filename
 
                 upload_profile_picture(f, modified_filename)
 
-                file_url = 'https://{}.s3.amazonaws.com/{}/{}'.format(S3_BUCKET, S3_BUCKET, modified_filename)
-
+                file_url = S3_LOCATION + modified_filename
                 user.profile_picture = file_url
                 user.update()
 
