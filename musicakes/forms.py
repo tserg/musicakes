@@ -165,6 +165,13 @@ class EditReleaseForm(FlaskForm):
 
 	tracks = FieldList(FormField(TrackForm))
 
+class EditReleaseCoverArtForm(FlaskForm):
+	release_cover_art = FileField('Cover Art', validators=[
+		FileRequired(),
+		FileAllowed(['jpg', 'jpeg', 'png'], 'Image only!')
+	])
+
+
 '''
 class ReleaseForm(FlaskForm):
 

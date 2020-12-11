@@ -1891,6 +1891,66 @@ def create_app(test_config=None):
         
         return redirect(url_for('edit_release_form', release_id=release_id))
 
+    @flask_app.route('/releases/<int:release_id>/edit_cover_art', methods=['GET'])
+    @requires_log_in
+    def edit_release_cover_art_form(release_id):
+
+        user, data = get_user_data(True)
+
+        if user.artist is None:
+
+            abort(404)
+
+        release = Release.query.filter(Release.id==release_id).one_or_none()
+        release_data = release.short_private()
+
+        form = EditReleaseCoverArtForm()
+
+        return render_template('forms/edit_release_cover_art.html',
+                                form=form, 
+                                userinfo=data,
+                                release=release_data)
+
+    @flask_app.route('/releases/<int:release_id>/edit_cover_art', methods=['POST'])
+    @requires_log_in
+    def edit_release_cover_art_form_submit(release_id):
+
+        user, data = get_user_data(True)
+
+        if user.artist is None:
+
+            abort(404)
+
+        form = EditReleaseCoverArtForm()
+
+        try:
+
+            if form.validate():
+
+                # Initialise form and populate with existing data
+                release = Release.query.filter(Release.id==release_id).one_or_none()
+
+                f = form.release_cover_art.data
+
+                filename = "cover." + f.filename.split(".")[-1]
+
+                modified_filename = user.auth_id + "/" + str(release_id) + "/" + filename
+
+                upload_profile_picture(f, modified_filename)
+
+                file_url = S3_LOCATION + modified_filename
+                release.cover_art = file_url
+                release.update()
+
+                flash('The cover art has been updated.')
+
+        except Exception as e:
+
+            print(e)
+            flash('The cover art could not be updated.')
+
+        return redirect(url_for('edit_release_cover_art_form', release_id=release_id))
+
     ###################################################
 
     # Tracks

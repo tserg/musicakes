@@ -1,0 +1,36 @@
+{% extends 'layouts/layout.html' %}
+{% block title %}Edit cover art{% endblock %}
+{% block content %}
+
+<div class = "container">
+
+  <div class="row pt-4 mt-4">
+    <div class="col">
+
+      <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <h3 class="form-heading">Edit cover art</h3>
+
+        <p> Current Cover Art
+
+        <div class="my-3 card-img-top">
+
+            <img src="{{ release.cover_art }}" />
+
+        </div>
+
+        <div class="form-group">
+            <label for="release_cover_art"></label>
+            {{ form.release_cover_art(class = 'form-control-file') }}
+
+        </div>
+
+        <input type="submit" value="Update cover art" class="btn btn-sm btn-outline-secondary mt-3">
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
