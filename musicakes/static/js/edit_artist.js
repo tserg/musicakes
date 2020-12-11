@@ -36,13 +36,16 @@ async function validateForm() {
 
 function getSignedRequestArtistPicture(file){
   var xhr = new XMLHttpRequest();
-  xhr.open("GET", "/sign_s3_upload?file_name="+file.name+"&file_type="+file.type);
+
+  var file_name = "artist_profile_picture." + file.type.slice(6);
+
+  xhr.open("GET", "/sign_s3_upload?file_name="+file_name+"&file_type="+file.type);
   xhr.onreadystatechange = function(){
     if(xhr.readyState === 4){
       if(xhr.status === 200){
         var response = JSON.parse(xhr.responseText);
 
-        uploadArtistPicture(file, response.data, response.url, file.name);
+        uploadArtistPicture(file, response.data, response.url, file_name);
       }
       else{
         alert("Could not get signed URL.");

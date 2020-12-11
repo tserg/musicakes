@@ -1175,7 +1175,7 @@ def create_app(test_config=None):
             if current_artist is None:
                 abort(404)
 
-            artist_picture_file_name = S3_LOCATION + auth_id + "/" + request.get_json()['file_name']
+            artist_picture_file_name = S3_LOCATION + user.auth_id + "/" + request.get_json()['file_name']
 
             current_artist.artist_picture = artist_picture_file_name
             current_artist.update()
