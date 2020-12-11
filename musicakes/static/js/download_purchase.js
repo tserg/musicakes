@@ -44,6 +44,7 @@ function downloadTrack(presigned_url, file_name) {
 	        saveBlob(blob, file_name);
 	      }
 	      else{
+	      	console.log(xhr.response);
 	        alert("There was a problem with your download. Please refresh and try again.");
 	      }
 	    }

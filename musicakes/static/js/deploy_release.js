@@ -107,7 +107,7 @@ window.addEventListener('load', async () => {
     console.log('Ethereum successfully detected!');
 
     ethereum.on('accountsChanged', function(accounts) {
-      loadInterface();
+      window.location.reload();
     });
 
     // From now on, this should always be true:

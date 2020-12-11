@@ -588,18 +588,9 @@ def create_app(test_config=None):
     @requires_log_in
     def sign_s3_download_track():
 
-        logged_in = session.get('token', None)
-        if logged_in:
+        user, data = get_user_data(True)
 
-            auth_id = session['jwt_payload']['sub'][6:]
-
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            if user is None:
-
-                abort(404)
-
-        else:
+        if user is None:
 
             abort(404)
 
@@ -618,9 +609,13 @@ def create_app(test_config=None):
 
         url_components = track.download_url.rsplit('/')
 
+        print(url_components)
+
         filename = secure_filename(url_components[-1])
 
-        key = url_components[-2] + "/" + filename
+        key = url_components[-3] + "/" + url_components[-2] + "/" + filename
+
+        print(key)
 
         presigned_url = s3_client.generate_presigned_url(
             'get_object',
@@ -1175,7 +1170,7 @@ def create_app(test_config=None):
             if current_artist is None:
                 abort(404)
 
-            artist_picture_file_name = S3_LOCATION + user.auth_id + "/" + request.get_json()['file_name']
+            artist_picture_file_name = S3_LOCATION + user.auth_id + "/" + secure_filename(request.get_json()['file_name'])
 
             current_artist.artist_picture = artist_picture_file_name
             current_artist.update()
@@ -1614,11 +1609,7 @@ def create_app(test_config=None):
 
             release_name = request.get_json()['release_name']
             release_price = request.get_json()['release_price']
-            #release_cover_art_file_name = S3_LOCATION + user.auth_id + "/" + secure_filename(request.get_json()['file_name'])
             release_text = request.get_json()['release_text']
-
-            #print("release cover art URL: ")
-            #print(release_cover_art_file_name)
 
             # Create new release in database
 
@@ -2068,7 +2059,7 @@ def create_app(test_config=None):
             track_name = request.get_json()['track_name']
             track_price = request.get_json()['track_price']
             track_release_id = request.get_json()['release_id']
-            track_file_name = S3_LOCATION + user.auth_id + "/" + str(track_release_id) + "/" + request.get_json()['file_name']
+            track_file_name = S3_LOCATION + user.auth_id + "/" + str(track_release_id) + "/" + secure_filename(request.get_json()['file_name'])
 
             # Create new release in database
 

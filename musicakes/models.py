@@ -132,7 +132,7 @@ class Artist(db.Model):
     country = Column(String, nullable=False)
     artist_picture = Column(String, unique=False, nullable=True)
     releases = db.relationship(
-        'Release', backref='artist', cascade='all, delete', lazy=True)
+        'Release', backref='artist', order_by='desc(Release.created_on)', cascade='all, delete', lazy=True)
     tracks = db.relationship('Track', backref='artist',
                              cascade='all, delete', lazy=True)
     user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
