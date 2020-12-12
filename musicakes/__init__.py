@@ -684,6 +684,32 @@ def create_app(test_config=None):
             
         return render_template('pages/privacy.html', userinfo=data)
 
+    @flask_app.route('/search', methods=['GET'])
+    def search():
+
+        data = get_user_data()
+        search_term = request.args.get('query')   
+
+        try:
+
+            releases_search_results = Release.query.filter(Release.name.ilike('%' + search_term + '%')) \
+                                        .order_by(Release.created_on.desc()) \
+                                        .all()
+            print(releases_search_results)
+
+            formatted_releases_search_results = [release.short_public() for release in releases_search_results]
+
+            return render_template(
+                'pages/search_results.html',
+                userinfo=data,
+                releases_results=formatted_releases_search_results
+            )
+
+        except Exception as e:
+            print(e)
+
+        return render_template('pages/search_results.html', userinfo=data)
+
 
     ###################################################
 

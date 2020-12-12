@@ -171,7 +171,6 @@ class EditReleaseCoverArtForm(FlaskForm):
 		FileAllowed(['jpg', 'jpeg', 'png'], 'Image only!')
 	])
 
-
 '''
 class ReleaseForm(FlaskForm):
 

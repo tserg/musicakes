@@ -256,7 +256,6 @@ class Release(db.Model):
 
                     youtube_embed_url += track_youtube_id
                     added_track_count += 1
-                    print(track_youtube_id)
 
                 elif added_track_count == 1:
                     youtube_embed_url += '?playlist='
