@@ -1,6 +1,14 @@
 const searchButton = document.querySelector('#search-btn');
 
+const searchInput = document.querySelector('#search-term');
+
 console.log(searchButton);
+
+searchInput.addEventListener('keyup', () => {
+  if (event.keyCode === 13) {
+    searchButton.click();
+  }
+})
 
 searchButton.addEventListener('click', () => {
   var searchTerm = document.querySelector('#search-term').value;
