@@ -695,14 +695,19 @@ def create_app(test_config=None):
             releases_search_results = Release.query.filter(Release.name.ilike('%' + search_term + '%')) \
                                         .order_by(Release.created_on.desc()) \
                                         .all()
-            print(releases_search_results)
+
+            tracks_search_results = Track.query.filter(Track.name.ilike('%' + search_term + '%')) \
+                                        .order_by(Track.created_on.desc()) \
+                                        .all()
 
             formatted_releases_search_results = [release.short_public() for release in releases_search_results]
+            formatted_tracks_search_results = [track.short_public() for track in tracks_search_results]
 
             return render_template(
                 'pages/search_results.html',
                 userinfo=data,
-                releases_results=formatted_releases_search_results
+                releases_results=formatted_releases_search_results,
+                tracks_results=formatted_tracks_search_results
             )
 
         except Exception as e:
