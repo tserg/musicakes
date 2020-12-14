@@ -13,13 +13,59 @@
   </div>
 
   <div class="container">
-    <h3 class="mb-4">Releases</h3>
+    <h3 class="mb-4">Artists</h3>
+
     <div class="row">
+      
+      {% if artists_results %}
+
+      {% for artist in artists_results %}
+          <div class="col-md-auto col-xs-12">
+            <div class="card mb-4 shadow-sm">
+              <div class="bd-placeholder-img card-img-top mx-auto d-block p-2">
+            <a href="/artists/{{ artist.id }}">
+                {% if artist.artist_picture is none %}
+                  <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
+                {% else %}
+                  <img class="img-fluid rounded" src="{{ artist.artist_picture }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
+                {% endif %}
+            </a>
+        </div>
+              <div class="card-body">
+                <p class="card-text">
+                  <div class="font-weight-bold">{{ artist.name }}</div>
+                  <div>
+                    <small class="text-muted">{{ artist.country }}</small>
+                  </div>
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="btn-group">
+                    <a type="button" class="btn btn-sm btn-outline-secondary" href="/artists/{{ artist.id }}">View</a>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+      {% else %}
       <div class="col-md-auto col-xs-12">
+        <p>No artists found.</p>
+      </div>
+      {% endif %}
+      
+    </div>
+  </div>
+
+  <div class="container">
+    <h3 class="mb-4">Releases</h3>
+
+    <div class="row">
+
       {% if releases_results %}
 
       {% for release in releases_results %}
-          
+        <div class="col-md-auto col-xs-12">
             <div class="card mb-4 shadow-sm">
               <div class="bd-placeholder-img card-img-top mx-auto d-block p-2">
             <a href="/releases/{{ release.id }}">
@@ -46,48 +92,33 @@
                 </div>
               </div>
             </div>
-          
-
+          </div>
           {% endfor %}
-
-          {% else %}
-          <p>No releases found.</p>
-          {% endif %}
+      {% else %}
+      <div class="col-md-auto col-xs-12">
+        <p>No releases found.</p>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-      {% if (request.args.get('page')|int > 1) %}
-        <button class="btn btn-sm btn-outline-secondary" type="button" id ="previous-page-btn" value="Previous Page">Previous Page</button>
       {% endif %}
       
-      {% if (releases|length == 10) %}
-        <button class="btn btn-sm btn-outline-secondary" type="button" id="next-page-btn" value="Next Page">Next Page</button>
-      {% endif %}
-      
-      </div>
     </div>
-
   </div>
 
   <div class="container">
     <h3 class="mb-4">Tracks</h3>
 
     <div class="row">
-      <div class="col-md-auto col-xs-12">
-      {% if (tracks_results|length > 0) %}
       
-      
+      {% if tracks_results %}
+
       {% for track in tracks_results %}
-          
+          <div class="col-md-auto col-xs-12">
             <div class="card mb-4 shadow-sm">
               <div class="bd-placeholder-img card-img-top mx-auto d-block p-2">
             <a href="/tracks/{{ track.id }}">
                 {% if track.release_cover_art is none %}
                   <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
                 {% else %}
-                  <img class="img-fluid rounded" src="{{ track.releasecover_art }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
+                  <img class="img-fluid rounded" src="{{ track.release_cover_art }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
                 {% endif %}
             </a>
         </div>
@@ -106,31 +137,16 @@
                   
                 </div>
               </div>
-            
-
-          
-        {% endfor %}
-
-        {% else %}
+            </div>
+          </div>
+          {% endfor %}
+      {% else %}
+      <div class="col-md-auto col-xs-12">
         <p>No tracks found.</p>
-        {% endif %}
-        </div>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-      {% if (request.args.get('page')|int > 1) %}
-        <button class="btn btn-sm btn-outline-secondary" type="button" id ="previous-page-btn" value="Previous Page">Previous Page</button>
       {% endif %}
       
-      {% if (releases|length == 10) %}
-        <button class="btn btn-sm btn-outline-secondary" type="button" id="next-page-btn" value="Next Page">Next Page</button>
-      {% endif %}
-      
-      </div>
     </div>
-
   </div>
 
 </div>
