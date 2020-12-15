@@ -688,7 +688,17 @@ def create_app(test_config=None):
     def search():
 
         data = get_user_data()
-        search_term = request.args.get('query')   
+        search_term = request.args.get('query')
+
+        if search_term == '':
+
+            return render_template(
+                'pages/search_results.html',
+                userinfo=data,
+                artists_results=None,
+                releases_results=None,
+                tracks_results=None
+            )
 
         try:
 
