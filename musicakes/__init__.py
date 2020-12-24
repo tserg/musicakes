@@ -30,7 +30,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 from flask_cors import CORS
 from flask_wtf import (
-    Form, 
+    Form,
     CSRFProtect
 )
 
@@ -124,7 +124,7 @@ def create_app(test_config=None):
     # create and configure the app
     flask_app = Flask(__name__, instance_relative_config=True)
 
-    try: 
+    try:
         os.makedirs(flask_app.instance_path)
     except OSError:
         pass
@@ -198,7 +198,7 @@ def create_app(test_config=None):
         except:
 
             """
-            Key error is thrown if user is not logged in 
+            Key error is thrown if user is not logged in
             """
 
             if return_user_id:
@@ -306,7 +306,7 @@ def create_app(test_config=None):
     @flask_app.route('/home', methods=['GET'])
     @requires_log_in
     def home():
-        
+
         data = get_user_data()
 
         if data is None:
@@ -659,7 +659,7 @@ def create_app(test_config=None):
     def show_about_us():
 
         data = get_user_data()
-            
+
         return render_template('pages/about.html', userinfo=data)
 
 
@@ -667,21 +667,21 @@ def create_app(test_config=None):
     def show_faq():
 
         data = get_user_data()
-            
+
         return render_template('pages/faq.html', userinfo=data)
 
     @flask_app.route('/terms', methods=['GET'])
     def show_terms_of_use():
 
         data = get_user_data()
-            
+
         return render_template('pages/terms.html', userinfo=data)
 
     @flask_app.route('/privacy', methods=['GET'])
     def show_privacy_policy():
 
         data = get_user_data()
-            
+
         return render_template('pages/privacy.html', userinfo=data)
 
     @flask_app.route('/search', methods=['GET'])
@@ -754,7 +754,7 @@ def create_app(test_config=None):
 
             data['artist_name'] = artist.name
 
-        else: 
+        else:
 
             data['artist_name'] = None
 
@@ -788,7 +788,7 @@ def create_app(test_config=None):
         form = EditUserForm()
 
         return render_template('forms/edit_user.html',
-                                form=form, 
+                                form=form,
                                 userinfo=data)
 
     @flask_app.route('/account/edit', methods=['POST'])
@@ -899,7 +899,7 @@ def create_app(test_config=None):
     @flask_app.route('/transactions/<string:transaction_hash>/update', methods=['POST'])
     def update_transaction(transaction_hash):
         """
-        Updates a pending transaction's status 
+        Updates a pending transaction's status
         """
 
         user, data = get_user_data(True)
@@ -920,7 +920,7 @@ def create_app(test_config=None):
                 wallet_address = current_task.wallet_address
                 transaction_hash = current_task.transaction_hash
 
-                    
+
                 celery_control.revoke(current_task.task_id, terminate=True)
                 current_task.delete()
 
@@ -1001,7 +1001,7 @@ def create_app(test_config=None):
                 if User.query.filter(User.username==new_username).one_or_none():
 
                     flash('The username has been taken. Please choose another username.')
-                                                
+
                     return redirect(url_for('create_user_form'))
 
                 new_user = User(
@@ -1019,7 +1019,7 @@ def create_app(test_config=None):
 
             print(e)
             flash('Your account could not be created.')
-                                        
+
             return redirect(url_for('create_user_form'))
 
     ###################################################
@@ -1030,7 +1030,7 @@ def create_app(test_config=None):
 
     @flask_app.route('/artists', methods=['GET'])
     def get_artists():
-        
+
         data = get_user_data()
 
         try:
@@ -1129,7 +1129,7 @@ def create_app(test_config=None):
         try:
 
             if form.validate():
-                
+
                 # Split soundcloud url to get username in order to input into widget
 
                 artist_soundcloud_url = str(form.artist_soundcloud_url.data).split("/")[-1]
@@ -1208,7 +1208,7 @@ def create_app(test_config=None):
             abort(404)
 
         if user.artist.id != artist_id:
-            
+
             abort(401)
 
         try:
@@ -1244,7 +1244,7 @@ def create_app(test_config=None):
             abort(404)
 
         if user.artist.id != artist_id:
-            
+
             abort(401)
 
         try:
@@ -1303,7 +1303,7 @@ def create_app(test_config=None):
         if data is None:
 
             abort(404)
-            
+
         data['purchased_releases'], data['purchased_tracks'] =  user.get_purchases()
 
         return render_template('pages/show_purchases.html', userinfo=data)
@@ -1479,7 +1479,7 @@ def create_app(test_config=None):
 
         artist_user = Artist.query.filter(Artist.id==release.artist_id).one_or_none()
 
-        keys = [] 
+        keys = []
         filenames = []
 
         for track in release.tracks:
@@ -1570,7 +1570,7 @@ def create_app(test_config=None):
             if current_release.smart_contract_address is None:
                 release_data['smart_contract_address'] = "0x"
 
-            # Get YouTube playlist URL 
+            # Get YouTube playlist URL
 
             if release_data['youtube_embed_url'] == 'https://youtube.com/embed/':
                 release_data['youtube_embed_url'] = None
@@ -1592,7 +1592,7 @@ def create_app(test_config=None):
                 creator = False
 
             return render_template('pages/show_release.html',
-                                    release=release_data, 
+                                    release=release_data,
                                     userinfo=data,
                                     creator=creator,
                                     chain_id=ETHEREUM_CHAIN_ID,
@@ -1630,7 +1630,7 @@ def create_app(test_config=None):
 
         presubmission_form = ReleasePresubmissionForm(request.form)
 
-        track_count = presubmission_form.track_count.data 
+        track_count = presubmission_form.track_count.data
 
         if track_count >= 2:
 
@@ -1737,7 +1737,7 @@ def create_app(test_config=None):
 
                 user_track_count = len(Track.query.filter(Track.artist_id==user.artist.id).all())
 
-                # Snippet to determine which smart contract factory address to use 
+                # Snippet to determine which smart contract factory address to use
 
                 '''
 
@@ -1753,8 +1753,8 @@ def create_app(test_config=None):
 
                 contract_factory_address = MusicakesContractFactory.query.get(1).smart_contract_address
 
-                return render_template('pages/deploy_release.html', 
-                                        release=release_data, 
+                return render_template('pages/deploy_release.html',
+                                        release=release_data,
                                         userinfo=data,
                                         contract_factory_address=contract_factory_address,
                                         chain_id=ETHEREUM_CHAIN_ID)
@@ -1926,7 +1926,7 @@ def create_app(test_config=None):
 
             print(e)
             flash('Your release information could not be updated. Please try again.')
-        
+
         return redirect(url_for('edit_release_form', release_id=release_id))
 
     @flask_app.route('/releases/<int:release_id>/edit_cover_art', methods=['GET'])
@@ -1945,7 +1945,7 @@ def create_app(test_config=None):
         form = EditReleaseCoverArtForm()
 
         return render_template('forms/edit_release_cover_art.html',
-                                form=form, 
+                                form=form,
                                 userinfo=data,
                                 release=release_data)
 
@@ -2057,7 +2057,7 @@ def create_app(test_config=None):
             if formatted_track_data['smart_contract_address'] is None:
                 formatted_track_data['smart_contract_address'] = "0x"
 
-            # Get YouTube playlist URL 
+            # Get YouTube playlist URL
 
             if formatted_track_data['youtube_embed_url'] == 'https://youtube.com/embed/':
                 formatted_track_data['youtube_embed_url'] = None
