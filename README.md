@@ -73,7 +73,7 @@ flask run
 
 Setting the `FLASK_ENV` variable to `development` will detect file changes and restart the server automatically.
 
-Setting the `FLASK_APP` variable to `app` directs flask to use the `app.py` application. 
+Setting the `FLASK_APP` variable to `app` directs flask to use the `app.py` application.
 
 ### Testing
 
@@ -105,17 +105,22 @@ CREATE DATABASE musicakes_test;
 ```
 4. Change the database path for TEST_DATABASE_PATH in .env to your test database path.
 
-5. Run the app by running:
+5. Add the DAI token into the `payment_token` table, and the Musicakes factory contract into the `musicakes_contract_factory` table. If you are on Ropsten, refer to the section below for the contract addresses.
+
+6. Run the app by running:
 ```
 flask run
 ```
 
-6. In a new terminal, run the following command to start a Celery worker
+7. In a new terminal, run the following command to start a Celery worker
 ```
 celery -A musicakes.celery worker
 ```
 
 #### Ropsten Testnet
+
+DAI token address on Ropsten testnet is:
+  * 0xad6d458402f60fd3bd25163575031acdce07538d
 
 Contract factory addresses on Ropsten testnet are:
   * 0x8232d36c1dc9EACf5089Ac76cbbf37CDfB678D82 (100 tokens to creator)
