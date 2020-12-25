@@ -451,6 +451,31 @@ def create_app(test_config=None):
 
         return True
 
+    def delete_files(s3_directory):
+        """
+        Delete a folder from AWS S3
+
+        :s3_directory: path of folder of files to be deleted
+        :return: True if files were deleted, else false
+        """
+
+        s3_client = boto3.client('s3',
+                                region_name='us-east-1',
+                                aws_access_key_id=S3_KEY,
+                                aws_secret_access_key=S3_SECRET)
+
+        try:
+
+            bucket = s3_client.Bucket(S3_BUCKET)
+            target_objects = bucket.objects.filter(Prefix=s3_directory)
+            print(target_objects)
+
+        except ClientError as e:
+            print(e)
+            return False
+
+        return True
+
     def download_track(key, file_name):
         """
         Function to download a given track from an S3 bucket
@@ -534,10 +559,19 @@ def create_app(test_config=None):
 
         release_id = request.args.get('release_id')
 
-        s3_client = boto3.client('s3',
-                                region_name='us-east-1',
-                                aws_access_key_id=S3_KEY,
-                                aws_secret_access_key=S3_SECRET)
+        cond = True 
+
+        while cond:
+            try:
+
+                s3_client = boto3.client('s3',
+                                        region_name='us-east-1',
+                                        aws_access_key_id=S3_KEY,
+                                        aws_secret_access_key=S3_SECRET)
+
+                cond = False
+            except:
+                cond = True
 
         if release_id == None:
 
@@ -2008,7 +2042,13 @@ def create_app(test_config=None):
 
             current_release = Release.query.filter(Release.id==release_id).one_or_none()
 
-            current_release.delete()
+            # Delete release
+
+            s3_directory = user.auth_id + "/" + release_id + "/"
+
+            delete_files(s3_directory)
+
+            # current_release.delete()
 
             return jsonify({
                 'success': True,
