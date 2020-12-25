@@ -1989,6 +1989,36 @@ def create_app(test_config=None):
 
         return redirect(url_for('edit_release_cover_art_form', release_id=release_id))
 
+    @flask_app.route('/releases/<int:release_id>/delete', methods=['POST'])
+    @requires_log_in
+    def delete_release(release_id):
+
+        """
+        Allow user to delete a release
+        """
+
+        print("delete triggered")
+        user, data = get_user_data(True)
+
+        if user.artist is None:
+
+            abort(404)
+
+        try:
+
+            current_release = Release.query.filter(Release.id==release_id).one_or_none()
+
+            current_release.delete()
+
+            return jsonify({
+                'success': True,
+            })
+
+        except Exception as e:
+            print(e)
+            return jsonify({
+                'success': False
+            })
 
 
     ###################################################
