@@ -451,11 +451,11 @@ def create_app(test_config=None):
 
         return True
 
-    def delete_files(s3_directory):
+    def delete_files(file_dict_list):
         """
         Delete a folder from AWS S3
 
-        :s3_directory: path of folder of files to be deleted
+        :file_dict_list: dictionary of keys of objects to be deleted
         :return: True if files were deleted, else false
         """
 
@@ -466,9 +466,13 @@ def create_app(test_config=None):
 
         try:
 
-            bucket = s3_client.Bucket(S3_BUCKET)
-            target_objects = bucket.objects.filter(Prefix=s3_directory)
-            print(target_objects)
+            bucket = s3_client.delete_objects(
+                Bucket=S3_BUCKET,
+                Delete={
+                    'Objects': file_dict_list,
+                    'Quiet': False
+                }
+            )
 
         except ClientError as e:
             print(e)
@@ -559,7 +563,7 @@ def create_app(test_config=None):
 
         release_id = request.args.get('release_id')
 
-        cond = True 
+        cond = True
 
         while cond:
             try:
@@ -2031,7 +2035,6 @@ def create_app(test_config=None):
         Allow user to delete a release
         """
 
-        print("delete triggered")
         user, data = get_user_data(True)
 
         if user.artist is None:
@@ -2042,19 +2045,36 @@ def create_app(test_config=None):
 
             current_release = Release.query.filter(Release.id==release_id).one_or_none()
 
-            # Delete release
+            # Extract S3 keys for files to be deleted and pass to delete_files()
 
-            s3_directory = user.auth_id + "/" + release_id + "/"
+            file_dict_list = []
 
-            delete_files(s3_directory)
+            file_url_list = []
 
-            # current_release.delete()
+            file_url_list.append(current_release.cover_art)
+
+            for track in current_release.tracks:
+                file_url_list.append(track.download_url)
+
+            for file_url in file_url_list:
+                if file_url is not None:
+                    file_s3_path = file_url.split(S3_LOCATION)[-1]
+                    file_dict_list.append({'Key': file_s3_path})
+
+            # Delete files
+
+            delete_files(file_dict_list)
+
+            # Delete entry
+
+            current_release.delete()
 
             return jsonify({
                 'success': True,
             })
 
         except Exception as e:
+            print("error while deleting")
             print(e)
             return jsonify({
                 'success': False
