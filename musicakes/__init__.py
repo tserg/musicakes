@@ -114,15 +114,13 @@ RELEASES_PER_PAGE = 10
 TRACKS_PER_PAGE = 10
 ARTISTS_PER_PAGE = 10
 
-class AuthError(Exception):
-    def __init__(self, error, status_code):
-        self.error = error
-        self.status_code = status_code
-
 def create_app(test_config=None):
 
     # create and configure the app
     flask_app = Flask(__name__, instance_relative_config=True)
+
+    from musicakes.errors import bp as errors_bp
+    flask_app.register_blueprint(errors_bp)
 
     try:
         os.makedirs(flask_app.instance_path)
@@ -2223,34 +2221,6 @@ def create_app(test_config=None):
             return jsonify({
                 'success': False
             })
-
-    """
-        Errors handling
-    """
-
-    @flask_app.errorhandler(AuthError)
-    def auth_error(AuthError):
-        return render_template('errors/401.html'), 401
-
-    @flask_app.errorhandler(400)
-    def bad_request_error(error):
-        return render_template('errors/400.html'), 400
-
-    @flask_app.errorhandler(401)
-    def unathorised_error(error):
-        return render_template('errors/401.html'), 401
-
-    @flask_app.errorhandler(404)
-    def not_found_error(error):
-        return render_template('errors/404.html'), 404
-
-    @flask_app.errorhandler(405)
-    def wrong_method(error):
-        return render_template('errors/405.html'), 405
-
-    @flask_app.errorhandler(500)
-    def server_error(error):
-        return render_template('errors/500.html'), 500
 
 
     return flask_app
