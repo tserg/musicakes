@@ -11,7 +11,7 @@ const deployContractButton = document.querySelector('#deploy-contract-btn');
 var web3 = new Web3(Web3.givenProvider);
 
 deployContractButton.addEventListener('click', () => {
-  
+
   deployMusicakesContract();
 
 });
@@ -107,7 +107,7 @@ window.addEventListener('load', async () => {
     console.log('Ethereum successfully detected!');
 
     ethereum.on('accountsChanged', function(accounts) {
-      window.location.reload();
+
     });
 
     // From now on, this should always be true:
@@ -131,7 +131,7 @@ window.addEventListener('load', async () => {
       } else {
         alert('You are connected to the wrong network.')
       }
-      
+
     }
 
   } else {

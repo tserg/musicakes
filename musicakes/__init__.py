@@ -423,7 +423,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    def upload_profile_picture(file, key):
+    def upload_file(file, key):
         """Upload a user's profile picture to an S3 bucket with public access
 
         :param file: File to upload
@@ -519,7 +519,7 @@ def create_app(test_config=None):
 
         return str(zip_file_name + ".zip")
 
-    @flask_app.route('/sign_s3_upload/', methods=['GET'])
+    @flask_app.route('/sign_s3_upload', methods=['GET'])
     @requires_log_in
     def sign_s3_upload():
 
@@ -813,7 +813,7 @@ def create_app(test_config=None):
 
                 modified_filename = user.auth_id + "/" + filename
 
-                upload_profile_picture(f, modified_filename)
+                upload_file(f, modified_filename)
 
                 file_url = S3_LOCATION + modified_filename
                 user.profile_picture = file_url
@@ -1974,7 +1974,7 @@ def create_app(test_config=None):
 
                 modified_filename = user.auth_id + "/" + str(release_id) + "/" + filename
 
-                upload_profile_picture(f, modified_filename)
+                upload_file(f, modified_filename)
 
                 file_url = S3_LOCATION + modified_filename
                 release.cover_art = file_url
@@ -1988,6 +1988,8 @@ def create_app(test_config=None):
             flash('The cover art could not be updated.')
 
         return redirect(url_for('edit_release_cover_art_form', release_id=release_id))
+
+
 
     ###################################################
 

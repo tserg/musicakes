@@ -39,7 +39,7 @@ from werkzeug.utils import secure_filename
 import pycountry
 
 def flash_validation_errors(form):
-	"""	
+	"""
 		Helper function to show form errors
 	"""
 
@@ -101,7 +101,7 @@ class EditArtistForm(FlaskForm):
 			'placeholder': '0x'
 		}
 	)
-	
+
 	artist_soundcloud_url = URLField(
 		validators=[URL(), Optional()]
 	)
@@ -124,7 +124,7 @@ class TrackForm(FlaskForm):
 	)
 
 	track_price = IntegerField('Price of track',
-		default=1, 
+		default=1,
 		validators=[DataRequired()],
 		widget=html5.NumberInput(min=1, max=100)
 	)
@@ -138,7 +138,7 @@ class TrackForm(FlaskForm):
 class ReleasePresubmissionForm(FlaskForm):
 
 	track_count = IntegerField('Number of Tracks',
-		default=1, 
+		default=1,
 		validators=[DataRequired()],
 		widget=html5.NumberInput(min=1,max=100)
 	)
@@ -150,7 +150,7 @@ class EditReleaseForm(FlaskForm):
 	)
 
 	release_price = IntegerField('Price of release',
-		default=1, 
+		default=1,
 		validators=[DataRequired()],
 		widget=html5.NumberInput(min=1,max=100),
 	)
@@ -187,7 +187,7 @@ class ReleaseForm(FlaskForm):
 	)
 
 	release_price = IntegerField('Price of release',
-		default=1, 
+		default=1,
 		validators=[DataRequired()],
 		widget=html5.NumberInput(min=1,max=100),
 		render_kw={'id': "release-price-field"}
