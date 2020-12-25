@@ -121,7 +121,30 @@
 	</form>
 
     <div class="col col-sm-2">
-      <button class="btn btn-sm btn-outline-danger" id="delete-release-btn">Delete</button>
+      <button class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#delete-release-modal">Delete</button>
+    </div>
+
+    <!-- Modal for purchase of release -->
+
+    <div class="modal fade" id="delete-release-modal" tabindex="-1" role="dialog" aria-labelledby="#delete-release-modal-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delete-release-modal-title">Delete release</h5>
+          </div>
+
+          <div class="modal-body">
+
+            <p>Are you sure you want to delete this release?</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">No</button>
+            <button type="button" id="delete-release-btn" class="btn btn-sm btn-outline-danger">Yes</button>
+          </div>
+
+        </div>
+      </div>
     </div>
 
 
