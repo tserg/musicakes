@@ -75,7 +75,7 @@ function downloadRelease(release_id) {
 	        	})
 	        }
 	  	}
-  	
+
 	};
 	xhr.send();
 }
