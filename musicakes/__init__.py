@@ -77,6 +77,10 @@ ALGORITHMS = os.getenv('ALGORITHMS', 'Does not exist')
 API_AUDIENCE = os.getenv('API_AUDIENCE', 'Does not exist')
 REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
 
+# Environment variable for AWS S3 location
+
+S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
+
 # Environment variables for Ethereum blockchain
 
 ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')
