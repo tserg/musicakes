@@ -3,14 +3,7 @@ import time
 import json
 from urllib.parse import urlencode
 
-from werkzeug.datastructures import MultiDict
-
-# Import AWS S3 and dependencies
-
-from .s3_utils import *
-import zipfile
-
-from functools import wraps
+from .decorators import *
 
 from flask import (
     Flask,
@@ -34,7 +27,6 @@ from flask_wtf import (
 )
 
 from datetime import timedelta
-from jose import jwt
 
 from .tasks import *
 from .forms import *
@@ -114,6 +106,9 @@ def create_app(test_config=None):
     from musicakes.errors import bp as errors_bp
     flask_app.register_blueprint(errors_bp)
 
+    from musicakes.aws_s3 import bp as aws_s3_bp
+    flask_app.register_blueprint(aws_s3_bp)
+
     try:
         os.makedirs(flask_app.instance_path)
     except OSError:
@@ -154,14 +149,6 @@ def create_app(test_config=None):
     # Auth
 
     ###################################################
-
-    def requires_log_in(f):
-        @wraps(f)
-        def decorated(*args, **kwargs):
-            if 'token' not in session:
-                return redirect('/')
-            return f(*args, **kwargs)
-        return decorated
 
     def get_user_data(return_user_id=False):
 
@@ -399,172 +386,6 @@ def create_app(test_config=None):
                     purchase.insert()
 
         return True
-
-    ###################################################
-
-    # AWS S3
-
-    ###################################################
-
-    def download_track(key, file_name):
-        """
-        Function to download a given track from an S3 bucket
-        """
-        s3_client = boto3.client('s3',
-                                region_name='us-east-1',
-                                aws_access_key_id=S3_KEY,
-                                aws_secret_access_key=S3_SECRET)
-
-        try:
-
-            s3_client.download_file(
-                Bucket=S3_BUCKET,
-                Key=key,
-                Filename=file_name
-            )
-
-        except ClientError as e:
-
-            print(e)
-            return False
-
-        return output
-
-    def download_release(keys, filenames, zip_file_name):
-        """
-        Function to download multiple tracks as zip from an S3 bucket
-        """
-
-        if len(keys) != len(filenames):
-            return False
-
-        s3_client = boto3.client('s3',
-                                region_name='us-east-1',
-                                aws_access_key_id=S3_KEY,
-                                aws_secret_access_key=S3_SECRET)
-
-        for i in range(len(keys)):
-
-
-            output = filenames[i]
-
-            print(output)
-
-            try:
-
-                s3_client.download_file(
-                    Bucket=S3_BUCKET,
-                    Key=keys[i],
-                    Filename=output
-                )
-
-            except ClientError as e:
-
-                print(e)
-
-        zf = zipfile.ZipFile(os.path.join(os.getcwd(), str(zip_file_name+".zip")), "w")
-
-        for filename in filenames:
-            zf.write(filename)
-
-        zf.close()
-
-        for filename in filenames:
-            os.remove(filename)
-
-        return str(zip_file_name + ".zip")
-
-    @flask_app.route('/sign_s3_upload', methods=['GET'])
-    @requires_log_in
-    def sign_s3_upload():
-
-        user, data = get_user_data(True)
-
-        if not user:
-            abort(404)
-
-        file_name = secure_filename(request.args.get('file_name'))
-
-        file_type = request.args.get('file_type')
-
-        release_id = request.args.get('release_id')
-
-        if release_id == None:
-
-            key = user.auth_id + "/" + file_name
-
-        else:
-
-            key = user.auth_id + "/" + release_id + "/" + file_name
-
-        json_data = generate_s3_presigned_post_for_upload(key, file_type, file_name)
-
-        return json_data
-
-    @flask_app.route('/sign_s3_download/', methods=['GET'])
-    @requires_log_in
-    def sign_s3_download_track():
-
-        user, data = get_user_data(True)
-
-        if user is None:
-
-            abort(404)
-
-        track_id = request.args.get('track_id')
-
-        track = Track.query.filter(Track.id==track_id).one_or_none()
-
-        if track is None:
-
-            abort(404)
-
-        s3_client = boto3.client('s3',
-                                region_name='us-east-1',
-                                aws_access_key_id=S3_KEY,
-                                aws_secret_access_key=S3_SECRET)
-
-        url_components = track.download_url.rsplit('/')
-
-        print(url_components)
-
-        filename = secure_filename(url_components[-1])
-
-        key = url_components[-3] + "/" + url_components[-2] + "/" + filename
-
-        print(key)
-
-        presigned_url = s3_client.generate_presigned_url(
-            'get_object',
-            Params = {
-                'Bucket': S3_BUCKET,
-                'Key': key
-            },
-            ExpiresIn=300
-        )
-
-        return json.dumps({
-            'data': presigned_url,
-            'file_name': filename
-        })
-
-    @flask_app.route('/releases/<int:release_id>/download', methods=['GET'])
-    @requires_log_in
-    def download_release(release_id):
-
-        release = Release.query.filter(Release.id==release_id).one_or_none()
-
-        if release is None:
-
-            abort(404)
-
-        track_ids = [track.id for track in release.tracks]
-
-        print(track_ids)
-
-        return json.dumps({
-            'track_ids': track_ids
-        })
 
     ###################################################
 
@@ -1368,6 +1189,10 @@ def create_app(test_config=None):
 
         return redirect(url_for('show_purchases'))
 
+    """
+
+    # Not in use due to lack of server
+
     @flask_app.route('/releases/<int:release_id>/download', methods=['GET'])
     @requires_log_in
     def download_purchased_release(release_id):
@@ -1422,6 +1247,8 @@ def create_app(test_config=None):
             flash('Unable to download file.')
 
         return redirect(url_for('show_purchases'))
+
+    """
 
     ###################################################
 
@@ -1906,6 +1733,24 @@ def create_app(test_config=None):
 
         return redirect(url_for('edit_release_cover_art_form', release_id=release_id))
 
+    @flask_app.route('/releases/<int:release_id>/download', methods=['GET'])
+    @requires_log_in
+    def download_release(release_id):
+
+        release = Release.query.filter(Release.id==release_id).one_or_none()
+
+        if release is None:
+
+            abort(404)
+
+        track_ids = [track.id for track in release.tracks]
+
+        print(track_ids)
+
+        return json.dumps({
+            'track_ids': track_ids
+        })
+
     @flask_app.route('/releases/<int:release_id>/delete', methods=['POST'])
     @requires_log_in
     def delete_release(release_id):
@@ -2103,9 +1948,7 @@ def create_app(test_config=None):
                 'success': False
             })
 
-
     return flask_app
-
 
 app = create_app()
 celery = make_celery(app)

@@ -42,7 +42,14 @@ def upload_file(file, key):
 
     return True
 
-def generate_s3_presigned_post_for_upload(key, file_type, file_name):
+def generate_s3_presigned_upload(key, file_type, file_name):
+
+    """Generate presigned URL for upload
+    :param key: Path name for the file
+    :param file_type: Type of file to be uploaded
+    :param file_name: Name of file to be uploaded
+    :return: JSON data with presigned URL
+    """
 
     cond = True
 
@@ -97,6 +104,138 @@ def generate_s3_presigned_post_for_upload(key, file_type, file_name):
         'data': presigned_post,
         'url': S3_LOCATION + key
     })
+
+def generate_s3_presigned_download(key, filename):
+
+    """Generate presigned URL for download
+    :param key: Path name for the file
+    :param file_name: Name of file to be downloaded
+    :return: JSON data with presigned URL
+    """
+
+    cond = True
+
+    while cond:
+
+        try:
+
+            s3_client = boto3.client('s3',
+                region_name='us-east-1',
+                aws_access_key_id=S3_KEY,
+                aws_secret_access_key=S3_SECRET
+            )
+
+            cond = False
+
+        except:
+            cond = True
+
+    presigned_url = s3_client.generate_presigned_url(
+        'get_object',
+        Params = {
+            'Bucket': S3_BUCKET,
+            'Key': key
+        },
+        ExpiresIn=300
+    )
+
+    return json.dumps({
+        'data': presigned_url,
+        'file_name': filename
+    })
+
+def download_track(key, file_name):
+    """
+    Function to download a given track from an S3 bucket
+    """
+
+    cond = True
+
+    while cond:
+
+        try:
+
+            s3_client = boto3.client('s3',
+                region_name='us-east-1',
+                aws_access_key_id=S3_KEY,
+                aws_secret_access_key=S3_SECRET
+            )
+
+            cond = False
+
+        except:
+            cond = True
+
+    try:
+
+        s3_client.download_file(
+            Bucket=S3_BUCKET,
+            Key=key,
+            Filename=file_name
+        )
+
+    except ClientError as e:
+
+        print(e)
+        return False
+
+    return output
+
+def download_release(keys, filenames, zip_file_name):
+    """
+    Function to download multiple tracks as zip from an S3 bucket
+    """
+
+    if len(keys) != len(filenames):
+        return False
+
+    cond = True
+
+    while cond:
+
+        try:
+
+            s3_client = boto3.client('s3',
+                region_name='us-east-1',
+                aws_access_key_id=S3_KEY,
+                aws_secret_access_key=S3_SECRET
+            )
+
+            cond = False
+
+        except:
+            cond = True
+
+    for i in range(len(keys)):
+
+
+        output = filenames[i]
+
+        print(output)
+
+        try:
+
+            s3_client.download_file(
+                Bucket=S3_BUCKET,
+                Key=keys[i],
+                Filename=output
+            )
+
+        except ClientError as e:
+
+            print(e)
+
+    zf = zipfile.ZipFile(os.path.join(os.getcwd(), str(zip_file_name+".zip")), "w")
+
+    for filename in filenames:
+        zf.write(filename)
+
+    zf.close()
+
+    for filename in filenames:
+        os.remove(filename)
+
+    return str(zip_file_name + ".zip")
 
 def delete_files(file_dict_list):
     """
