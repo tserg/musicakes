@@ -59,6 +59,10 @@ from web3.exceptions import TransactionNotFound
 
 from dotenv import load_dotenv
 
+# Import S3 helper functions
+
+from .aws_s3.s3_utils import *
+
 load_dotenv()
 
 # Secret key
