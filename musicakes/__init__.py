@@ -20,6 +20,8 @@ from flask import (
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
+from sqlalchemy import or_
+
 from flask_cors import CORS
 from flask_wtf import (
     Form,
@@ -1793,13 +1795,29 @@ def create_app(test_config=None):
                     file_s3_path = file_url.split(S3_LOCATION)[-1]
                     file_dict_list.append({'Key': file_s3_path})
 
-            # Delete files
+            # Delete files if no purchases have been made
 
-            delete_files(file_dict_list)
+            tracks = Track.query.filter(Release.id==release_id)
 
-            # Delete entry
+            track_ids_list = [track.id for track in tracks]
 
-            current_release.delete()
+            has_purchases = Purchase.query.filter(or_(Purchase.release_id==release_id, Purchase.track_id.in_(track_ids_list))). \
+                join(Release). \
+                join(Track).one_or_none()
+
+            if has_purchases is None:
+
+                delete_files(file_dict_list)
+
+                # Delete entry
+
+                current_release.delete()
+
+            else:
+                print("Release has been purchased")
+                return jsonify({
+                    'success': False
+                })
 
             return jsonify({
                 'success': True,

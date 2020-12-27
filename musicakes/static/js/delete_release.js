@@ -25,9 +25,18 @@ function deleteRelease(release_id) {
     if(xhr.readyState === 4){
       if(xhr.status === 200){
 
-        console.log("Release has been deleted.");
-        alert("Your release has been deleted.");
-        window.location.replace('/home');
+        response = JSON.parse(xhr.response);
+
+        console.log(response);
+
+        if (response['success'] == true) {
+
+          console.log("Release has been deleted.");
+          alert("Your release has been deleted.");
+          window.location.replace('/home');
+        } else {
+          alert("Your release could not be deleted.");
+        }
 
       }
       else{
