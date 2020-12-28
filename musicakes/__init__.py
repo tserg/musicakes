@@ -294,9 +294,10 @@ def create_app(test_config=None):
             return redirect(url_for('create_user_form'))
 
         latest_releases = Release.query.join(Release.tracks) \
-                            .having(func.count(Track.id) > 0) \
-                            .group_by(Release.id) \
-                            .order_by(Release.created_on.desc()).limit(5).all()
+            .filter(Release.is_removed == False) \
+            .having(func.count(Track.id) > 0) \
+            .group_by(Release.id) \
+            .order_by(Release.created_on.desc()).limit(5).all()
 
         latest_releases_data = [release.short_public() for release in latest_releases]
 
@@ -454,13 +455,22 @@ def create_app(test_config=None):
                                         .order_by(Artist.created_on.desc()) \
                                         .all()
 
-            releases_search_results = Release.query.filter(Release.name.ilike('%' + search_term + '%')) \
-                                        .order_by(Release.created_on.desc()) \
-                                        .all()
+            # Filter for releases that have been removed by artists
 
-            tracks_search_results = Track.query.filter(Track.name.ilike('%' + search_term + '%')) \
-                                        .order_by(Track.created_on.desc()) \
-                                        .all()
+            releases_search_results = Release.query.filter(
+                Release.name.ilike('%' + search_term + '%'),
+                Release.is_removed == False
+                ) \
+                .order_by(Release.created_on.desc()) \
+                .all()
+
+            tracks_search_results = Track.query.join(Track.release). \
+                filter(
+                Track.name.ilike('%' + search_term + '%'),
+                Release.is_removed == False
+                ) \
+                .order_by(Track.created_on.desc()) \
+                .all()
 
             formatted_artist_search_results = [artist.short() for artist in artists_search_results]
             formatted_releases_search_results = [release.short_public() for release in releases_search_results]
@@ -1281,9 +1291,10 @@ def create_app(test_config=None):
             end = start + RELEASES_PER_PAGE
 
             all_releases = Release.query.join(Release.tracks) \
-                            .having(func.count(Track.id) > 0) \
-                            .group_by(Release.id) \
-                            .order_by(Release.created_on.desc()).all()
+                .filter(Release.is_removed == False) \
+                .having(func.count(Track.id) > 0) \
+                .group_by(Release.id) \
+                .order_by(Release.created_on.desc()).all()
 
             formatted_all_releases = [release.short_public()
                                       for release in all_releases]
@@ -1814,9 +1825,12 @@ def create_app(test_config=None):
                 current_release.delete()
 
             else:
-                print("Release has been purchased")
+
+                current_release.is_removed = True
+                current_release.update()
+
                 return jsonify({
-                    'success': False
+                    'success': True
                 })
 
             return jsonify({
@@ -1851,7 +1865,11 @@ def create_app(test_config=None):
             start = (page-1)*TRACKS_PER_PAGE
             end = start + TRACKS_PER_PAGE
 
-            all_tracks = Track.query.order_by(Track.created_on.desc()).all()
+            # Filter for releases that have been removed by artist
+
+            all_tracks = Track.query.join(Track.release) \
+                .filter(Release.is_removed == False) \
+                .order_by(Track.created_on.desc()).all()
 
             formatted_all_tracks = [track.short_public() for track in all_tracks]
 

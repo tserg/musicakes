@@ -3,14 +3,14 @@ import datetime
 from dotenv import load_dotenv
 
 from sqlalchemy import (
-    Column, 
-    String, 
-    Integer, 
+    Column,
+    String,
+    Integer,
     Float,
     Boolean,
-    create_engine, 
-    DateTime, 
-    UniqueConstraint, 
+    create_engine,
+    DateTime,
+    UniqueConstraint,
     CheckConstraint
 )
 
@@ -48,7 +48,7 @@ class User(db.Model):
     artist = db.relationship('Artist', uselist=False, back_populates='user')
     profile_picture = Column(String, unique=False, nullable=True)
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
-    
+
     def insert(self):
         db.session.add(self)
         db.session.commit()
@@ -92,10 +92,10 @@ class User(db.Model):
         """
 
         purchased_releases = Purchase.query.filter(Purchase.user_id==self.id). \
-                    join(Release).all()
+            join(Release).all()
 
         purchased_tracks = Purchase.query.filter(Purchase.user_id==self.id). \
-                            join(Track).all()
+            join(Track).all()
 
 
         formatted_purchased_releases=[]
@@ -108,6 +108,7 @@ class User(db.Model):
                 temp_dict['release_id'] = release.id
                 temp_dict['release_name'] = release.name
                 temp_dict['release_cover_art'] = release.cover_art
+                temp_dict['release_is_removed'] = release.is_removed
                 formatted_purchased_releases.append(temp_dict)
 
         formatted_purchased_tracks = []
@@ -120,6 +121,7 @@ class User(db.Model):
                 temp_dict['track_id'] = track.id
                 temp_dict['track_name'] = track.name
                 temp_dict['release_cover_art'] = track.release.cover_art
+                temp_dict['release_is_removed'] = track.release.is_removed
                 formatted_purchased_tracks.append(temp_dict)
 
         return formatted_purchased_releases, formatted_purchased_tracks
@@ -160,18 +162,22 @@ class Artist(db.Model):
 
     def short(self):
 
-        formatted_releases = [{"release_id": release.id,
-                               "release_name": release.name,
-                               "release_price": release.price,
-                               "release_cover_art": release.cover_art,
-                               "created_on": release.created_on,
-                               "tracks": [{"track_name": track.name,
-                                           "track_id": track.id,
-                                           "track_price": track.price}
-                                          for track in release.tracks]}
-                              for release in self.releases]
+        public_releases = self.releases
 
-        # Checks if external link is null, and replace with empty string if null for 
+        formatted_releases = [{
+            "release_id": release.id,
+            "release_name": release.name,
+            "release_price": release.price,
+            "release_cover_art": release.cover_art,
+            "created_on": release.created_on,
+            "tracks": [{"track_name": track.name,
+               "track_id": track.id,
+               "track_price": track.price}
+               for track in release.tracks]}
+               for release in self.releases if release.is_removed == False
+            ]
+
+        # Checks if external link is null, and replace with empty string if null for
         # rendering in jinja
 
         if self.soundcloud_url is None:
@@ -217,6 +223,7 @@ class Release(db.Model):
     created_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     smart_contract_address=Column(String, unique=True, nullable=True)
 
+    is_removed = Column(Boolean, default=False, nullable=False)
 
     def insert(self):
         db.session.add(self)
@@ -380,7 +387,7 @@ class Track(db.Model):
         result = []
 
         for purchase in purchases:
-            
+
             purchaser_name = User.query.get(purchase.user_id).username
 
             if purchaser_name not in result:
@@ -403,9 +410,9 @@ class Purchase(db.Model):
     purchased_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     transaction_hash = Column(String, unique=True, nullable=False)
     wallet_address = Column(String, nullable=False)
-    
+
     __table_args__ = (
-        UniqueConstraint('user_id', 'release_id', name='unique_release_purchase'), 
+        UniqueConstraint('user_id', 'release_id', name='unique_release_purchase'),
         CheckConstraint('NOT(release_id IS NULL and track_id IS NULL)', name ='release_or_track_id_defined'),
         CheckConstraint('NOT(release_id IS NOT NULL and track_id IS NOT NULL)', name = 'only_release_or_track_id_defined'),
         )
