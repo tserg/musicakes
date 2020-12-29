@@ -3,8 +3,6 @@ import time
 import json
 from urllib.parse import urlencode
 
-from .decorators import *
-
 from flask import (
     Flask,
     request,
@@ -61,9 +59,11 @@ from web3.exceptions import TransactionNotFound
 
 from dotenv import load_dotenv
 
-# Import S3 helper functions
+# Import utils
 
 from .aws_s3.s3_utils import *
+from .decorators import *
+from .session_utils import *
 
 load_dotenv()
 
@@ -159,45 +159,6 @@ def create_app(test_config=None):
     # Auth
 
     ###################################################
-
-    def get_user_data(return_user_id=False):
-
-        """
-        Helper function to obtain user data and User model object for rendering of page
-        """
-
-        try:
-
-            logged_in = session.get('token', None)
-
-            auth_id = session['jwt_payload']['sub'][6:]
-            user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-            data = user.short_private()
-
-        except:
-
-            """
-            Key error is thrown if user is not logged in
-            """
-
-            if return_user_id:
-
-                return None, None
-
-            else:
-
-                return None
-
-        else:
-
-            if return_user_id:
-
-                return user, data
-
-            else:
-
-                return data
 
     def has_purchased_track(_userId, _trackId, _releaseId):
 

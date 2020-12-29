@@ -1,51 +1,13 @@
-from flask import render_template, request, session
+from flask import render_template, request
 from werkzeug.utils import secure_filename
 
 from . import bp
 
-from .s3_utils import *
-
 from ..decorators import requires_log_in
-from ..models import Track, User
+from ..models import Track
 
-def get_user_data(return_user_id=False):
-
-    """
-    Helper function to obtain user data and User model object for rendering of page
-    """
-
-    try:
-
-        logged_in = session.get('token', None)
-
-        auth_id = session['jwt_payload']['sub'][6:]
-        user = User.query.filter(User.auth_id==auth_id).one_or_none()
-
-        data = user.short_private()
-
-    except:
-
-        """
-        Key error is thrown if user is not logged in
-        """
-
-        if return_user_id:
-
-            return None, None
-
-        else:
-
-            return None
-
-    else:
-
-        if return_user_id:
-
-            return user, data
-
-        else:
-
-            return data
+from .s3_utils import *
+from ..session_utils import *
 
 @bp.route('/sign_s3_upload', methods=['GET'])
 @requires_log_in
