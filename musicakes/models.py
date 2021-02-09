@@ -504,6 +504,38 @@ class PurchaseCeleryTask(db.Model):
             'is_visible': self.is_visible
         }
 
+class DeployCeleryTask(db.Model):
+
+    task_id = Column(String, primary_key=True)
+    user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
+    release_id = Column(Integer, db.ForeignKey('releases.id'), nullable=False)
+    wallet_address = Column(String, nullable=False)
+    transaction_hash = Column(String, unique=True, nullable=False)
+    started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
+    is_confirmed = Column(Boolean, default=False, nullable=False)
+    is_visible = Column(Boolean, default=True, nullable=False)
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def short(self):
+        return {
+            'task_id': self.task_id,
+            'user_id': self.user_id,
+            'wallet_address': self.wallet_address,
+            'transaction_hash': self.transaction_hash,
+            'is_confirmed': self.is_confirmed,
+            'is_visible': self.is_visible
+        }
+
 class PaymentToken(db.Model):
 
     id = Column(Integer, primary_key=True)

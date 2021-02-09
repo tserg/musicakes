@@ -158,15 +158,35 @@ async function deployMusicakesContract() {
   musicakesFactoryContract.methods.createNewMusicakes(token_name, token_symbol).send({from: account})
   .once('transactionHash', function(hash) {
     console.log(hash);
-  })
-  .once('receipt', function(receipt) {
-    console.log(receipt);
-    const smart_contract_address = receipt['events']['0']['address'];
-    console.log(receipt['events']['0']['address']);
-    addSmartContractToRelease(release_id, smart_contract_address);
+
+    var data = JSON.stringify({
+      transaction_hash: hash,
+      wallet_address: account
+    });
+
+    fetch('/releases/' + release_id.toString() + '/deploy', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+          'X-CSRFToken': csrf_token,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+      },
+      body: data
+    })
+    .then(response => {
+        console.log(response);
+        if (response.ok) {
+          alert("Your transaction is pending.");
+        }
+        return response.json();
+    })
+    .then(data => {
+      console.log(data);
+    });
 
   })
-  .on('error', function(error) {
+  .catch(error => {
     console.log(error);
   });
 }

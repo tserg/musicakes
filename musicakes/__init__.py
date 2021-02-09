@@ -40,7 +40,8 @@ from .models import (
     Purchase,
     MusicakesContractFactory,
     PaymentToken,
-    PurchaseCeleryTask
+    PurchaseCeleryTask,
+    DeployCeleryTask
 )
 
 from urllib.request import urlopen
@@ -283,9 +284,11 @@ def create_app(test_config=None):
         print(w3.isConnected())
 
         current_check = 0
-        check_duration = 30
+        check_duration = 10
 
-        # Checks for 15 minutes based on 30 intervals of 30 seconds each
+        # Checks for 5 minutes based on 10 intervals of 30 seconds each
+
+        receipt = None
 
         while current_check < check_duration:
 
@@ -307,6 +310,34 @@ def create_app(test_config=None):
             break
 
         return receipt
+
+    @celery.task(bind=True)
+    def check_smart_contract_deployed(self, _transactionHash, _releaseId):
+
+        receipt = check_transaction_receipt(_transactionHash)
+
+        if receipt:
+            print("deploy celery task receipt")
+            print(receipt)
+            print("logs")
+            print(receipt.logs[0].address)
+
+            transactionHash = receipt.transactionHash.hex()
+            smart_contract_address = receipt.logs[0].address
+
+            task_id = self.request.id
+
+            deploy_celery_task = DeployCeleryTask.query.filter(DeployCeleryTask.task_id==task_id).one_or_none()
+
+            deploy_celery_task.is_confirmed = True
+            deploy_celery_task.update()
+
+            release = Release.query.get(_releaseId)
+            release.smart_contract_address = smart_contract_address
+            release.update()
+
+        return True
+
 
     @celery.task(bind=True)
     def check_purchase_transaction_confirmed(self, _transactionHash, _userId):
@@ -1514,6 +1545,34 @@ def create_app(test_config=None):
 
         try:
 
+            transaction_hash = request.get_json()['transaction_hash']
+            wallet_address = request.get_json()['wallet_address']
+
+            task = check_smart_contract_deployed.apply_async(
+                        args=(transaction_hash,
+                                release_id))
+
+            print("deploy contract task created")
+
+            deploy_celery_task = DeployCeleryTask(
+                task_id = task.id,
+                user_id = user.id,
+                release_id = release_id,
+                wallet_address=wallet_address,
+                transaction_hash = transaction_hash,
+                is_confirmed = False
+            )
+
+            deploy_celery_task.insert()
+
+            return jsonify({
+                'success': True,
+                'task_id': task.id,
+                'completed': task.ready()
+            })
+
+            '''
+
             smart_contract_address = request.get_json()['smart_contract_address']
 
             release = Release.query.filter(Release.id==release_id).one_or_none()
@@ -1533,6 +1592,7 @@ def create_app(test_config=None):
                 'release_id': release.id,
                 'smart_contract_address': release.smart_contract_address
             })
+            '''
 
         except Exception as e:
             print(e)
