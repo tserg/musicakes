@@ -2,8 +2,6 @@ const searchButton = document.querySelector('#search-btn');
 
 const searchInput = document.querySelector('#search-term');
 
-console.log(searchButton);
-
 searchInput.addEventListener('keyup', () => {
   if (event.keyCode === 13) {
     searchButton.click();
@@ -18,7 +16,7 @@ searchButton.addEventListener('click', () => {
 async function search(_searchTerm) {
 
   var data = JSON.stringify({
-    search_term: _searchTerm 
+    search_term: _searchTerm
   });
 
 	fetch('/search', {

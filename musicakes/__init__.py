@@ -270,8 +270,7 @@ def create_app(test_config=None):
 
     ###################################################
 
-    @celery.task(bind=True)
-    def check_transaction_hash_confirmed(self, _transactionHash, _userId):
+    def check_transaction_receipt(_transactionHash):
 
         if ETHEREUM_CHAIN_ID == 1:
             from web3.auto.infura import w3
@@ -306,6 +305,13 @@ def create_app(test_config=None):
                 continue
 
             break
+
+        return receipt
+
+    @celery.task(bind=True)
+    def check_purchase_transaction_confirmed(self, _transactionHash, _userId):
+
+        receipt = check_transaction_receipt(_transactionHash)
 
         if receipt:
 
@@ -643,7 +649,7 @@ def create_app(test_config=None):
                 celery_control.revoke(current_task.task_id, terminate=True)
                 current_task.delete()
 
-                new_task = check_transaction_hash_confirmed.apply_async(
+                new_task = check_purchase_transaction_confirmed.apply_async(
                             args=(current_task.transaction_hash,
                                     user.id))
 
@@ -1042,7 +1048,7 @@ def create_app(test_config=None):
             transaction_hash = request.get_json()['transaction_hash']
             wallet_address = request.get_json()['wallet_address']
 
-            task = check_transaction_hash_confirmed.apply_async(
+            task = check_purchase_transaction_confirmed.apply_async(
                         args=(transaction_hash,
                                 user.id))
 
@@ -1090,7 +1096,7 @@ def create_app(test_config=None):
             transaction_hash = request.get_json()['transaction_hash']
             wallet_address = request.get_json()['wallet_address']
 
-            task = check_transaction_hash_confirmed.apply_async(
+            task = check_purchase_transaction_confirmed.apply_async(
                         args=(transaction_hash,
                                 user.id))
 
