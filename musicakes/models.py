@@ -91,40 +91,57 @@ class User(db.Model):
         Helper function to retrieve information of all purchases of user
         """
 
+        purchases = Purchase.query.filter(Purchase.user_id==self.id) \
+            .order_by(Purchase.purchased_on.desc()) \
+            .all()
+
+        """
+
         purchased_releases = Purchase.query.filter(Purchase.user_id==self.id). \
             join(Release).all()
 
         purchased_tracks = Purchase.query.filter(Purchase.user_id==self.id). \
             join(Track).all()
 
+        """
 
-        formatted_purchased_releases=[]
+        formatted_purchases = []
 
-        for purchased_release in purchased_releases:
-            release = Release.query.get(purchased_release.release_id)
+        for purchase in purchases:
+
             temp_dict = {}
 
-            if release.name not in formatted_purchased_releases:
-                temp_dict['release_id'] = release.id
-                temp_dict['release_name'] = release.name
-                temp_dict['release_cover_art'] = release.cover_art
-                temp_dict['release_is_removed'] = release.is_removed
-                formatted_purchased_releases.append(temp_dict)
+            if purchase.release_id is not None:
 
-        formatted_purchased_tracks = []
+                release = Release.query.get(purchase.release_id)
 
-        for purchased_track in purchased_tracks:
-            track = Track.query.get(purchased_track.track_id)
-            temp_dict = {}
+                if release.name not in formatted_purchases:
 
-            if track.name not in formatted_purchased_tracks:
-                temp_dict['track_id'] = track.id
-                temp_dict['track_name'] = track.name
-                temp_dict['release_cover_art'] = track.release.cover_art
-                temp_dict['release_is_removed'] = track.release.is_removed
-                formatted_purchased_tracks.append(temp_dict)
+                    temp_dict['type'] = 'release'
+                    temp_dict['type_id'] = release.id
+                    temp_dict['type_name'] = release.name
+                    temp_dict['artist_name'] = release.artist.name
+                    temp_dict['release_cover_art'] = release.cover_art
+                    temp_dict['release_is_removed'] = release.is_removed
 
-        return formatted_purchased_releases, formatted_purchased_tracks
+                    formatted_purchases.append(temp_dict)
+
+            elif purchase.track_id is not None:
+
+                track = Track.query.get(purchase.track_id)
+
+                if track.name not in formatted_purchases:
+
+                    temp_dict['type'] = 'track'
+                    temp_dict['type_id'] = track.id
+                    temp_dict['type_name'] = track.name
+                    temp_dict['artist_name'] = track.artist.name
+                    temp_dict['release_cover_art'] = track.release_cover_art
+                    temp_dict['release_is_removed'] = track.release_is_removed
+
+                    formatted_purchases.append(temp_dict)
+
+        return formatted_purchases
 
 class Artist(db.Model):
     __tablename__ = 'artists'

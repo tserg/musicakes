@@ -370,7 +370,7 @@ def create_app(test_config=None):
 
         data = get_user_data()
 
-        return render_template('pages/about.html', userinfo=data)
+        return render_template('boilerplate/about.html', userinfo=data)
 
 
     @flask_app.route('/faq', methods=['GET'])
@@ -378,21 +378,21 @@ def create_app(test_config=None):
 
         data = get_user_data()
 
-        return render_template('pages/faq.html', userinfo=data)
+        return render_template('boilerplate/faq.html', userinfo=data)
 
     @flask_app.route('/terms', methods=['GET'])
     def show_terms_of_use():
 
         data = get_user_data()
 
-        return render_template('pages/terms.html', userinfo=data)
+        return render_template('boilerplate/terms.html', userinfo=data)
 
     @flask_app.route('/privacy', methods=['GET'])
     def show_privacy_policy():
 
         data = get_user_data()
 
-        return render_template('pages/privacy.html', userinfo=data)
+        return render_template('boilerplate/privacy.html', userinfo=data)
 
     @flask_app.route('/search', methods=['GET'])
     def search():
@@ -1023,7 +1023,7 @@ def create_app(test_config=None):
 
             abort(404)
 
-        data['purchased_releases'], data['purchased_tracks'] =  user.get_purchases()
+        data['purchases'] =  user.get_purchases()
 
         return render_template('pages/show_purchases.html', userinfo=data)
 
