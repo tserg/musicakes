@@ -14,6 +14,8 @@ from sqlalchemy import (
     CheckConstraint
 )
 
+from sqlalchemy.ext.declarative import declared_attr
+
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import json
@@ -467,18 +469,25 @@ class MusicakesContractFactory(db.Model):
             'description': self.description
         }
 
-class PurchaseCeleryTask(db.Model):
+class Web3Task(object):
+
+    @declared_attr
+    def user_id(cls):
+        return Column(Integer, db.ForeignKey('users.id'), nullable=False)
 
     task_id = Column(String, primary_key=True)
-    user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
     wallet_address = Column(String, nullable=False)
     transaction_hash = Column(String, unique=True, nullable=False)
-    purchase_description = Column(String, nullable=False)
-    purchase_type = Column(String, nullable=False)
-    purchase_type_id = Column(Integer, nullable=False)
     started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
     is_confirmed = Column(Boolean, default=False, nullable=False)
     is_visible = Column(Boolean, default=True, nullable=False)
+
+class PurchaseCeleryTask(Web3Task, db.Model):
+
+    purchase_description = Column(String, nullable=False)
+    purchase_type = Column(String, nullable=False)
+    purchase_type_id = Column(Integer, nullable=False)
+
 
     def insert(self):
         db.session.add(self)
@@ -504,16 +513,9 @@ class PurchaseCeleryTask(db.Model):
             'is_visible': self.is_visible
         }
 
-class DeployCeleryTask(db.Model):
+class DeployCeleryTask(Web3Task, db.Model):
 
-    task_id = Column(String, primary_key=True)
-    user_id = Column(Integer, db.ForeignKey('users.id'), nullable=False)
     release_id = Column(Integer, db.ForeignKey('releases.id'), nullable=False)
-    wallet_address = Column(String, nullable=False)
-    transaction_hash = Column(String, unique=True, nullable=False)
-    started_on = Column(DateTime, server_default=db.func.now(), nullable=False)
-    is_confirmed = Column(Boolean, default=False, nullable=False)
-    is_visible = Column(Boolean, default=True, nullable=False)
 
     def insert(self):
         db.session.add(self)
