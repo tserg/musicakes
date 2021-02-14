@@ -1,5 +1,4 @@
 import os
-import time
 import json
 from urllib.parse import urlencode
 
@@ -55,16 +54,22 @@ from celery.app.control import Control
 
 # Import web3.py
 
-from web3 import Web3, HTTPProvider
-from web3.exceptions import TransactionNotFound
+from web3 import Web3
 
 from dotenv import load_dotenv
 
 # Import utils
 
 from .aws_s3.s3_utils import *
-from .decorators import *
-from .session_utils import *
+from .decorators import (
+    requires_log_in
+)
+from .session_utils import (
+    get_user_data
+)
+from .web3_utils import (
+    check_transaction_receipt
+)
 
 load_dotenv()
 
@@ -271,50 +276,10 @@ def create_app(test_config=None):
 
     ###################################################
 
-    def check_transaction_receipt(_transactionHash):
-
-        if ETHEREUM_CHAIN_ID == 1:
-            from web3.auto.infura import w3
-        else:
-            from web3.auto.infura.ropsten import w3
-
-        print(_transactionHash)
-
-        print("w3 connection: ")
-        print(w3.isConnected())
-
-        current_check = 0
-        check_duration = 10
-
-        # Checks for 5 minutes based on 10 intervals of 30 seconds each
-
-        receipt = None
-
-        while current_check < check_duration:
-
-            try:
-                receipt = w3.eth.getTransactionReceipt(_transactionHash)
-
-            except TransactionNotFound as e:
-
-                # Retries after 30 seconds if transaction is not found
-
-                time.sleep(30)
-                current_check += 1
-                continue
-
-            except Exception as o:
-                print(o)
-                continue
-
-            break
-
-        return receipt
-
     @celery.task(bind=True)
     def check_smart_contract_deployed(self, _transactionHash, _releaseId):
 
-        receipt = check_transaction_receipt(_transactionHash)
+        receipt = check_transaction_receipt(ETHEREUM_CHAIN_ID, _transactionHash)
 
         if receipt:
             print("deploy celery task receipt")
@@ -342,7 +307,7 @@ def create_app(test_config=None):
     @celery.task(bind=True)
     def check_purchase_transaction_confirmed(self, _transactionHash, _userId):
 
-        receipt = check_transaction_receipt(_transactionHash)
+        receipt = check_transaction_receipt(ETHEREUM_CHAIN_ID, _transactionHash)
 
         if receipt:
 
