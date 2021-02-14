@@ -87,6 +87,32 @@ class User(db.Model):
             'created_on': self.created_on.strftime('%#d %B %Y')
         }
 
+    def has_purchased_release(self, _releaseId):
+
+        purchased_current_release = Purchase.query.filter(Purchase.release_id==_releaseId). \
+                filter(Purchase.user_id==self.id). \
+                join(Release).one_or_none()
+
+        if purchased_current_release is not None:
+            return True
+
+        return False
+
+    def has_purchased_track(self, _trackId, _releaseId):
+
+        purchased_current_track = Purchase.query.filter(Purchase.track_id==_trackId). \
+                filter(Purchase.user_id==self.id). \
+                join(Release).one_or_none()
+
+        purchased_release_with_current_track = Purchase.query.filter(Purchase.release_id==_releaseId). \
+                filter(Purchase.user_id==self.id). \
+                join(Release).one_or_none()
+
+        if purchased_current_track or purchased_release_with_current_track:
+            return True
+
+        return False
+
     def get_purchases(self):
 
         """

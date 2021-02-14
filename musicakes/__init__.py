@@ -160,37 +160,6 @@ def create_app(test_config=None):
             'scope': 'openid profile email',
         },
     )
-    ###################################################
-
-    # Auth
-
-    ###################################################
-
-    def has_purchased_track(_userId, _trackId, _releaseId):
-
-        purchased_current_track = Purchase.query.filter(Purchase.track_id==_trackId). \
-                filter(Purchase.user_id==_userId). \
-                join(Release).one_or_none()
-
-        purchased_release_with_current_track = Purchase.query.filter(Purchase.release_id==_releaseId). \
-                filter(Purchase.user_id==_userId). \
-                join(Release).one_or_none()
-
-        if purchased_current_track or purchased_release_with_current_track:
-            return True
-
-        return False
-
-    def has_purchased_release(_userId, _releaseId):
-
-        purchased_current_release = Purchase.query.filter(Purchase.release_id==_releaseId). \
-                filter(Purchase.user_id==_userId). \
-                join(Release).one_or_none()
-
-        if purchased_current_release is not None:
-            return True
-
-        return False
 
     ###################################################
 
@@ -1141,9 +1110,9 @@ def create_app(test_config=None):
 
             abort(404)
 
-        track_purchase = has_purchased_track(user.id, track.id, release.id)
+        track_purchase = user.has_purchased_track(track.id, release.id)
 
-        release_purchase = has_purchased_release(user.id, release.id)
+        release_purchase = user.has_purchased_release(release.id)
 
         if track_purchase is False and release_purchase is False:
 
@@ -1312,7 +1281,7 @@ def create_app(test_config=None):
 
             if data is not None:
 
-                data['has_purchased'] = has_purchased_release(user.id, release_id)
+                data['has_purchased'] = user.has_purchased_release(release_id)
 
                 creator = (current_release.artist.user.id == user.id)
 
@@ -1925,7 +1894,7 @@ def create_app(test_config=None):
 
             if data is not None:
 
-                data['has_purchased'] = has_purchased_track(user.id, track_id, current_release.id)
+                data['has_purchased'] = user.has_purchased_track(track_id, current_release.id)
 
                 creator = (current_release.artist.user.id == user.id)
 
