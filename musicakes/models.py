@@ -88,6 +88,9 @@ class User(db.Model):
         }
 
     def has_purchased_release(self, _releaseId):
+        """
+        Helper function to check if user has purchased release
+        """
 
         purchased_current_release = Purchase.query.filter(Purchase.release_id==_releaseId). \
                 filter(Purchase.user_id==self.id). \
@@ -99,6 +102,9 @@ class User(db.Model):
         return False
 
     def has_purchased_track(self, _trackId, _releaseId):
+        """
+        Helper function to check if user has purchased track
+        """
 
         purchased_current_track = Purchase.query.filter(Purchase.track_id==_trackId). \
                 filter(Purchase.user_id==self.id). \
@@ -555,11 +561,16 @@ class DeployCeleryTask(Web3Task, db.Model):
         db.session.commit()
 
     def short(self):
+
+        current_release = Release.query.get(self.release_id)
+
         return {
             'task_id': self.task_id,
             'user_id': self.user_id,
             'wallet_address': self.wallet_address,
             'transaction_hash': self.transaction_hash,
+            'release_name': current_release.name,
+            'started_on': self.started_on,
             'is_confirmed': self.is_confirmed,
             'is_visible': self.is_visible
         }

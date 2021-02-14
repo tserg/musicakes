@@ -458,11 +458,26 @@ def create_app(test_config=None):
                                 .filter(PurchaseCeleryTask.is_visible==True) \
                                 .order_by(PurchaseCeleryTask.started_on.desc()).limit(10).all()
 
+
+        pending_deployments = DeployCeleryTask.query.filter(
+                                DeployCeleryTask.user_id == user.id) \
+                                .filter(DeployCeleryTask.is_confirmed == False) \
+                                .filter(DeployCeleryTask.is_visible == True) \
+                                .order_by(DeployCeleryTask.started_on.desc()) \
+                                .limit(10).all()
+
+        deployment_history = DeployCeleryTask.query.filter(DeployCeleryTask.user_id==user.id) \
+                                .filter(DeployCeleryTask.is_confirmed==True) \
+                                .filter(DeployCeleryTask.is_visible==True) \
+                                .order_by(DeployCeleryTask.started_on.desc()).limit(10).all()
+
         return render_template(
             'pages/show_account.html',
             userinfo=data,
             transaction_history = transaction_history,
-            pending_transactions = pending_transactions
+            pending_transactions = pending_transactions,
+            deployment_history = [deployment.short() for deployment in deployment_history],
+            pending_deployments = [pending_deployment.short() for pending_deployment in pending_deployments]
         )
 
     @flask_app.route('/account/edit', methods=['GET'])
@@ -542,7 +557,7 @@ def create_app(test_config=None):
                                             .order_by(PurchaseCeleryTask.started_on.desc()) \
                                             .all()
 
-            pending_purchases_formatted = [pending_purchase.short() for pending_purchase in pending_purchases]
+            pending_deployment_formatted = [pending_deployment.short() for pending_deployment in pending_deployments]
 
             return jsonify({
                 'success': True,
@@ -570,6 +585,9 @@ def create_app(test_config=None):
 
         try:
             current_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.transaction_hash==transaction_hash).one_or_none()
+
+            if not current_task:
+                current_task = DeployCeleryTask.query.filter(DeployCeleryTask.transaction_hash==transaction_hash).one_or_none()
 
             if current_task:
                 current_task.is_visible=False
@@ -634,6 +652,38 @@ def create_app(test_config=None):
                 return jsonify({
                     'success': True
                 })
+
+            else:
+
+                current_task = DeployCeleryTask.query.filter(DeployCeleryTask.transaction_hash==transaction_hash).one_or_none()
+
+                if current_task:
+
+                    wallet_address = current_task.wallet_address
+                    transaction_hash = current_task.transaction_hash
+                    release_id = current_task.release_id
+
+                    celery_control.revoke(current_task.task_id, terminate=True)
+                    current_task.delete()
+
+                    new_task = check_smart_contract_deployed.apply_async(
+                                args=(current_task.transaction_hash,
+                                        release_id))
+
+                    deploy_celery_task = DeployCeleryTask(
+                        task_id = new_task.id,
+                        user_id = user.id,
+                        release_id = release_id,
+                        wallet_address=wallet_address,
+                        transaction_hash = transaction_hash,
+                        is_confirmed = False
+                    )
+
+                    deploy_celery_task.insert()
+
+                    return jsonify({
+                        'success': True
+                    })
 
 
         except Exception as e:
