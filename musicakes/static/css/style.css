@@ -37,6 +37,10 @@ button {
 	border-color: #8d9db6;
 }
 
+.nav-item > a {
+	background-color: #ede0e0;
+	color: black;
+}
 
 
 /* Nav bar */
@@ -89,7 +93,7 @@ button {
 
 .card {
 	max-width:192px;
-	
+
 }
 
 .card-img-top, .bd-placeholder-img {
@@ -174,4 +178,3 @@ button {
 	text-decoration: none;
 	font-size: 17px;
 }
-
