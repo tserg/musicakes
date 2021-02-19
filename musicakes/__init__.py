@@ -557,12 +557,21 @@ def create_app(test_config=None):
                                             .order_by(PurchaseCeleryTask.started_on.desc()) \
                                             .all()
 
-            pending_deployment_formatted = [pending_deployment.short() for pending_deployment in pending_deployments]
+            pending_deployments = DeployCeleryTask.query.filter(
+                                            DeployCeleryTask.user_id == user.id) \
+                                            .filter(DeployCeleryTask.is_confirmed == False) \
+                                            .filter(DeployCeleryTask.is_visible == True) \
+                                            .order_by(DeployCeleryTask.started_on.desc()) \
+                                            .all()
+
+            pending_purchases_formatted = [pending_purchase.short() for pending_purchase in pending_purchases]
+            pending_deployments_formatted = [pending_deployment.short() for pending_deployment in pending_deployments]
 
             return jsonify({
                 'success': True,
                 'chain_id': ETHEREUM_CHAIN_ID,
-                'data': pending_purchases_formatted
+                'pending_purchases': pending_purchases_formatted,
+                'pending_deployments': pending_deployments_formatted
             })
 
         except:

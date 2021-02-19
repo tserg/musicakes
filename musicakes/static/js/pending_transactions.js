@@ -41,23 +41,40 @@ async function getPendingTransactions() {
 
         const chainId = data['chain_id'];
 
-        if (data['data'].length > 0) {
+        if (data['pending_purchases'].length > 0 || data['pending_deployments'].length > 0) {
 
-          for (i=0; i<data['data'].length; i++) {
+          for (i=0; i<data['pending_purchases'].length; i++) {
 
           	var link = document.createElement("A");
-          	link.innerHTML = "Your purchase of " + data['data'][i]['purchase_description'] + " is pending confirmation.";
+          	link.innerHTML = "Your purchase of " + data['pending_purchases'][i]['purchase_description'] + " is pending confirmation.";
             link.className = "dropdown-item";
 
             if (chainId === 1) {
-          	  link.href = "https://etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+          	  link.href = "https://etherscan.io/tx/" + data['pending_purchases'][i]['transaction_hash'];
             } else {
-              link.href = "https://ropsten.etherscan.io/tx/" + data['data'][i]['transaction_hash'];
+              link.href = "https://ropsten.etherscan.io/tx/" + data['pending_purchases'][i]['transaction_hash'];
             }
 
             link.target ="_blank";
           	pendingTransactionPlaceholder.appendChild(link);
           }
+
+          for (i=0; i<data['pending_deployments'].length; i++) {
+
+          	var link = document.createElement("A");
+          	link.innerHTML = "Your Musicakes deployment for " + data['pending_deployments'][i]['release_name'] + " is pending confirmation.";
+            link.className = "dropdown-item";
+
+            if (chainId === 1) {
+          	  link.href = "https://etherscan.io/tx/" + data['pending_deployments'][i]['transaction_hash'];
+            } else {
+              link.href = "https://ropsten.etherscan.io/tx/" + data['pending_deployments'][i]['transaction_hash'];
+            }
+
+            link.target ="_blank";
+          	pendingTransactionPlaceholder.appendChild(link);
+          }
+
 
         } else {
           var link = document.createElement("A");
@@ -68,6 +85,13 @@ async function getPendingTransactions() {
           pendingTransactionPlaceholder.appendChild(link);
         }
 
+      }).catch(function(error) {
+        var link = document.createElement("A");
+
+        link.innerHTML = "We encountered an error. Please try again";
+        link.className = "dropdown-item";
+        link.style.fontSize = "80%";
+        pendingTransactionPlaceholder.appendChild(link);
       });
 
 }
