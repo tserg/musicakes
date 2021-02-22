@@ -6,8 +6,13 @@ from . import bp
 from ..decorators import requires_log_in
 from ..models import Track
 
-from .s3_utils import *
-from ..session_utils import *
+from .s3_utils import (
+    generate_s3_presigned_upload,
+    generate_s3_presigned_download
+)
+from ..session_utils import (
+    get_user_data
+)
 
 @bp.route('/sign_s3_upload', methods=['GET'])
 @requires_log_in

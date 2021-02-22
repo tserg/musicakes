@@ -25,8 +25,6 @@ from flask_wtf import (
     CSRFProtect
 )
 
-from datetime import timedelta
-
 from .tasks import *
 from .forms import *
 
@@ -43,9 +41,7 @@ from .models import (
     DeployCeleryTask
 )
 
-from urllib.request import urlopen
 from authlib.integrations.flask_client import OAuth
-from six.moves.urllib.parse import urlencode
 
 # Import Celery
 
@@ -60,7 +56,11 @@ from dotenv import load_dotenv
 
 # Import utils
 
-from .aws_s3.s3_utils import *
+from .aws_s3.s3_utils import (
+    upload_file,
+    download_track,
+    delete_files
+)
 from .decorators import (
     requires_log_in
 )
