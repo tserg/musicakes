@@ -28,16 +28,16 @@
         <div class="d-flex flex-row">
           {% if artist.soundcloud_url|length > 0 %}
           <div class="artist-page-icon mr-2">
-            
+
 
               <iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2F{{ artist.soundcloud_url }}&color=black_white&size=32"></iframe>
 
-            
+
           </div>
           {% endif %}
           {% if artist.facebook_url|length > 0 %}
           <div class="artist-page-icon mr-2">
-            
+
 
               <a href="{{ artist.facebook_url }}" target="_blank"><img id="facebook-icon" src="/static/img/fb_logo.png" /></a>
 
@@ -50,7 +50,7 @@
 
           </div>
           {% endif %}
-          
+
         </div>
 
       </div>
@@ -72,7 +72,7 @@
         {{ form.hidden_tag() }}
         <h3 class="mb-4">Wallet Address</h3>
         <div class="form-group row">
-  
+
           <div class="col">
             {{ form.artist_wallet_address(class_ = 'form-control', autofocus = true) }}
           </div>
@@ -89,7 +89,7 @@
         <h3 class="mb-4">External Links</h3>
         <div class="form-group row">
           <label for="artist_soundcloud_url" class="col-sm-2 col-form-label">Soundcloud URL</label>
-  
+
           <div class="col-sm-10">
             {{ form.artist_soundcloud_url(class_ = 'form-control', autofocus = true) }}
           </div>
@@ -97,7 +97,7 @@
 
         <div class="form-group row">
           <label for="artist_facebook_url" class="col-sm-2 col-form-label">Facebook URL</label>
-  
+
           <div class="col-sm-10">
             {{ form.artist_facebook_url(class_ = 'form-control', autofocus = true) }}
           </div>
@@ -123,7 +123,7 @@
             {% for message in messages %}
               <li>{{ message }}</li>
             {% endfor %}
-            </ul> 
+            </ul>
           </div>
         </div>
         {% endif %}
@@ -142,14 +142,14 @@
 
         <div class="display-picture">
         {% if artist.artist_picture is none %}
-          <img id="preview" src="/static/img/musicakes.png" />
+          <img src="/static/img/musicakes.png" id="image-preview" />
         {% else %}
-          <img src="{{ artist.artist_picture }}" />
+          <img src="{{ artist.artist_picture }}" id="image-preview"/>
         {% endif %}
         </div>
         <div class="form-group mt-3">
-          <label for="artist-picture-input"></label>
-          <input type="file" id="artist-picture-input" accept="image/png, image/jpg, image/jpeg" >
+          <label for="image-input"></label>
+          <input type="file" id="image-input" accept="image/png, image/jpg, image/jpeg" >
           <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
 
         </div>
@@ -173,5 +173,6 @@
   }
 </script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/edit_artist.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/image_preview.js') }}"></script>
 
 {% endblock %}

@@ -90,8 +90,9 @@ class ArtistForm(FlaskForm):
 class EditUserForm(FlaskForm):
 	profile_picture = FileField('Profile Picture', validators=[
 		FileRequired(),
-		FileAllowed(['jpg', 'jpeg', 'png'], 'Image only!')
-	])
+		FileAllowed(['jpg', 'jpeg', 'png'], 'Image only!')],
+		render_kw={'id': "image-input"}
+	)
 
 class EditArtistForm(FlaskForm):
 
