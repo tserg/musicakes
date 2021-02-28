@@ -272,7 +272,6 @@ def create_app(test_config=None):
 
         return True
 
-
     @celery.task(bind=True)
     def check_purchase_transaction_confirmed(self, _transactionHash, _userId):
 
@@ -716,9 +715,9 @@ def create_app(test_config=None):
             if current_user is None:
                 abort(404)
 
-            data = current_user.short_private()
+            data = {}
 
-            data['purchased_releases'], data['purchased_tracks'] = current_user.get_purchases()
+            data['purchases'] = current_user.get_purchases()
 
             return render_template('pages/show_user.html', user=data, userinfo=user_data)
 
