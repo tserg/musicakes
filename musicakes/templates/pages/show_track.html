@@ -43,16 +43,16 @@
         <div class="d-flex flex-row">
           {% if artist.soundcloud_url|length > 0 %}
           <div class="artist-page-icon mr-2">
-            
+
 
               <iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2F{{ artist.soundcloud_url }}&color=black_white&size=32"></iframe>
 
-            
+
           </div>
           {% endif %}
           {% if artist.facebook_url|length > 0 %}
           <div class="artist-page-icon mr-2">
-            
+
 
               <a href="{{ artist.facebook_url }}" target="_blank"><img id="facebook-icon" src="/static/img/fb_logo.png" /></a>
 
@@ -65,7 +65,7 @@
 
           </div>
           {% endif %}
-          
+
         </div>
 
       </div>
@@ -75,7 +75,7 @@
 
 </div>
 
-<div class="container mt-2 mb-5"> 
+<div class="container mt-2 mb-5">
   <div class="row">
     <div class="col-sm-3">
 
@@ -95,7 +95,7 @@
     <div class="col-xl-6">
 
       {% if track.smart_contract_address|length == 2 %}
-        
+
         {% if userinfo and creator is true %}
 
         <form action="{{ url_for('show_release_for_deployment', release_id=track.release_id) }}">
@@ -112,7 +112,7 @@
 
       {% else %}
 
-      <!-- 
+      <!--
 
       <h5>User Dashboard</h5>
 
@@ -127,11 +127,11 @@
       {% endif %}
 
       {% if track.smart_contract_address|length > 2 %}
-        
+
 
         {% if userinfo %}
 
-          {% if userinfo.purchased is not none %}
+          {% if userinfo.has_purchased is true %}
 
         <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
           Download
@@ -176,13 +176,13 @@
 
           </div>
 
-        
+
           <p>
-              Address to transfer Musicakes: 
+              Address to transfer Musicakes:
               <input type="text" class="form-control" id="transfer-musicakes-address">
           </p>
           <p>
-              Number of Musicakes to transfer: 
+              Number of Musicakes to transfer:
               <div class="form-row">
                 <p class="col-sm-2">
                 <input type="text" class="form-control" id="transfer-musicakes-amount">
@@ -191,7 +191,7 @@
           </p>
 
           <p>
-            
+
             <button type="button" id="btn-transfer-musicakes" class="btn btn-sm btn-outline-secondary">Transfer</button>
           </p>
 
@@ -207,7 +207,7 @@
             <div class="modal-header">
               <h5 class="modal-title" id="support-artist-modal-title">Support Artist with DAI</h5>
             </div>
-            
+
             <div class="modal-body">
               <form action="" method="post" >
 
@@ -256,7 +256,7 @@
             </div>
 
             {% elif userinfo and userinfo.purchased is none %}
-        
+
             <div class="modal-body">
 
               <form action="" method="post" >
@@ -274,7 +274,7 @@
             </div>
 
             {% endif %}
-        
+
           </div>
         </div>
       </div>
@@ -344,7 +344,7 @@
       <meta id="price" data-value="{{ track.price }}">
 
       <!-- proxy element to store and query track id for window.appConfig --->
-      <meta id="track-id" data-value="{{ track.id }}">        
+      <meta id="track-id" data-value="{{ track.id }}">
 
       <!-- proxy element to store and query CSRF token for window.appConfig --->
       <meta id="csrf-token" data-value="{{ csrf_token() }}">

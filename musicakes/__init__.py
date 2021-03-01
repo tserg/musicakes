@@ -1953,6 +1953,7 @@ def create_app(test_config=None):
             if data is not None:
 
                 data['has_purchased'] = user.has_purchased_track(track_id, current_release.id)
+                print(data['has_purchased'])
 
                 creator = (current_release.artist.user.id == user.id)
 
