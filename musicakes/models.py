@@ -108,7 +108,7 @@ class User(db.Model):
 
         purchased_current_track = Purchase.query.filter(Purchase.track_id==_trackId). \
                 filter(Purchase.user_id==self.id). \
-                join(Release).one_or_none()
+                join(Track).one_or_none()
 
         purchased_release_with_current_track = Purchase.query.filter(Purchase.release_id==_releaseId). \
                 filter(Purchase.user_id==self.id). \
