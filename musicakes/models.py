@@ -170,8 +170,8 @@ class User(db.Model):
                     temp_dict['type_id'] = track.id
                     temp_dict['type_name'] = track.name
                     temp_dict['artist_name'] = track.artist.name
-                    temp_dict['release_cover_art'] = track.release_cover_art
-                    temp_dict['release_is_removed'] = track.release_is_removed
+                    temp_dict['release_cover_art'] = track.release.cover_art
+                    temp_dict['release_is_removed'] = track.release.is_removed
 
                     formatted_purchases.append(temp_dict)
 
