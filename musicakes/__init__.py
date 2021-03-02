@@ -64,9 +64,7 @@ from .aws_s3.s3_utils import (
 from .decorators import (
     requires_log_in
 )
-from .session_utils import (
-    get_user_data
-)
+
 from .web3_utils import (
     check_transaction_receipt
 )
