@@ -64,11 +64,13 @@ from .aws_s3.s3_utils import (
 from .decorators import (
     requires_log_in
 )
-from .session_utils import (
-    get_user_data
-)
+
 from .web3_utils import (
     check_transaction_receipt
+)
+
+from .session_utils import (
+    get_user_data
 )
 
 load_dotenv()
@@ -709,13 +711,14 @@ def create_app(test_config=None):
     @flask_app.route('/users/<int:user_id>', methods=['GET'])
     def show_user(user_id):
         try:
+
             user_data = get_user_data()
 
             current_user = User.query.get(user_id)
             if current_user is None:
                 abort(404)
 
-            data = {}
+            data = current_user.short_public()
 
             data['purchases'] = current_user.get_purchases()
 

@@ -11,22 +11,22 @@
 				Username
 			</h4>
 
-			<p>{{ userinfo.username }}</p>
+			<p>{{ user.username }}</p>
 
 			<h4>
 				Profile Picture
 			</h4>
 
 			<div class = "display-picture my-4">
-			{% if userinfo.profile_picture is none %}
+			{% if user.profile_picture is none %}
 				<img id="preview" src="/static/img/musicakes.png" />
 			{% else %}
-				<img src="{{ userinfo.profile_picture }}" />
+				<img src="{{ user.profile_picture }}" />
 			{% endif %}
 			</div>
 
 			<small>
-				Member since {{ userinfo.created_on }}
+				Member since {{ user.created_on }}
 			</small>
 
 		</div>
