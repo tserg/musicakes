@@ -709,9 +709,11 @@ def create_app(test_config=None):
     @flask_app.route('/users/<int:user_id>', methods=['GET'])
     def show_user(user_id):
         try:
-            user_data = get_user_data()
 
-            current_user = User.query.get(user_id)
+            current_user, user_data = get_user_data(True)
+            print(current_user)
+            print(user_data)
+
             if current_user is None:
                 abort(404)
 
