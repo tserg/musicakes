@@ -50,9 +50,13 @@
           <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#tab-1">Purchases</a>
           </li>
+
+					{% if userinfo.artist_id is not defined %}
           <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#tab-2">Deployments</a>
           </li>
+					{% endif %}
+
         </ul>
 			</div>
 
@@ -100,7 +104,7 @@
 						</tbody>
 					</table>
 					{% else %}
-					<p>You do not have any pending transactions.</p>
+					<p>You do not have any pending purchases.</p>
 					{% endif %}
 				</div>
 
@@ -137,10 +141,12 @@
 						</tbody>
 					</table>
 					{% else %}
-					<p>You have not made any transactions.</p>
+					<p>You have not made any purchases.</p>
 					{% endif %}
 				</div>
 			</div>
+
+			{% if userinfo.artist_id is not defined %}
 
 			<div class="tab-pane fade mt-3" id="tab-2">
 				<div>
@@ -226,6 +232,7 @@
 					{% endif %}
 				</div>
 			</div>
+			{% endif %}
 		</div>
 
 	</div>
