@@ -7,7 +7,7 @@
 
 		<h3 class="mb-4">Purchases</h3>
 
-		{% if userinfo.purchases is defined %}
+		{% if userinfo.purchases is defined and userinfo.purchases|length > 0 %}
 
 		<div class="row">
 
@@ -60,7 +60,7 @@
 
 	{% else %}
 
-		<h4>You have not purchased any music yet.</h4>
+		<p>You have not purchased any music yet.</p>
 
 	{% endif %}
 	</div>
