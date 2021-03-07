@@ -377,12 +377,16 @@ def create_app(test_config=None):
             return render_template(
                 'pages/search_results.html',
                 userinfo=data,
+                users_results=None,
                 artists_results=None,
                 releases_results=None,
                 tracks_results=None
             )
 
         try:
+
+            users_search_results = User.query.filter(User.username.ilike('%' + search_term + '%')) \
+                                    .all()
 
             artists_search_results = Artist.query.filter(Artist.name.ilike('%' + search_term + '%')) \
                                         .order_by(Artist.created_on.desc()) \
@@ -408,10 +412,12 @@ def create_app(test_config=None):
             formatted_artist_search_results = [artist.short() for artist in artists_search_results]
             formatted_releases_search_results = [release.short_public() for release in releases_search_results]
             formatted_tracks_search_results = [track.short_public() for track in tracks_search_results]
+            formatted_users_search_results = [user.short_public() for user in users_search_results]
 
             return render_template(
                 'pages/search_results.html',
                 userinfo=data,
+                users_results=formatted_users_search_results,
                 artists_results=formatted_artist_search_results,
                 releases_results=formatted_releases_search_results,
                 tracks_results=formatted_tracks_search_results
