@@ -33,7 +33,7 @@
 
 		<div class="col-md-10">
 			<h4>Purchases </h4>
-			{% if user.purchases is defined %}
+			{% if user.purchases is defined and user.purchases|length > 0 %}
 
 			<div class="row">
 
@@ -74,7 +74,7 @@
 
 		{% else %}
 
-			<h4>You have not purchased any music yet.</h4>
+			<p>{{ user.username }} has not purchased any music yet.</p>
 
 		{% endif %}
 		</div>
