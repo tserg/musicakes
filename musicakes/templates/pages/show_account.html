@@ -29,13 +29,14 @@
 				<a href="/account/edit" class="btn btn-sm btn-outline-secondary" type="button">Change profile picture</a>
 			</p>
 
-
+			{% if userinfo.artist_name is not none %}
 			<h4>
 				Artist profile
 			</h4>
 
-			<p>{% if userinfo.artist_name is none %} You have not created an artist profile  {% else %} <a href ="../artists/{{ userinfo.artist_id }}">{{ userinfo.artist_name}}</a> {% endif %}</p>
+			<p><a href ="../artists/{{ userinfo.artist_id }}">{{ userinfo.artist_name}}</a></p>
 
+			{% endif %}
 
 			<small>
 				Member since {{ userinfo.created_on }}
