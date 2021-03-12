@@ -42,6 +42,16 @@ button {
 	color: black;
 }
 
+.nav-item-tab > a {
+	background-color: #FFFAFA;
+	color: rgba(0, 0, 0, 0.7);
+}
+
+.nav-item-tab .nav-link.active {
+	background-color: #ede0e0;
+	color: black;
+}
+
 
 /* Nav bar */
 
