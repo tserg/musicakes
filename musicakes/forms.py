@@ -115,6 +115,11 @@ class EditArtistForm(FlaskForm):
 		URL(), Optional()]
 	)
 
+	artist_country = SelectField(
+			'artist_country', validators=[DataRequired()],
+			choices = sorted([(country.name, country.name) for country in pycountry.countries])
+		)
+
 
 class TrackForm(FlaskForm):
 

@@ -946,6 +946,8 @@ def create_app(test_config=None):
             if current_artist.wallet_address is not None:
                 form.artist_wallet_address.data = current_artist.wallet_address
 
+            form.artist_country.data = current_artist.country
+
             return render_template('forms/edit_artist.html', form=form, artist=artist_data, userinfo=data)
 
         except Exception as e:
@@ -1019,6 +1021,7 @@ def create_app(test_config=None):
                 soundcloud_url = form.artist_soundcloud_url.data
                 facebook_url = form.artist_facebook_url.data
                 instagram_url = form.artist_instagram_url.data
+                artist_country = form.artist_country.data
 
                 # Split soundcloud url to get username in order to input into widget
 
@@ -1028,6 +1031,7 @@ def create_app(test_config=None):
                 current_artist.facebook_url = facebook_url
                 current_artist.instagram_url = instagram_url
                 current_artist.wallet_address = wallet_address
+                current_artist.country = artist_country
                 current_artist.update()
 
                 return redirect(url_for('edit_artist', artist_id=artist_id))
