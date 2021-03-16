@@ -6,7 +6,7 @@ editArtistButton.addEventListener('click', () => {
   validateForm().then(function(response) {
     if (response) {
 
-      var artist_picture = document.getElementById('artist-picture-input').files[0];
+      var artist_picture = document.getElementById('image-input').files[0];
       getSignedRequestArtistPicture(artist_picture);
 
     }
@@ -20,10 +20,10 @@ editArtistButton.addEventListener('click', () => {
 });
 
 async function validateForm() {
-  
+
   // validate release
 
-  var artist_picture = document.getElementById('artist-picture-input').files[0];
+  var artist_picture = document.getElementById('image-input').files[0];
 
   if (!artist_picture) {
     alert("You have not uploaded a picture.");
