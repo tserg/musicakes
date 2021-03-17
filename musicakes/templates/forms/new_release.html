@@ -23,7 +23,7 @@
     <div class="col">
     {% if userinfo.artist_name is none %}
 
-      <h4> You have not created an artist profile yet.</h4> 
+      <h4> You have not created an artist profile yet.</h4>
 
       {% else %}
 
@@ -110,7 +110,7 @@
 
       <fieldset class="track-count-group">
         <div class="form-group row">
-          
+
           <div class="col-sm-4">
             <label for="track-name-input-{{track_number}}"></label>
             <input type="text" class="form-control" id="track-name-input-{{track_number}}" minlength="1" maxlength="100">
@@ -135,7 +135,7 @@
       </fieldset>
 
       {% endfor %}
-      
+
     </div>
   </div>
 </div>
@@ -148,7 +148,7 @@
       <button type="button" class="btn btn-sm btn-outline-secondary" value="Back" onclick="window.location='/releases/create';">Back</button>
       <button type="submit" class="btn btn-sm btn-outline-secondary" value="Create release" id="create-release-btn">Create release</button>
       </form>
-    
+
     </div>
   </div>
 </div>
@@ -157,8 +157,6 @@
 
 </div>
 
-<script type="text/javascript" src="{{ url_for('static', filename='js/libs/jquery-3.5.1.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/new_release.js') }}"></script>
 
 {% endblock %}
-

@@ -487,59 +487,27 @@ def create_app(test_config=None):
             pending_deployments = [pending_deployment.short() for pending_deployment in pending_deployments]
         )
 
-    @flask_app.route('/account/edit', methods=['GET'])
+    @flask_app.route('/users/<int:user_id>/update_profile_picture', methods=['PUT'])
     @requires_log_in
-    def edit_user_form():
-
-        data = get_user_data()
-
-        if data is None:
-
-            abort(404)
-
-        form = EditUserForm()
-
-        return render_template('forms/edit_user.html',
-                                form=form,
-                                userinfo=data)
-
-    @flask_app.route('/account/edit', methods=['POST'])
-    @requires_log_in
-    def edit_user_submission():
+    def edit_profile_picture(user_id):
 
         user, data = get_user_data(True)
 
-        form = EditUserForm()
-
-        if not user:
-
-            abort(404)
-
         try:
 
-            if form.validate():
+            profile_picture_file_name = S3_LOCATION + user.auth_id + "/" +secure_filename(request.get_json()['file_name'])
+            user.profile_picture = profile_picture_file_name
+            user.update()
 
-                f = form.profile_picture.data
-
-                filename = "profile_picture." + f.filename.split(".")[-1]
-
-                modified_filename = user.auth_id + "/" + filename
-
-                upload_file(f, modified_filename)
-
-                file_url = S3_LOCATION + modified_filename
-                user.profile_picture = file_url
-                user.update()
-
-                flash('Your profile has been updated.')
+            return jsonify({
+                'success': True,
+            })
 
         except Exception as e:
-
             print(e)
-            flash('Your profile could not be updated.')
-
-        return redirect(url_for('show_account'))
-
+            return jsonify({
+                'success': False
+            })
 
     @flask_app.route('/pending_transactions', methods=['GET'])
     def get_pending_transactions():
