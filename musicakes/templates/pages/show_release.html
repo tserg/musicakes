@@ -43,16 +43,16 @@
           <div class="d-flex flex-row">
             {% if artist.soundcloud_url|length > 0 %}
             <div class="artist-page-icon mr-2">
-              
+
 
                 <iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2F{{ artist.soundcloud_url }}&color=black_white&size=32"></iframe>
 
-              
+
             </div>
             {% endif %}
             {% if artist.facebook_url|length > 0 %}
             <div class="artist-page-icon mr-2">
-              
+
 
                 <a href="{{ artist.facebook_url }}" target="_blank"><img id="facebook-icon" src="/static/img/fb_logo.png" /></a>
 
@@ -65,7 +65,7 @@
 
             </div>
             {% endif %}
-            
+
           </div>
 
         </div>
@@ -75,7 +75,7 @@
 
 </div>
 
-<div class="container mt-2 mb-5"> 
+<div class="container mt-2 mb-5">
   <div class="row mb-3">
 
     <div class="col-sm-3">
@@ -174,15 +174,15 @@
 
         </div>
 
-        
+
         <div>
 
-            Address to transfer Musicakes: 
+            Address to transfer Musicakes:
             <br>
             <input type="text"  class="form-control" id="transfer-musicakes-address">
         </div>
         <div>
-          Number of Musicakes to transfer: 
+          Number of Musicakes to transfer:
           <div class="form-row">
             <p class="col-sm-2">
             <input type="text" class="form-control" size=50 id="transfer-musicakes-amount">
@@ -209,7 +209,7 @@
             <div class="modal-header">
               <h5 class="modal-title" id="support-artist-modal-title">Support Artist with DAI</h5>
             </div>
-            
+
             <div class="modal-body">
               <form action="" method="post" >
 
@@ -240,7 +240,7 @@
             <div class="modal-header">
               <h5 class="modal-title" id="buy-release-modal-title">Buy Release with DAI</h5>
             </div>
-            
+
 
             {% if userinfo is none %}
             <div class="modal-body">
@@ -348,7 +348,7 @@
       <meta id="price" data-value="{{ release.price }}">
 
       <!-- proxy element to store and query release id for window.appConfig --->
-      <meta id="release-id" data-value="{{ release.id }}">        
+      <meta id="release-id" data-value="{{ release.id }}">
 
       <!-- proxy element to store and query smart contract address for window.appConfig --->
       <meta id="smart_contract_address" data-value="{{ release.smart_contract_address }}">
@@ -401,7 +401,7 @@
       </div>
       {% endif %}
 
-      {% if release.purchasers|length > 0 %}
+      {% if release.smart_contract_address|length != 2 and release.purchasers|length > 0 %}
       <h5>
         Purchasers
       </h5>
