@@ -458,12 +458,12 @@ def create_app(test_config=None):
         pending_transactions = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.user_id==user.id) \
                                 .filter(PurchaseCeleryTask.is_confirmed==False) \
                                 .filter(PurchaseCeleryTask.is_visible==True) \
-                                .order_by(PurchaseCeleryTask.started_on.desc()).limit(10).all()
+                                .order_by(PurchaseCeleryTask.started_on.desc()).limit(5).all()
 
         transaction_history = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.user_id==user.id) \
                                 .filter(PurchaseCeleryTask.is_confirmed==True) \
                                 .filter(PurchaseCeleryTask.is_visible==True) \
-                                .order_by(PurchaseCeleryTask.started_on.desc()).limit(10).all()
+                                .order_by(PurchaseCeleryTask.started_on.desc()).limit(5).all()
 
 
         pending_deployments = DeployCeleryTask.query.filter(
@@ -471,12 +471,12 @@ def create_app(test_config=None):
                                 .filter(DeployCeleryTask.is_confirmed == False) \
                                 .filter(DeployCeleryTask.is_visible == True) \
                                 .order_by(DeployCeleryTask.started_on.desc()) \
-                                .limit(10).all()
+                                .limit(5).all()
 
         deployment_history = DeployCeleryTask.query.filter(DeployCeleryTask.user_id==user.id) \
                                 .filter(DeployCeleryTask.is_confirmed==True) \
                                 .filter(DeployCeleryTask.is_visible==True) \
-                                .order_by(DeployCeleryTask.started_on.desc()).limit(10).all()
+                                .order_by(DeployCeleryTask.started_on.desc()).limit(5).all()
 
         return render_template(
             'pages/show_account.html',

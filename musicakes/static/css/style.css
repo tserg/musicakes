@@ -165,10 +165,10 @@ button {
 
 .upload-img-btn {
 	position: absolute;
-	bottom: 1%;
-	right: 1%;
-	transform: translate(1%, 1%);
-	-ms-transform: translate(1%, 1%);
+	bottom: 5%;
+	right: 8%;
+	transform: translate(5%, 8%);
+	-ms-transform: translate(5%, 8%);
 	background-color: #ede0e0;
 	border: 1px solid;
 	padding: 2px 2px;
