@@ -25,8 +25,16 @@ from flask_wtf import (
     CSRFProtect
 )
 
-from .tasks import *
-from .forms import *
+from .tasks import make_celery
+from .forms import (
+    UserForm,
+    ArtistForm,
+    EditArtistForm,
+    TrackForm,
+    ReleasePresubmissionForm,
+    EditReleaseForm,
+    EditReleaseCoverArtForm
+)
 
 from .models import (
     setup_db,
@@ -133,8 +141,6 @@ def create_app(test_config=None):
         pass
 
     flask_app.config['SECRET_KEY'] = SECRET_KEY
-    flask_app.config['CELERY_BROKER_URL'] = CELERY_BROKER_URL
-    flask_app.config['CELERY_RESULT_BACKEND'] = CELERY_RESULT_BACKEND
     flask_app.config['CELERY_SEND_EVENTS'] = True
 
     celery = make_celery(flask_app)
