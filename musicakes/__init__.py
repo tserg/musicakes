@@ -135,12 +135,17 @@ def create_app(test_config=None):
     from musicakes.aws_s3 import bp as aws_s3_bp
     flask_app.register_blueprint(aws_s3_bp)
 
+    from musicakes.boilerplate import bp as boilerplate_bp
+    flask_app.register_blueprint(boilerplate_bp)
+
     try:
         os.makedirs(flask_app.instance_path)
     except OSError:
         pass
 
     flask_app.config['SECRET_KEY'] = SECRET_KEY
+    flask_app.config['CELERY_BROKER_URL'] = CELERY_BROKER_URL
+    flask_app.config['CELERY_RESULT_BACKEND'] = CELERY_RESULT_BACKEND
     flask_app.config['CELERY_SEND_EVENTS'] = True
 
     celery = make_celery(flask_app)
@@ -342,35 +347,6 @@ def create_app(test_config=None):
     # General
 
     ###################################################
-
-    @flask_app.route('/about', methods=['GET'])
-    def show_about_us():
-
-        data = get_user_data()
-
-        return render_template('boilerplate/about.html', userinfo=data)
-
-
-    @flask_app.route('/faq', methods=['GET'])
-    def show_faq():
-
-        data = get_user_data()
-
-        return render_template('boilerplate/faq.html', userinfo=data)
-
-    @flask_app.route('/terms', methods=['GET'])
-    def show_terms_of_use():
-
-        data = get_user_data()
-
-        return render_template('boilerplate/terms.html', userinfo=data)
-
-    @flask_app.route('/privacy', methods=['GET'])
-    def show_privacy_policy():
-
-        data = get_user_data()
-
-        return render_template('boilerplate/privacy.html', userinfo=data)
 
     @flask_app.route('/search', methods=['GET'])
     def search():
