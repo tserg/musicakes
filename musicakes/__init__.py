@@ -953,5 +953,7 @@ def create_app(test_config=None):
 
     return flask_app
 
+
+
 app = create_app()
 celery = make_celery(app)

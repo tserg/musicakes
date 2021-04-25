@@ -190,37 +190,3 @@ async function deployMusicakesContract() {
     console.log(error);
   });
 }
-
-function addSmartContractToRelease(release_id, smart_contract_address) {
-
-  var csrf_token = document.getElementById('csrf_token').value;
-
-  var data = JSON.stringify({
-    smart_contract_address: smart_contract_address
-  });
-
-  var xhr = new XMLHttpRequest();
-  xhr.open("POST", '/releases/' + release_id.toString() + "/deploy");
-
-  xhr.setRequestHeader("Content-Type", "application/json");
-  xhr.setRequestHeader("Accept", "application/json");
-  xhr.setRequestHeader('X-CSRFToken', csrf_token)
-
-  xhr.onreadystatechange = function(error, result) {
-    if(xhr.readyState === 4){
-      if(xhr.status === 200){
-
-        console.log("Smart contract address added to database.");
-        alert("Your Musicakes smart contract has been deployed.");
-        window.location.replace('/home');
-
-      }
-      else{
-        console.log(error);
-        alert("Your Musicakes smart contract could not be deployed.");
-      }
-   }
-  };
-  xhr.send(data);
-
-}

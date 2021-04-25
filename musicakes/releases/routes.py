@@ -362,29 +362,6 @@ def deploy_release_smart_contract(release_id):
             'completed': task.ready()
         })
 
-        '''
-
-        smart_contract_address = request.get_json()['smart_contract_address']
-
-        release = Release.query.filter(Release.id==release_id).one_or_none()
-
-        if release is None:
-
-            abort(404)
-
-        if user.artist.id != release.artist_id:
-            abort(401)
-
-        release.smart_contract_address = smart_contract_address
-        release.update()
-
-        return jsonify({
-            'success': True,
-            'release_id': release.id,
-            'smart_contract_address': release.smart_contract_address
-        })
-        '''
-
     except Exception as e:
         print(e)
         return jsonify({
