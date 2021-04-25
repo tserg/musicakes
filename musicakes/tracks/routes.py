@@ -7,6 +7,8 @@ from flask import (
     render_template
 )
 
+from werkzeug.utils import secure_filename
+
 from dotenv import load_dotenv
 
 from . import bp
@@ -14,7 +16,8 @@ from . import bp
 from ..models import (
     Artist,
     Release,
-    Track
+    Track,
+    PaymentToken
 )
 
 from ..session_utils import (
@@ -26,6 +29,10 @@ from ..decorators import (
 )
 
 load_dotenv()
+
+# Environment variables for Ethereum blockchain
+
+ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')
 
 # Environment variable for AWS S3 location
 

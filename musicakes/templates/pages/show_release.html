@@ -95,7 +95,7 @@
 
         {% if userinfo and creator is true %}
 
-        <form action="{{ url_for('show_release_for_deployment', release_id=release.id) }}">
+        <form action="{{ url_for('releases.show_release_for_deployment', release_id=release.id) }}">
           <input type="submit" value="Deploy Smart Contract" class="btn btn-sm btn-outline-secondary" />
         </form>
         {% else %}

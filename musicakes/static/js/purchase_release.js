@@ -678,7 +678,7 @@ window.addEventListener('load', async () => {
       } else {
         alert('You are connected to the wrong network.')
       }
-      
+
     }
 
   } else {
@@ -708,7 +708,7 @@ function startApp() {
           } else {
             alert('You are connected to the wrong network.')
           }
-          
+
         } else {
           supportArtist();
         }
@@ -733,7 +733,7 @@ function startApp() {
           } else {
             alert('You are connected to the wrong network.')
           }
-          
+
         } else {
           getAccount();
         }
@@ -761,7 +761,7 @@ function startApp() {
           } else {
             alert('You are connected to the wrong network.')
           }
-          
+
         } else {
           payMusicakes();
         }
@@ -787,7 +787,7 @@ function startApp() {
           } else {
             alert('You are connected to the wrong network.')
           }
-          
+
         } else {
           claimDividends();
         }
@@ -812,7 +812,7 @@ function startApp() {
           } else {
             alert('You are connected to the wrong network.')
           }
-          
+
         } else {
           updateDividends();
         }
@@ -820,7 +820,7 @@ function startApp() {
       } else {
         alert('Please install MetaMask to continue!');
       }
-      
+
     });
   }
 
@@ -838,7 +838,7 @@ function startApp() {
           } else {
             alert('You are connected to the wrong network.')
           }
-          
+
         } else {
           transferMusicakes();
         }
@@ -882,7 +882,7 @@ async function loadInterface() {
 	});
 
 	// Get total supply of Musicakes
-	
+
 	var musicakesTotalSupply = musicakesContract.methods.totalSupply().call(function(error, result) {
 		if (!error) {
 			showMusicakesTotalSupply.innerHTML = result;
@@ -998,7 +998,7 @@ async function payMusicakes() {
 		});
 
   }
-	
+
 }
 
 async function claimDividends() {

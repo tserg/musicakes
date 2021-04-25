@@ -42,10 +42,10 @@
       <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav">
           <li class="nav-item mx-3">
-            <a class="nav-link" href="{{ url_for('get_artists') }}">Artists</a>
+            <a class="nav-link" href="{{ url_for('artists.get_artists') }}">Artists</a>
           </li>
           <li class="nav-item mx-3">
-            <a class="nav-link" href="{{ url_for('get_releases') }}">Releases</a>
+            <a class="nav-link" href="{{ url_for('releases.get_releases') }}">Releases</a>
           </li>
           <li class="nav-item ml-3 mr-5">
             <a class="nav-link" href="{{ url_for('tracks.get_tracks') }}">Tracks</a>
@@ -103,8 +103,8 @@
 
               {% else %}
 
-              <a class="dropdown-item" href="/artists/{{ userinfo.artist_id }}">View Artist Profile</a>
-              <a class="dropdown-item" href="/artists/{{ userinfo.artist_id }}/edit">Edit Artist Profile</a>
+              <a class="dropdown-item" href="{{ url_for('artists.show_artist', artist_id=userinfo.artist_id) }}">View Artist Profile</a>
+              <a class="dropdown-item" href="{{ url_for('artists.edit_artist', artist_id=userinfo.artist_id) }}">Edit Artist Profile</a>
               <a class="dropdown-item" href="/releases/create">Create Release</a>
 
               {% endif %}

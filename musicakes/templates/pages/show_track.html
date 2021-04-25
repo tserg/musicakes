@@ -84,7 +84,7 @@
       </h3>
       <p>
         <small>
-          from <a href="/releases/{{ track.release_id }}">{{ track.release_name }}</a>
+          from <a href="{{ url_for('releases.show_release', release_id=track.release_id) }}">{{ track.release_name }}</a>
         </small>
       <p>
       <h5>

@@ -27,7 +27,7 @@ createReleaseButton.addEventListener('click', () => {
 });
 
 async function validateForm() {
-  
+
   // validate release
 
   var release_name = document.getElementById('release-name-input');
@@ -49,7 +49,7 @@ async function validateForm() {
 
   const track_name_placeholder = "track-name-input"
   const track_file_placeholder = "track-file-input"
-  const track_price_placeholder = "track-price-input"  
+  const track_price_placeholder = "track-price-input"
 
   for (i=1; i<=tracks_count; i++) {
 
@@ -214,7 +214,7 @@ function addTracks(release_id) {
 
   const track_name_placeholder = "track-name-input"
   const track_file_placeholder = "track-file-input"
-  const track_price_placeholder = "track-price-input"  
+  const track_price_placeholder = "track-price-input"
 
   for (i=1; i<=tracks_count; i++) {
 
@@ -237,7 +237,7 @@ function addTracks(release_id) {
   }
 
 
-  
+
 }
 
 function getSignedRequestTrack(file, track_name, track_price, release_id, html_id){
@@ -321,10 +321,10 @@ function addTrackToServer(file_name, track_name, track_price, release_id) {
         response = JSON.parse(xhr.response);
 
         created_track_count += 1;
-        
+
         if (created_track_count == tracks_count) {
           alert("All tracks have been successfully uploaded");
-          window.location.replace('/releases/' + release_id.toString() + '/deploy');
+          // window.location.replace('/releases/' + release_id.toString() + '/deploy');
 
         }
 
