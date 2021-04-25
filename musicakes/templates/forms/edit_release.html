@@ -23,7 +23,7 @@
 	    <meta id="artist-id" data-id="{{ artist.id }}">
 
 
-		<form method="post" action="{{ url_for('edit_release_form', release_id=release.id) }}">
+		<form method="post" action="{{ url_for('releases.edit_release_form', release_id=release.id) }}">
 		    {{ form.hidden_tag() }}
 		    <fieldset>
 	    	<legend>Release Information</legend>

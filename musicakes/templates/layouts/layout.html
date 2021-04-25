@@ -105,7 +105,7 @@
 
               <a class="dropdown-item" href="{{ url_for('artists.show_artist', artist_id=userinfo.artist_id) }}">View Artist Profile</a>
               <a class="dropdown-item" href="{{ url_for('artists.edit_artist', artist_id=userinfo.artist_id) }}">Edit Artist Profile</a>
-              <a class="dropdown-item" href="/releases/create">Create Release</a>
+              <a class="dropdown-item" href="{{ url_for('releases.create_release_presubmission_form') }}">Create Release</a>
 
               {% endif %}
 

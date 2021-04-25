@@ -10,6 +10,11 @@ from flask import (
     url_for
 )
 
+from flask_wtf import (
+    Form
+)
+
+from sqlalchemy import or_
 from sqlalchemy.sql import func
 
 from werkzeug.utils import secure_filename
@@ -24,7 +29,8 @@ from ..models import (
     Track,
     Purchase,
     PaymentToken,
-    MusicakesContractFactory
+    MusicakesContractFactory,
+    DeployCeleryTask
 )
 
 from ..session_utils import (
@@ -36,7 +42,13 @@ from ..decorators import (
 )
 
 from ..forms import (
-    ReleasePresubmissionForm
+    ReleasePresubmissionForm,
+    EditReleaseForm
+)
+
+from ..aws_s3.s3_utils import (
+    upload_file,
+    delete_files
 )
 
 load_dotenv()
@@ -498,7 +510,7 @@ def edit_release_form_submit(release_id):
         print(e)
         flash('Your release information could not be updated. Please try again.')
 
-    return redirect(url_for('edit_release_form', release_id=release_id))
+    return redirect(url_for('releases.edit_release_form', release_id=release_id))
 
 @bp.route('/releases/<int:release_id>/edit_cover_art', methods=['GET'])
 @requires_log_in

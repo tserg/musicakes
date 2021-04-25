@@ -17,7 +17,6 @@ from flask import (
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
-from sqlalchemy import or_
 
 from flask_cors import CORS
 from flask_wtf import (
@@ -29,13 +28,7 @@ from werkzeug.utils import secure_filename
 
 from .tasks import make_celery
 from .forms import (
-    UserForm,
-    ArtistForm,
-    EditArtistForm,
-    TrackForm,
-    ReleasePresubmissionForm,
-    EditReleaseForm,
-    EditReleaseCoverArtForm
+    UserForm
 )
 
 from .models import (
@@ -45,8 +38,6 @@ from .models import (
     Release,
     Track,
     Purchase,
-    MusicakesContractFactory,
-    PaymentToken,
     PurchaseCeleryTask,
     DeployCeleryTask
 )
@@ -71,6 +62,7 @@ from .aws_s3.s3_utils import (
     download_track,
     delete_files
 )
+
 from .decorators import (
     requires_log_in
 )
