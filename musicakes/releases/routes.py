@@ -51,6 +51,10 @@ from ..aws_s3.s3_utils import (
     delete_files
 )
 
+from .. import create_app
+
+from ..tasks import check_smart_contract_deployed
+
 load_dotenv()
 
 # Environment variable for AWS S3 location

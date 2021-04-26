@@ -26,7 +26,6 @@ from flask_wtf import (
 
 from werkzeug.utils import secure_filename
 
-from .tasks import make_celery
 from .forms import (
     UserForm
 )
@@ -49,10 +48,6 @@ from authlib.integrations.flask_client import OAuth
 from celery import Celery
 from celery.app.control import Control
 
-# Import web3.py
-
-from web3 import Web3
-
 from dotenv import load_dotenv
 
 # Import utils
@@ -65,10 +60,6 @@ from .aws_s3.s3_utils import (
 
 from .decorators import (
     requires_log_in
-)
-
-from .web3_utils import (
-    check_transaction_receipt
 )
 
 from .session_utils import (
@@ -106,12 +97,24 @@ ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')
 CELERY_BROKER_URL = os.getenv('REDIS_URL', 'Does not exist')
 CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'Does not exist')
 
-# Environment variables for Infura
+def make_celery(app=None):
+    app = app or create_app()
+    celery = Celery(
+        app.import_name,
+        backend=CELERY_RESULT_BACKEND,
+        broker=CELERY_BROKER_URL,
+    )
+    celery.conf.update(
+        worker_send_task_events=True
+    )
 
-WEB3_INFURA_PROJECT_ID = os.getenv('WEB3_INFURA_PROJECT_ID', 'Does not exist')
-WEB3_INFURA_API_SECRET = os.getenv('WEB3_INFURA_API_SECRET', 'Does not exist')
-#WEB3_PROVIDER_URI = os.getenv('WEB3_PROVIDER_URI', 'Does not exist')
+    class ContextTask(celery.Task):
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return self.run(*args, **kwargs)
 
+    celery.Task = ContextTask
+    return celery
 
 def create_app(test_config=None):
 
@@ -142,12 +145,6 @@ def create_app(test_config=None):
         pass
 
     flask_app.config['SECRET_KEY'] = SECRET_KEY
-    flask_app.config['CELERY_BROKER_URL'] = CELERY_BROKER_URL
-    flask_app.config['CELERY_RESULT_BACKEND'] = CELERY_RESULT_BACKEND
-    flask_app.config['CELERY_SEND_EVENTS'] = True
-
-    celery = make_celery(flask_app)
-    celery_control = Control(celery)
 
     csrf = CSRFProtect()
     csrf.init_app(flask_app)
@@ -249,96 +246,6 @@ def create_app(test_config=None):
         latest_releases_data = [release.short_public() for release in latest_releases]
 
         return render_template('pages/home.html', userinfo=data, latest_releases=latest_releases_data)
-
-    ###################################################
-
-    # Celery
-
-    ###################################################
-
-    @celery.task(bind=True)
-    def check_smart_contract_deployed(self, _transactionHash, _releaseId):
-
-        receipt = check_transaction_receipt(ETHEREUM_CHAIN_ID, _transactionHash)
-
-        if receipt:
-            print("deploy celery task receipt")
-            print(receipt)
-            print("logs")
-            print(receipt.logs[0].address)
-
-            transactionHash = receipt.transactionHash.hex()
-            smart_contract_address = receipt.logs[0].address
-
-            task_id = self.request.id
-
-            deploy_celery_task = DeployCeleryTask.query.filter(DeployCeleryTask.task_id==task_id).one_or_none()
-
-            deploy_celery_task.is_confirmed = True
-            deploy_celery_task.update()
-
-            release = Release.query.get(_releaseId)
-            release.smart_contract_address = smart_contract_address
-            release.update()
-
-        return True
-
-    @celery.task(bind=True)
-    def check_purchase_transaction_confirmed(self, _transactionHash, _userId):
-
-        receipt = check_transaction_receipt(ETHEREUM_CHAIN_ID, _transactionHash)
-
-        if receipt:
-
-            print(receipt)
-
-            transactionHash = receipt.transactionHash.hex()
-            paid = Web3.fromWei(Web3.toInt(hexstr=receipt.logs[0].data), 'ether')
-            walletAddress = receipt['from']
-
-            # Checks if wallet address matches
-
-            task_id = self.request.id
-
-            purchase_celery_task = PurchaseCeleryTask.query.filter(PurchaseCeleryTask.task_id==task_id).one_or_none()
-
-            # Checks if wallet address is same as when transaction hash was first submitted
-
-            if str(walletAddress).lower() == purchase_celery_task.wallet_address:
-
-                # Update the task status to confirmed
-
-                purchase_celery_task.is_confirmed = True
-
-                purchase_celery_task.update()
-
-                # Add the purchase depending on whether it is a track or release
-
-                if purchase_celery_task.purchase_type == 'release':
-
-                    purchase = Purchase(
-                            user_id = _userId,
-                            release_id = purchase_celery_task.purchase_type_id,
-                            paid = paid,
-                            wallet_address = walletAddress,
-                            transaction_hash = transactionHash
-                        )
-
-                    purchase.insert()
-
-                elif purchase_celery_task.purchase_type == 'track':
-
-                    purchase = Purchase(
-                            user_id = _userId,
-                            track_id = purchase_celery_task.purchase_type_id,
-                            paid = paid,
-                            wallet_address = walletAddress,
-                            transaction_hash = transactionHash
-                        )
-
-                    purchase.insert()
-
-        return True
 
     ###################################################
 
@@ -568,6 +475,8 @@ def create_app(test_config=None):
                 'success': False
             })
 
+
+    '''
     @flask_app.route('/transactions/<string:transaction_hash>/update', methods=['POST'])
     def update_transaction(transaction_hash):
         """
@@ -655,6 +564,7 @@ def create_app(test_config=None):
             return jsonify({
                 'success': False
             })
+        '''
 
     ###################################################
 
