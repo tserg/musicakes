@@ -1,10 +1,14 @@
 import os
 
 from flask import (
+    flash,
     request,
     abort,
     jsonify,
-    render_template
+    render_template,
+    redirect,
+    url_for,
+    send_file
 )
 
 from werkzeug.utils import secure_filename
@@ -12,6 +16,10 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
 from . import bp
+
+from ..aws_s3.s3_utils import (
+    download_track
+)
 
 from ..models import (
     Artist,
@@ -28,6 +36,9 @@ from ..session_utils import (
 from ..decorators import (
     requires_log_in
 )
+
+
+
 '''
 from ..tasks import (
     check_smart_contract_deployed,
@@ -235,3 +246,54 @@ def purchase_track(track_id):
         return jsonify({
             'success': False
         })
+
+
+@bp.route('/tracks/<int:track_id>/download', methods=['GET'])
+@requires_log_in
+def download_purchased_track(track_id):
+
+    user, data = get_user_data(True)
+
+    if data is None:
+
+        abort(404)
+
+    # checks if user has purchased the current track
+
+    track = Track.query.filter(Track.id==track_id).one_or_none()
+    release = Release.query.filter(Release.id==track.release_id).one_or_none()
+
+    if track is None or release is None:
+
+        abort(404)
+
+    track_purchase = user.has_purchased_track(track.id, release.id)
+
+    release_purchase = user.has_purchased_release(release.id)
+
+    if track_purchase is False and release_purchase is False:
+
+        abort(404)
+
+    # download file
+
+    artist_user = Artist.query.filter(Artist.id==release.artist_id).one_or_none()
+
+    url_components = track.download_url.rsplit('/')
+
+    filename = secure_filename(url_components[-1])
+
+    key = url_components[-2] + "/" + filename
+
+    try:
+
+        output = download_track(key, filename)
+
+        return send_file(output, as_attachment=True)
+
+    except Exception as e:
+
+        print(e)
+        flash('Unable to download file.')
+
+    return redirect(url_for('users.show_purchases'))

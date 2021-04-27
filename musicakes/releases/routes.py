@@ -550,7 +550,7 @@ def edit_release_cover_art_form_submit(release_id):
         print(e)
         flash('The cover art could not be updated.')
 
-    return redirect(url_for('edit_release_cover_art_form', release_id=release_id))
+    return redirect(url_for('releases.edit_release_cover_art_form', release_id=release_id))
 
 @bp.route('/releases/<int:release_id>/download', methods=['GET'])
 @requires_log_in
