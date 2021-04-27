@@ -470,8 +470,6 @@ def create_app(test_config=None):
                 'success': False
             })
 
-
-    '''
     @flask_app.route('/transactions/<string:transaction_hash>/update', methods=['POST'])
     def update_transaction(transaction_hash):
         """
@@ -496,8 +494,9 @@ def create_app(test_config=None):
                 wallet_address = current_task.wallet_address
                 transaction_hash = current_task.transaction_hash
 
+                from .tasks import remove_celery_task, check_purchase_transaction_confirmed
 
-                celery_control.revoke(current_task.task_id, terminate=True)
+                remove_celery_task(current_task.task_id)
                 current_task.delete()
 
                 new_task = check_purchase_transaction_confirmed.apply_async(
@@ -559,7 +558,6 @@ def create_app(test_config=None):
             return jsonify({
                 'success': False
             })
-        '''
 
     ###################################################
 
@@ -654,50 +652,7 @@ def create_app(test_config=None):
 
 
 
-    @flask_app.route('/tracks/<int:track_id>/purchase', methods=['POST'])
-    @requires_log_in
-    def purchase_track(track_id):
 
-        user, data = get_user_data(True)
-
-        if data is None:
-
-            abort(404)
-
-        try:
-
-            transaction_hash = request.get_json()['transaction_hash']
-            wallet_address = request.get_json()['wallet_address']
-
-            task = check_purchase_transaction_confirmed.apply_async(
-                        args=(transaction_hash,
-                                user.id))
-
-            purchase_description = Track.query.filter(Track.id == track_id).one_or_none().purchase_description()
-
-            purchase_celery_task = PurchaseCeleryTask(
-                task_id = task.id,
-                user_id = user.id,
-                purchase_description = purchase_description,
-                purchase_type = 'track',
-                purchase_type_id = track_id,
-                wallet_address=wallet_address,
-                transaction_hash = transaction_hash,
-                is_confirmed = False
-            )
-
-            purchase_celery_task.insert()
-
-            return jsonify({
-                'success': True,
-                'task_id': task.id,
-                'completed': task.ready()
-            })
-
-        except Exception as e:
-            return jsonify({
-                'success': False
-            })
 
     @flask_app.route('/tracks/<int:track_id>/download', methods=['GET'])
     @requires_log_in
@@ -817,4 +772,4 @@ def create_app(test_config=None):
 
 
 app = create_app()
-celery = make_celery(app)
+celery_app = make_celery(app)

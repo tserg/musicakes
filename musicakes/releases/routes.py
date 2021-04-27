@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import os
 
 from flask import (
@@ -54,10 +52,7 @@ from ..aws_s3.s3_utils import (
     delete_files
 )
 
-from ..tasks import (
-    check_smart_contract_deployed,
-    check_purchase_transaction_confirmed
-)
+
 
 load_dotenv()
 
@@ -662,6 +657,8 @@ def purchase_release(release_id):
 
         transaction_hash = request.get_json()['transaction_hash']
         wallet_address = request.get_json()['wallet_address']
+
+        from ..tasks import check_purchase_transaction_confirmed
 
         task = check_purchase_transaction_confirmed.apply_async(
                     args=(transaction_hash,

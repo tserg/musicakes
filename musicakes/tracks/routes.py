@@ -17,7 +17,8 @@ from ..models import (
     Artist,
     Release,
     Track,
-    PaymentToken
+    PaymentToken,
+    PurchaseCeleryTask
 )
 
 from ..session_utils import (
@@ -27,7 +28,12 @@ from ..session_utils import (
 from ..decorators import (
     requires_log_in
 )
-
+'''
+from ..tasks import (
+    check_smart_contract_deployed,
+    check_purchase_transaction_confirmed
+)
+'''
 load_dotenv()
 
 # Environment variables for Ethereum blockchain
@@ -173,6 +179,55 @@ def create_track():
         return jsonify({
             'success': True,
             'track_id': new_track.id
+        })
+
+    except Exception as e:
+        print(e)
+        return jsonify({
+            'success': False
+        })
+
+
+@bp.route('/tracks/<int:track_id>/purchase', methods=['POST'])
+@requires_log_in
+def purchase_track(track_id):
+
+    user, data = get_user_data(True)
+
+    if data is None:
+
+        abort(404)
+
+    try:
+
+        transaction_hash = request.get_json()['transaction_hash']
+        wallet_address = request.get_json()['wallet_address']
+
+        from ..tasks import check_purchase_transaction_confirmed
+
+        task = check_purchase_transaction_confirmed.apply_async(
+                    args=(transaction_hash,
+                            user.id))
+
+        purchase_description = Track.query.filter(Track.id == track_id).one_or_none().purchase_description()
+
+        purchase_celery_task = PurchaseCeleryTask(
+            task_id = task.id,
+            user_id = user.id,
+            purchase_description = purchase_description,
+            purchase_type = 'track',
+            purchase_type_id = track_id,
+            wallet_address=wallet_address,
+            transaction_hash = transaction_hash,
+            is_confirmed = False
+        )
+
+        purchase_celery_task.insert()
+
+        return jsonify({
+            'success': True,
+            'task_id': task.id,
+            'completed': task.ready()
         })
 
     except Exception as e:

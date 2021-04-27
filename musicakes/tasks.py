@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import os
 
 from celery import Celery
@@ -37,11 +35,16 @@ ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')
 WEB3_INFURA_PROJECT_ID = os.getenv('WEB3_INFURA_PROJECT_ID', 'Does not exist')
 WEB3_INFURA_API_SECRET = os.getenv('WEB3_INFURA_API_SECRET', 'Does not exist')
 
-celery = make_celery()
+celery_app = make_celery()
 
-celery_control = Control(celery)
+celery_control = Control(celery_app)
 
-@celery.task(bind=True)
+@celery_app.task(bind=True)
+def remove_celery_task(self, _taskId):
+    celery_control.revoke(_taskId, terminate=True)
+    return True
+
+@celery_app.task(bind=True)
 def check_smart_contract_deployed(self, _transactionHash, _releaseId):
 
     receipt = check_transaction_receipt(ETHEREUM_CHAIN_ID, _transactionHash)
@@ -68,7 +71,7 @@ def check_smart_contract_deployed(self, _transactionHash, _releaseId):
 
     return True
 
-@celery.task(bind=True)
+@celery_app.task(bind=True)
 def check_purchase_transaction_confirmed(self, _transactionHash, _userId):
 
     receipt = check_transaction_receipt(ETHEREUM_CHAIN_ID, _transactionHash)
