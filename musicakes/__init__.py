@@ -66,6 +66,10 @@ from .session_utils import (
     get_user_data
 )
 
+from .config import (
+    CeleryConfig
+)
+
 load_dotenv()
 
 # Secret key
@@ -92,21 +96,12 @@ S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
 
 ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')
 
-# Environment variables for Celery and Redies
-
-CELERY_BROKER_URL = os.getenv('REDIS_URL', 'Does not exist')
-CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'Does not exist')
-
 def make_celery(app=None):
     app = app or create_app()
     celery = Celery(
-        app.import_name,
-        backend=CELERY_RESULT_BACKEND,
-        broker=CELERY_BROKER_URL,
+        app.import_name
     )
-    celery.conf.update(
-        worker_send_task_events=True
-    )
+    celery.config_from_object(CeleryConfig)
 
     class ContextTask(celery.Task):
         def __call__(self, *args, **kwargs):
