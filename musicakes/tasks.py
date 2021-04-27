@@ -28,11 +28,6 @@ env_path = Path().absolute() / '.env'
 
 load_dotenv(dotenv_path=env_path)
 
-# Environment variables for Celery and Redies
-
-CELERY_BROKER_URL = os.getenv('REDIS_URL', 'Does not exist')
-CELERY_RESULT_BACKEND = os.getenv('REDIS_URL', 'Does not exist')
-
 # Environment variables for Ethereum blockchain
 
 ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')

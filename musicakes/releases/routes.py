@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import os
 
 from flask import (
@@ -30,7 +32,8 @@ from ..models import (
     Purchase,
     PaymentToken,
     MusicakesContractFactory,
-    DeployCeleryTask
+    DeployCeleryTask,
+    PurchaseCeleryTask
 )
 
 from ..session_utils import (
@@ -51,9 +54,10 @@ from ..aws_s3.s3_utils import (
     delete_files
 )
 
-from .. import create_app
-
-from ..tasks import check_smart_contract_deployed
+from ..tasks import (
+    check_smart_contract_deployed,
+    check_purchase_transaction_confirmed
+)
 
 load_dotenv()
 
@@ -639,6 +643,55 @@ def delete_release(release_id):
     except Exception as e:
         print("error while deleting")
         print(e)
+        return jsonify({
+            'success': False
+        })
+
+
+@bp.route('/releases/<int:release_id>/purchase', methods=['POST'])
+@requires_log_in
+def purchase_release(release_id):
+
+    user, data = get_user_data(True)
+
+    if data is None:
+
+        abort(404)
+
+    try:
+
+        transaction_hash = request.get_json()['transaction_hash']
+        wallet_address = request.get_json()['wallet_address']
+
+        task = check_purchase_transaction_confirmed.apply_async(
+                    args=(transaction_hash,
+                            user.id))
+
+        purchase_description = Release.query.filter(Release.id == release_id).one_or_none().purchase_description()
+
+        purchase_celery_task = PurchaseCeleryTask(
+            task_id = task.id,
+            user_id = user.id,
+            purchase_description = purchase_description,
+            purchase_type = 'release',
+            purchase_type_id = release_id,
+            wallet_address=wallet_address,
+            transaction_hash = transaction_hash,
+            is_confirmed = False
+        )
+
+        purchase_celery_task.insert()
+
+        return jsonify({
+            'success': True,
+            'task_id': task.id,
+            'completed': task.ready()
+        })
+
+    except Exception as e:
+
+        print(e)
+
         return jsonify({
             'success': False
         })
