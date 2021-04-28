@@ -21,10 +21,10 @@
 
     <div class="col">
 
-      {% if userinfo.artist_name is none %} 
-      <h4> You have not created an artist profile yet.</h4> 
+      {% if userinfo.artist_name is none %}
+      <h4> You have not created an artist profile yet.</h4>
 
-      {% else %} 
+      {% else %}
 
       <h4>
         Release: {{ release.release_name }}
@@ -37,7 +37,7 @@
         Price: {{ release.price }}
       </h4>
       <h4>
-        Tracks: 
+        Tracks:
       </h4>
 
       <ol>
@@ -51,10 +51,10 @@
 
       <!-- proxy element to store and query release id for window.appConfig --->
       <meta id="release-id" data-address="{{ release.id }}">
-      <meta id="contract-factory-address" data-address="{{ contract_factory_address }}">   
+      <meta id="contract-factory-address" data-address="{{ contract_factory_address }}">
 
       <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
-      <meta id="chain_id" data-value="{{ chain_id }}">   
+      <meta id="chain_id" data-value="{{ chain_id }}">
 
       <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
 
@@ -74,5 +74,5 @@
   }
 </script>
 <script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/deploy_release.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('releases.static', filename='js/deploy_release.js') }}"></script>
 {% endblock %}
