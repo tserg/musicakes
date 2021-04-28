@@ -7,3 +7,6 @@ class CeleryConfig:
     broker_url = os.getenv('REDIS_URL', 'Does not exist')
     result_backend = os.getenv('REDIS_URL', 'Does not exist')
     worker_send_task_events = True
+
+class FlaskConfig:
+    SECRET_KEY = os.getenv('SECRET_KEY', 'Does not exist')

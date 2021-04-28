@@ -55,14 +55,11 @@ from .session_utils import (
 )
 
 from .config import (
-    CeleryConfig
+    CeleryConfig,
+    FlaskConfig
 )
 
 load_dotenv()
-
-# Secret key
-
-SECRET_KEY = os.getenv('SECRET_KEY', 'Does not exist')
 
 # Environment variables for Auth0
 
@@ -130,8 +127,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    flask_app.config['SECRET_KEY'] = SECRET_KEY
-
     csrf = CSRFProtect()
     csrf.init_app(flask_app)
 
@@ -154,6 +149,8 @@ def create_app(test_config=None):
             'scope': 'openid profile email',
         },
     )
+
+    flask_app.config.from_object(FlaskConfig)
 
     ###################################################
 
