@@ -66,7 +66,7 @@ def get_artists():
 
         if start + 1 <= artists_count:
 
-            return render_template('pages/artists.html', artists=formatted_all_artists[start:end], userinfo=data)
+            return render_template('artists/artists.html', artists=formatted_all_artists[start:end], userinfo=data)
 
         else:
 
@@ -101,7 +101,7 @@ def show_artist(artist_id):
 
         payment_token_address = PaymentToken.query.get(1).smart_contract_address
 
-        return render_template('pages/show_artist.html',
+        return render_template('artists/show_artist.html',
                                 artist=artist_data,
                                 userinfo=data,
                                 creator=creator,

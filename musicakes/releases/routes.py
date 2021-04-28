@@ -95,7 +95,7 @@ def get_releases():
 
         if start + 1 <= releases_count:
 
-            return render_template('pages/releases.html', releases=formatted_all_releases[start:end], userinfo=data)
+            return render_template('releases/releases.html', releases=formatted_all_releases[start:end], userinfo=data)
 
         else:
             abort(404)
@@ -148,7 +148,7 @@ def show_release(release_id):
         else:
             creator = False
 
-        return render_template('pages/show_release.html',
+        return render_template('releases/show_release.html',
                                 release=release_data,
                                 userinfo=data,
                                 creator=creator,
@@ -310,7 +310,7 @@ def show_release_for_deployment(release_id):
 
             contract_factory_address = MusicakesContractFactory.query.get(1).smart_contract_address
 
-            return render_template('pages/deploy_release.html',
+            return render_template('releases/deploy_release.html',
                                     release=release_data,
                                     userinfo=data,
                                     contract_factory_address=contract_factory_address,

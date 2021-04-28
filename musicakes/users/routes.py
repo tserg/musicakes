@@ -129,7 +129,7 @@ def show_user(user_id):
 
         data['purchases'] = current_user.get_purchases()
 
-        return render_template('pages/show_user.html', user=data, userinfo=user_data)
+        return render_template('users/show_user.html', user=data, userinfo=user_data)
 
     except Exception as e:
         print(e)
@@ -185,7 +185,7 @@ def show_account():
                             .order_by(DeployCeleryTask.started_on.desc()).limit(5).all()
 
     return render_template(
-        'pages/show_account.html',
+        'users/show_account.html',
         userinfo=data,
         transaction_history = transaction_history,
         pending_transactions = pending_transactions,
@@ -205,7 +205,7 @@ def show_purchases():
 
     data['purchases'] =  user.get_purchases()
 
-    return render_template('pages/show_purchases.html', userinfo=data)
+    return render_template('users/show_purchases.html', userinfo=data)
 
 @bp.route('/users/<int:user_id>/update_profile_picture', methods=['PUT'])
 @requires_log_in

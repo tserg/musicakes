@@ -154,12 +154,9 @@ def create_app(test_config=None):
 
     ###################################################
 
-    # Routes
+    # Authentication
 
     ###################################################
-
-
-    # /server.py
 
     # Here we're using the /callback route.
     @flask_app.route('/callback')
@@ -195,6 +192,12 @@ def create_app(test_config=None):
         # Redirect user to logout endpoint
         params = {'returnTo': url_for('index', _external=True), 'client_id': AUTH0_CLIENT_ID}
         return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
+
+    ###################################################
+
+    # Landing pages
+
+    ###################################################
 
     @flask_app.route('/')
     def index():

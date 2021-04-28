@@ -83,7 +83,7 @@ def get_tracks():
 
         if start + 1 <= tracks_count:
 
-            return render_template('/pages/tracks.html', tracks=formatted_all_tracks[start:end], userinfo=data)
+            return render_template('tracks/tracks.html', tracks=formatted_all_tracks[start:end], userinfo=data)
 
         else:
             abort(404)
@@ -146,7 +146,7 @@ def show_track(track_id):
         else:
             creator = False
 
-        return render_template('pages/show_track.html',
+        return render_template('tracks/show_track.html',
                                 track=formatted_track_data,
                                 userinfo=data,
                                 creator=creator,

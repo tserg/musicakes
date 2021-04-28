@@ -1,5 +1,6 @@
 from flask import Blueprint
 
-bp = Blueprint('releases', __name__)
+bp = Blueprint('releases', __name__,
+    template_folder='templates')
 
 from . import routes
