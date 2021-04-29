@@ -1,13 +1,12 @@
 import os
 import json
+from dotenv import load_dotenv
+
 from urllib.parse import urlencode
 
 from flask import (
     Flask,
     request,
-    abort,
-    jsonify,
-    flash,
     render_template,
     redirect,
     url_for,
@@ -18,16 +17,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 
 from flask_cors import CORS
-from flask_wtf import (
-    Form,
-    CSRFProtect
-)
-
-from werkzeug.utils import secure_filename
-
-from .forms import (
-    UserForm
-)
+from flask_wtf import CSRFProtect
 
 from .models import (
     setup_db,
@@ -43,8 +33,6 @@ from authlib.integrations.flask_client import OAuth
 # Import Celery
 
 from celery import Celery
-
-from dotenv import load_dotenv
 
 from .decorators import (
     requires_log_in
@@ -72,14 +60,6 @@ AUTH0_USER_INFO_URL = os.getenv('AUTH0_USER_INFO_URL', 'Does not exist')
 ALGORITHMS = os.getenv('ALGORITHMS', 'Does not exist')
 API_AUDIENCE = os.getenv('API_AUDIENCE', 'Does not exist')
 REDIRECT_URL = os.getenv('REDIRECT_URL', 'Does not exist')
-
-# Environment variable for AWS S3 location
-
-S3_LOCATION = os.getenv('S3_LOCATION', 'Does not exist')
-
-# Environment variables for Ethereum blockchain
-
-ETHEREUM_CHAIN_ID = os.getenv('ETHEREUM_CHAIN_ID', 'Does not exist')
 
 def make_celery(app=None):
     app = app or create_app()
