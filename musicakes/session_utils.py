@@ -6,6 +6,10 @@ def get_user_data(return_user_id=False):
 
     """
     Helper function to obtain user data and User model object for rendering of page
+
+    @param return_user_id Boolean variable to indicate whether the user ID should be returned
+
+    @returns: a tuple containing user ID and user data if return_user_id is True, or user data only if return_user_id is False.
     """
 
     try:

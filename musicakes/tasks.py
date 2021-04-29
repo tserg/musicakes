@@ -41,11 +41,22 @@ celery_control = Control(celery_app)
 
 @celery_app.task(bind=True)
 def remove_celery_task(self, _taskId):
+    """
+    Helper function to delete a task with Celery Control without having to import the Control instance
+
+    @param: _taskId The ID of the task to be deleted
+    """
     celery_control.revoke(_taskId, terminate=True)
     return True
 
 @celery_app.task(bind=True)
 def check_smart_contract_deployed(self, _transactionHash, _releaseId):
+    """
+    Helper function to check if a transaction to deploy a smart contract has been confirmed
+
+    @param: _transactionHash The transaction hash for the smart contract deployment
+    @param: _releaseId The ID of the release which Musicakes contract was being deployed
+    """
 
     receipt = check_transaction_receipt(ETHEREUM_CHAIN_ID, _transactionHash)
 
@@ -73,6 +84,12 @@ def check_smart_contract_deployed(self, _transactionHash, _releaseId):
 
 @celery_app.task(bind=True)
 def check_purchase_transaction_confirmed(self, _transactionHash, _userId):
+    """
+    Helper function to check if a transaction to purchase a Release or Track has been confirmed
+
+    @param: _transactionHash The transaction hash for the purchase transaction
+    @param: _userId The user who made the purchase transaction
+    """
 
     receipt = check_transaction_receipt(ETHEREUM_CHAIN_ID, _transactionHash)
 
