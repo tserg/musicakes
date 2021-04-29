@@ -10,7 +10,7 @@
 
       <form method="post" class="form" onsubmit="return validateForm()" name="new_user">
         {{ form.hidden_tag() }}
-      
+
         <label for="username">Username</label>
         <p>
           {{ form.username(class_ = 'form-control', autofocus = true) }}
@@ -33,7 +33,7 @@
   </div>
 </div>
 
-<script type="text/javascript" src="{{ url_for('static', filename='js/new_user.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('users.static', filename='js/new_user.js') }}"></script>
 
 
 {% endblock %}

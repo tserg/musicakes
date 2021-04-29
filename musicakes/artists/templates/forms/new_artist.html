@@ -37,7 +37,7 @@
             <div class="col-sm-4">
             {{ form.artist_name(class_ = 'form-control', autofocus = true) }}
             </div>
-          
+
           </div>
 
 
@@ -49,10 +49,10 @@
             </div>
           </div>
 
-          
+
           <div class="form-group row">
             <label for="artist_soundcloud_url" class="col-sm-2 col-form-label">Soundcloud URL</label>
-  
+
             <div class="col-sm-4">
             {{ form.artist_soundcloud_url(class_ = 'form-control', autofocus = true) }}
             </div>
@@ -84,10 +84,10 @@
 
   </div>
 
-  {% else %} 
-    <h4> You have an existing artist profile tied to this account.</h4> 
+  {% else %}
+    <h4> You have an existing artist profile tied to this account.</h4>
   {% endif %}
   </div>
 </div>
-<script type="text/javascript" src="{{ url_for('static', filename='js/new_artist.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('artists.static', filename='js/new_artist.js') }}"></script>
 {% endblock %}

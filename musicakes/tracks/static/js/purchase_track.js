@@ -41,8 +41,6 @@ if (csrf_token_purchase) {
   console.log("CSRF Token is loaded");
 }
 
-const artistWalletAddress = window.appConfig.artist_wallet_address.value;
-
 /* Payment token contract */
 
 const paymentTokenAddress = window.appConfig.payment_token_address.value.toLowerCase();
