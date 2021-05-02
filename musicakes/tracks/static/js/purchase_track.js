@@ -650,7 +650,7 @@ window.addEventListener('load', async () => {
     console.log('Ethereum successfully detected!');
 
     ethereum.on('accountsChanged', function(accounts) {
-      loadInterface();
+      location.reload();
     });
 
     // From now on, this should always be true:
@@ -682,147 +682,139 @@ window.addEventListener('load', async () => {
     // if the provider is not detected, detectEthereumProvider resolves to null
     alert('Please install MetaMask to continue!');
   }
-  startApp();
 
 })
 
 // Initialise buttons
 
-function startApp() {
 
-  if (manageMusicakesButton != null) {
+if (manageMusicakesButton != null) {
 
-    manageMusicakesButton.addEventListener('click', () => {
-      if (provider) {
+  manageMusicakesButton.addEventListener('click', () => {
+    if (provider) {
 
-        if (currentChainId != ethereumChainId) {
+      if (currentChainId != ethereumChainId) {
 
-          if (ethereumChainId == 1) {
-            alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
-          } else if (ethereumChainId == 3) {
-            alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
-          } else {
-            alert('You are connected to the wrong network.')
-          }
-
+        if (ethereumChainId == 1) {
+          alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+        } else if (ethereumChainId == 3) {
+          alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
         } else {
-          getAccount();
+          alert('You are connected to the wrong network.')
         }
 
       } else {
-        alert('Please install MetaMask to continue!');
-      }
-    });
-  }
-
-  if (musicakesPayButton != null) {
-
-    musicakesPayButton.addEventListener('click', () => {
-
-      if (provider) {
-
-        if (currentChainId != ethereumChainId) {
-
-          if (ethereumChainId == 1) {
-            alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
-          } else if (ethereumChainId == 3) {
-            alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
-          } else {
-            alert('You are connected to the wrong network.')
-          }
-
-        } else {
-          payMusicakes();
-        }
-      } else {
-        alert('Please install MetaMask to continue!');
-      }
-    });
-  }
-
-  if (musicakesClaimDividendsButton != null) {
-
-    musicakesClaimDividendsButton.addEventListener('click', () => {
-
-      if (provider) {
-        if (currentChainId != ethereumChainId) {
-
-          if (ethereumChainId == 1) {
-            alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
-          } else if (ethereumChainId == 3) {
-            alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
-          } else {
-            alert('You are connected to the wrong network.')
-          }
-
-        } else {
-          claimDividends();
-        }
-      } else {
-        alert('Please install MetaMask to continue!');
-      }
-    });
-  }
-
-  if (musicakesUpdateDividendsButton != null) {
-    musicakesUpdateDividendsButton.addEventListener('click', () => {
-
-      if (provider) {
-
-        if (currentChainId != ethereumChainId) {
-
-          if (ethereumChainId == 1) {
-            alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
-          } else if (ethereumChainId == 3) {
-            alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
-          } else {
-            alert('You are connected to the wrong network.')
-          }
-
-        } else{
-          updateDividends();
-        }
-      } else {
-        alert('Please install MetaMask to continue!');
+        loadInterface();
       }
 
-    });
-  }
-
-  if (musicakesTransferButton != null) {
-      musicakesTransferButton.addEventListener('click', () => {
-
-        if (provider) {
-
-          if (currentChainId != ethereumChainId) {
-
-            if (ethereumChainId == 1) {
-              alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
-            } else if (ethereumChainId == 3) {
-              alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
-            } else {
-              alert('You are connected to the wrong network.')
-            }
-
-          } else {
-            transferMusicakes();
-          }
-        } else {
-          alert('Please install MetaMask to continue!');
-        }
-      });
+    } else {
+      alert('Please install MetaMask to continue!');
     }
+  });
 }
 
-async function getAccount() {
-	await ethereum.enable();
-  loadInterface();
+if (musicakesPayButton != null) {
+
+  musicakesPayButton.addEventListener('click', () => {
+
+    if (provider) {
+
+      if (currentChainId != ethereumChainId) {
+
+        if (ethereumChainId == 1) {
+          alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+        } else if (ethereumChainId == 3) {
+          alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+        } else {
+          alert('You are connected to the wrong network.')
+        }
+
+      } else {
+        payMusicakes();
+      }
+    } else {
+      alert('Please install MetaMask to continue!');
+    }
+  });
+}
+
+if (musicakesClaimDividendsButton != null) {
+
+  musicakesClaimDividendsButton.addEventListener('click', () => {
+
+    if (provider) {
+      if (currentChainId != ethereumChainId) {
+
+        if (ethereumChainId == 1) {
+          alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+        } else if (ethereumChainId == 3) {
+          alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+        } else {
+          alert('You are connected to the wrong network.')
+        }
+
+      } else {
+        claimDividends();
+      }
+    } else {
+      alert('Please install MetaMask to continue!');
+    }
+  });
+}
+
+if (musicakesUpdateDividendsButton != null) {
+  musicakesUpdateDividendsButton.addEventListener('click', () => {
+
+    if (provider) {
+
+      if (currentChainId != ethereumChainId) {
+
+        if (ethereumChainId == 1) {
+          alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+        } else if (ethereumChainId == 3) {
+          alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+        } else {
+          alert('You are connected to the wrong network.')
+        }
+
+      } else{
+        updateDividends();
+      }
+    } else {
+      alert('Please install MetaMask to continue!');
+    }
+
+  });
+}
+
+if (musicakesTransferButton != null) {
+    musicakesTransferButton.addEventListener('click', () => {
+
+      if (provider) {
+
+        if (currentChainId != ethereumChainId) {
+
+          if (ethereumChainId == 1) {
+            alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+          } else if (ethereumChainId == 3) {
+            alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+          } else {
+            alert('You are connected to the wrong network.')
+          }
+
+        } else {
+          transferMusicakes();
+        }
+      } else {
+        alert('Please install MetaMask to continue!');
+      }
+    });
 }
 
 async function loadInterface() {
 
-  const account = ethereum.selectedAddress;
-	// showAccountAddress.innerHTML = account;
+  var accounts = await web3.eth.getAccounts();
+  const account = accounts[0];
 
 	// Get ETH balance of current address
 
@@ -892,9 +884,8 @@ async function loadInterface() {
 
 async function payMusicakes() {
 
-  getAccount();
-
-  const account = ethereum.selectedAddress;
+  var accounts = await web3.eth.getAccounts();
+  const account = accounts[0];
 
 	var payAmount = musicakesPayValue.value;
 
@@ -950,9 +941,8 @@ async function payMusicakes() {
 
 async function claimDividends() {
 
-  getAccount();
-
-  const account = ethereum.selectedAddress;
+  var accounts = await web3.eth.getAccounts();
+  const account = accounts[0];
 
 	musicakesContract.methods.withdrawFunds().send({from: account})
 	.once('transactionHash', function(hash) {
@@ -969,9 +959,8 @@ async function claimDividends() {
 
 async function updateDividends() {
 
-  getAccount();
-
-  const account = ethereum.selectedAddress;
+  var accounts = await web3.eth.getAccounts();
+  const account = accounts[0];
 
 	musicakesContract.methods.updateFundsReceived().send({from: account})
 	.once('transactionHash', function(hash) {
@@ -988,9 +977,8 @@ async function updateDividends() {
 
 async function transferMusicakes() {
 
-  getAccount();
-
-  const account = ethereum.selectedAddress;
+  var accounts = await web3.eth.getAccounts();
+  const account = accounts[0];
 
   var musicakesTransferAddressValue = musicakesTransferAddress.value;
   var musicakesTransferAmountValue = Number(musicakesTransferAmount.value);

@@ -132,7 +132,7 @@ window.addEventListener('load', async () => {
     console.log('Ethereum successfully detected!');
 
     ethereum.on('accountsChanged', function(accounts) {
-      loadInterface();
+      location.reload();
     });
 
     // From now on, this should always be true:
@@ -174,16 +174,10 @@ window.addEventListener('load', async () => {
 
 });
 
-async function getAccount() {
-	await ethereum.enable();
-
-}
-
 async function supportArtist() {
 
-  getAccount();
-
-  const account = ethereum.selectedAddress;
+  var accounts = await web3.eth.getAccounts();
+  const account = accounts[0];
 
   var supportAmount = supportArtistValue.value;
   var supportAmountFormatted = web3.utils.toWei(supportAmount);

@@ -107,7 +107,7 @@ window.addEventListener('load', async () => {
     console.log('Ethereum successfully detected!');
 
     ethereum.on('accountsChanged', function(accounts) {
-
+      location.reload();
     });
 
     // From now on, this should always be true:
@@ -147,10 +147,12 @@ const musicakesFactoryContractAddress = contract_factory_address;
 // const musicakesFactoryContractAddress = "0xec67abe36b67afB03228101b7110A0a6155fdCdD";
 const musicakesFactoryContract = new web3.eth.Contract(_abi, musicakesFactoryContractAddress);
 
-async function deployMusicakesContract() {
-  await ethereum.enable();
 
-  const account = ethereum.selectedAddress;
+
+async function deployMusicakesContract() {
+
+  var accounts = await web3.eth.getAccounts();
+  const account = accounts[0];
 
   const token_name = "Musicakes" + release_id.toString();
   const token_symbol = "MSC_" + release_id.toString();
