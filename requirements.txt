@@ -40,7 +40,7 @@ idna==2.9
 importlib-metadata==1.6.0
 ipfshttpclient==0.6.1
 itsdangerous==1.1.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 jmespath==0.10.0
 jsonschema==3.2.0
 kombu==5.0.2
@@ -58,7 +58,7 @@ prompt-toolkit==3.0.8
 protobuf==3.13.0
 psycopg2==2.8.5
 psycopg2-binary==2.8.5
-py==1.8.1
+py==1.10.0
 pyasn1==0.4.8
 pycountry==19.8.18
 pycparser==2.20
