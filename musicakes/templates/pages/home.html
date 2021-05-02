@@ -26,46 +26,40 @@
     </div>
 </div>
 
-<div class="album py-5">
-	<div class="container">
-		<h3 class="mb-4">Latest Releases</h3>
+<div id="releasesCarousel" class="carousel slide" data-ride="carousel">
+  <div class="text-center my-4">
+  <h3 class="mx-auto">Latest Releases</h3>
+  </div>
+  <ol class="carousel-indicators">
+    <li data-target="#releasesCarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#releasesCarousel" data-slide-to="1"></li>
+    <li data-target="#releasesCarousel" data-slide-to="2"></li>
+    <li data-target="#releasesCarousel" data-slide-to="3"></li>
+    <li data-target="#releasesCarousel" data-slide-to="4"></li>
+  </ol>
+  <div class="carousel-inner">
+    {% for release in latest_releases %}
+    <div class="carousel-item{% if loop.index==1 %} active{% endif %}">
+      <img class="d-block w-100 mx-auto" src="{{ release.cover_art }}">
+      <div class="carousel-caption d-none d-md-block mt-4">
+        <p class="font-weight-bold">{{ release.artist_name }}</p>
+        <p>{{ release.release_name }}</p>
+        <p>
+          <small class="text-muted">{{ release.created_on.strftime('%B %Y') }}</small>
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 
-		<div class="row">
-			{% for release in latest_releases %}
-	       	<div class="col-md-auto col-xs-12">
-	          <div class="card mb-4 shadow-sm">
-	          	<div class="bd-placeholder-img card-img-top mx-auto d-block p-2">
-			    	<a class="img-fluid" href="/releases/{{ release.id }}">
-				        {% if release.cover_art is none %}
-				          <img class="img-fluid" id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}" />
-				        {% else %}
-				          <img class="img-fluid rounded" src="{{ release.cover_art }}" onerror="this.onerror=null; this.src='{{ url_for('static', filename='img/musicakes.png') }}'" />
-				        {% endif %}
-				    </a>
-				</div>
-	            <div class="card-body">
-	            	<p class="card-text">
-	            		<div class="font-weight-bold">{{ release.artist_name }}</div>
-	            		<div>{{ release.release_name }}</div>
-	            		<div>
-	            			<small class="text-muted">{{ release.created_on.strftime('%B %Y') }}</small>
-	            		</div>
-	            	</p>
-
-	              <div class="d-flex justify-content-between align-items-center">
-	                <div class="btn-group">
-	                  <a type="button" class="btn btn-sm btn-outline-secondary" href="/releases/{{ release.id }}">View</a>
-	                </div>
-	                
-	              </div>
-	            </div>
-	          </div>
-	        </div>
-	        {% endfor %}
-		</div>
-
-	</div>
-
+  <a class="carousel-control-prev" href="#releasesCarousel" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#releasesCarousel" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
 </div>
 
 {% endblock %}

@@ -42,6 +42,16 @@ button {
 	color: black;
 }
 
+.nav-item-tab > a {
+	background-color: #FFFAFA;
+	color: rgba(0, 0, 0, 0.7);
+}
+
+.nav-item-tab .nav-link.active {
+	background-color: #ede0e0;
+	color: black;
+}
+
 
 /* Nav bar */
 
@@ -101,6 +111,27 @@ button {
 	width: 192px;
 }
 
+/* Carousel */
+
+.carousel-inner > .carousel-item > img {
+	max-width: 400px;
+	height: 400px;
+}
+
+.carousel-control-prev-icon {
+ background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E") !important;
+}
+
+.carousel-control-next-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='black' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E") !important;
+}
+
+.carousel-caption {
+    position: relative;
+    left: auto;
+    right: auto;
+		color: black;
+}
 /* Artist page */
 
 .artist-page-icon {
@@ -123,6 +154,7 @@ button {
 .display-picture {
 	height:128px;
 	width:128px;
+	position: relative;
 }
 
 .display-picture img {
@@ -150,6 +182,22 @@ button {
 	max-height:100%;
 	width: 100%;
 	height: 100%;
+}
+
+.upload-img-btn {
+	position: absolute;
+	bottom: 5%;
+	right: 8%;
+	transform: translate(5%, 8%);
+	-ms-transform: translate(5%, 8%);
+	background-color: #ede0e0;
+	border: 1px solid;
+	padding: 2px 2px;
+	cursor: pointer;
+}
+
+#image-input {
+	display: none;
 }
 
 /* Divs for forms */

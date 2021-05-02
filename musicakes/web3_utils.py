@@ -4,7 +4,14 @@ from web3 import Web3, HTTPProvider
 from web3.exceptions import TransactionNotFound
 
 def check_transaction_receipt(_chainId, _transactionHash):
+    """
+    Helper function to check for the receipt of a transaction
 
+    @param: _chainId The ID of the chain that is currently being used
+    @param: _transactionHash The transaction hash to check for
+
+    @returns: The transaction receipt from web3 API
+    """
     if _chainId == 1:
         from web3.auto.infura import w3
     else:

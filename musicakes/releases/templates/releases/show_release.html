@@ -1,0 +1,456 @@
+{% extends "layouts/layout.html" %}
+{% block title %}{{ release.release_name }} | {{ artist.name }}{% endblock %}
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-3">
+          <div class="display-picture">
+            <a href="/artists/{{ artist.id }}">
+              {% if artist.artist_picture is none %}
+                <img id="preview" src="/static/img/musicakes.png" />
+              {% else %}
+                <img src="{{ artist.artist_picture }}" />
+              {% endif %}
+            </a>
+          </div>
+        </div>
+
+        <div class="col-sm-3">
+          <div class="d-flex flex-row">
+            <h4 class="mr-5">
+              {{ artist.name }}
+            </h4>
+
+            {% if artist.wallet_address %}
+
+            <button class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#support-artist-modal">
+              <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-gift" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 14.5V7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A2.968 2.968 0 0 1 3 2.506V2.5zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43a.522.522 0 0 0 .023.07zM9 3h2.932a.56.56 0 0 0 .023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0V3zM1 4v2h6V4H1zm8 0v2h6V4H9zm5 3H9v8h4.5a.5.5 0 0 0 .5-.5V7zm-7 8V7H2v7.5a.5.5 0 0 0 .5.5H7z"/>
+              </svg>
+            </button>
+
+            {% endif %}
+
+
+
+          </div>
+
+          <p>
+            {{ artist.country }}
+          </p>
+
+          <div class="d-flex flex-row">
+            {% if artist.soundcloud_url|length > 0 %}
+            <div class="artist-page-icon mr-2">
+
+
+                <iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2F{{ artist.soundcloud_url }}&color=black_white&size=32"></iframe>
+
+
+            </div>
+            {% endif %}
+            {% if artist.facebook_url|length > 0 %}
+            <div class="artist-page-icon mr-2">
+
+
+                <a href="{{ artist.facebook_url }}" target="_blank"><img id="facebook-icon" src="/static/img/fb_logo.png" /></a>
+
+            </div>
+            {% endif %}
+            {% if artist.instagram_url|length > 0 %}
+            <div class="artist-page-icon mr-2">
+
+                <a href="{{ artist.instagram_url }}" target="_blank"><img id="instagram-icon" src="/static/img/glyph-logo_May2016.png" /></a>
+
+            </div>
+            {% endif %}
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+</div>
+
+<div class="container mt-2 mb-5">
+  <div class="row mb-3">
+
+    <div class="col-sm-3">
+
+
+      <h3>
+        {{ release.release_name }}
+      </h3>
+
+      <h5>
+        Price: {{ release.price }} DAI
+      </h5>
+    </div>
+    <div class="col-xl-6">
+
+      {% if release.smart_contract_address|length == 2 %}
+
+        {% if userinfo and creator is true %}
+
+        <form action="{{ url_for('releases.show_release_for_deployment', release_id=release.id) }}">
+          <input type="submit" value="Deploy Smart Contract" class="btn btn-sm btn-outline-secondary" />
+        </form>
+        {% else %}
+
+        <h4>This release is not available for purchase yet.</h4>
+        <div>
+          Please wait for the artist to deploy the smart contract.
+        </div>
+
+        {% endif %}
+
+      {% else %}
+
+      <!--
+      <h5>User Dashboard</h5>
+
+
+      <p>Current wallet: </p>
+      <p id ="account-address"></p>
+
+      <p>Current ETH balance: </p>
+      <p id = "account-balance"></p>
+      -->
+
+      {% endif %}
+
+      {% if release.smart_contract_address|length > 2 %}
+
+        {% if userinfo %}
+
+          {% if userinfo.has_purchased %}
+        <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
+          Download
+        </a>
+          {% else %}
+
+        <!-- Launch modal for purchase of release -->
+
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-release-modal">
+          Buy release
+        </button>
+
+          {% endif %}
+
+        {% else %}
+
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-release-modal" disabled>
+          Buy release
+        </button>
+        {% endif %}
+        <!--
+        <p>Current DAI balance: </p>
+        <p id ="payment-token-balance"></p>
+
+        <p>
+          <button id="enable-ethereum-button" class="btn btn-sm btn-outline-secondary">Connect your Metamask wallet</button>
+        </p>
+        -->
+
+        <!-- Launch modal for Musicakes dashboard -->
+
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#manage-musicakes-modal" id="btn-manage-musicakes">
+          Manage
+        </button>
+
+
+
+
+      <!--
+
+      <div id = "musicakes-management-dashboard" class="hidden">
+
+        <div>
+
+          <h3>Transfer your Musicakes</h3>
+
+        </div>
+
+
+        <div>
+
+            Address to transfer Musicakes:
+            <br>
+            <input type="text"  class="form-control" id="transfer-musicakes-address">
+        </div>
+        <div>
+          Number of Musicakes to transfer:
+          <div class="form-row">
+            <p class="col-sm-2">
+            <input type="text" class="form-control" size=50 id="transfer-musicakes-amount">
+            </p>
+          </div>
+        </div>
+
+        <p>
+          <button type="button" id="btn-transfer-musicakes" class="btn btn-sm btn-outline-secondary">Transfer</button>
+        </p>
+
+      </div>
+
+    -->
+
+    {% endif %}
+
+
+      <!-- Modal for support artist -->
+
+      <div class="modal fade" id="support-artist-modal" tabindex="-1" role="dialog" aria-labelledby="#support-artist-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="support-artist-modal-title">Support Artist with DAI</h5>
+            </div>
+
+            <div class="modal-body">
+              <form action="" method="post" >
+
+              <label for="support-artist-amount">Amount: </label>
+              <div class="form-row">
+                <p class="col-sm-2">
+                  <input type="number" class="form-control" id="support-artist-amount" name='support-artist-amount' />
+                </p>
+              </div>
+            </div>
+            <div class="modal-footer">
+
+              <button type="button" id="btn-support-artist" class="btn btn-sm btn-outline-secondary">Send to artist</button>
+
+            </form>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Modal for purchase of release -->
+
+      <div class="modal fade" id="buy-release-modal" tabindex="-1" role="dialog" aria-labelledby="#buy-release-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="buy-release-modal-title">Buy Release with DAI</h5>
+            </div>
+
+
+            {% if userinfo is none %}
+            <div class="modal-body">
+              <form action="" method="post" >
+
+
+              <label for="pay-contract-amount">Amount: </label>
+              <div class="form-row">
+                <p class="col-sm-2">
+                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" />
+                </p>
+              </div>
+            </div>
+            <div class="modal-footer">
+
+              <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
+
+            </form>
+            </div>
+
+            {% elif userinfo and not userinfo.has_purchased %}
+            <div class="modal-body">
+            <form action="" method="post" >
+
+
+              <label for="pay-contract-amount">Amount: </label>
+              <div class="form-row">
+                <p class="col-sm-2">
+                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" />
+                </p>
+              </div>
+            </div>
+            <div class="modal-footer">
+
+              <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
+
+            </form>
+            </div>
+
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal for Musicakes dashboard -->
+      <div class="modal fade" id="manage-musicakes-modal" tabindex="-1" role="dialog" aria-labelledby="#manage-musicakes-modal-title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="manage-musicakes-modal-title">Musicakes Dashboard</h5>
+            </div>
+
+            <div class="modal-body">
+              <p id = "musicakes-contract-address-display">
+                <span>Contract address: {{ release.smart_contract_address }}</span>
+
+                <span id = "musicakes-address"></span>
+              </p>
+
+              <p id = "musicakes-supply-display">
+                <span>Total supply of Musicakes: </span>
+                <span id = "musicakes-supply"></span>
+              </p>
+
+              <p id = "user-token-balance-display">
+                <span>Number of Musicakes held in this wallet: </span>
+                <span id = "user-musicakes-balance"></span>
+              </p>
+
+
+              <p id = "musicakes-payment-token-display">
+                <span>DAI balance in Musicakes contract: </span>
+                <span id = "musicakes-payment-token-balance"></span>
+              </p>
+
+              <p id="account-unclaimed-dividends-display">
+                <span>Dividends unclaimed: </span>
+                <span id="account-unclaimed-dividends"></span>
+              </p>
+            </div>
+
+            <div class="modal-footer">
+
+              <button type="button" id="btn-update-dividends" class="btn btn-sm btn-outline-secondary">Update Dividends</button>
+              <button type="button" id="btn-claim-dividends" class="btn btn-sm btn-outline-secondary">Claim Dividends</button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xl-3">
+
+      <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
+      <meta id="chain_id" data-value="{{ chain_id }}">
+
+      <!-- proxy element to store and query payment token address for window.appConfig --->
+      <meta id="payment_token_address" data-value="{{ release.payment_token_address }}">
+
+      <!-- proxy element to store and query release price for window.appConfig --->
+      <meta id="price" data-value="{{ release.price }}">
+
+      <!-- proxy element to store and query release id for window.appConfig --->
+      <meta id="release-id" data-value="{{ release.id }}">
+
+      <!-- proxy element to store and query smart contract address for window.appConfig --->
+      <meta id="smart_contract_address" data-value="{{ release.smart_contract_address }}">
+
+      <!-- proxy element to store and query artist wallet address for window.appConfig --->
+
+      <meta id="artist_wallet_address" data-value="{{ artist.wallet_address }}">
+
+      <div class = "release-cover-art justify-content-center mb-3">
+          <img src={{ release.cover_art }} />
+      </div>
+
+      <div>
+
+        <h5>
+          Tracks
+        </h5>
+
+        <table>
+          <tbody>
+            {% for track in release.tracks %}
+            <tr>
+              <td>{{ loop.index }}. &nbsp;</td>
+              <td><a href="../tracks/{{ track.track_id }}">{{ track.name }}</a></td>
+            </tr>
+            {% endfor %}
+
+          </tbody>
+        </table>
+
+      </div>
+
+
+      <p>
+        <pre>{{ release.description }}</pre>
+      </p>
+      <p>
+        <small>Released on {{ release.created_on.strftime('%#d %B %Y') }}</small>
+      </p>
+    </div>
+
+
+
+    <div class="col-xl-3" id="release-dashboard-3">
+      {% if release.youtube_embed_url is not none %}
+      <div>
+        <iframe id="ytplayer" type="text/html" width="384" height="256"
+          src="{{ release.youtube_embed_url }}"
+          frameborder="0"></iframe>
+      </div>
+      {% endif %}
+
+      {% if release.smart_contract_address|length != 2 and release.purchasers|length > 0 %}
+      <h5>
+        Purchasers
+      </h5>
+
+      <div class="row">
+
+          {% for purchaser in release.purchasers %}
+          <div class="col">
+            <a href="../users/{{ purchaser.user_id }}">
+            <div class="display-picture-thumbnail">
+            {% if purchaser.profile_picture is none %}
+              <img id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}">
+            {% else %}
+              <img src="{{ purchaser.profile_picture }}" />
+            {% endif %}
+            </div>
+            </a>
+          </div>
+          {% endfor %}
+        {% endif %}
+
+      </div>
+
+
+    </div>
+
+  </div>
+</div>
+
+
+
+<script type="text/javascript">
+  window.appConfig = {
+    smart_contract_address: $('#smart_contract_address').data(),
+    price: $('#price').data(),
+    release_id: $('#release-id').data(),
+    csrf_token: $('#csrf-token').data(),
+    payment_token_address: $('#payment_token_address').data(),
+    chain_id: $('#chain_id').data(),
+    artist_wallet_address: $('#artist_wallet_address').data()
+  }
+</script>
+
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
+<script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
+
+<script type="text/javascript" src="{{ url_for('releases.static', filename='js/purchase_release.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('artists.static', filename='js/support_artist.js') }}"></script>
+
+
+{% endblock %}

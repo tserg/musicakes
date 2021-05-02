@@ -40,7 +40,7 @@ import pycountry
 
 def flash_validation_errors(form):
 	"""
-		Helper function to show form errors
+	Helper function to show form errors
 	"""
 
 	for field, errors in form.errors.items():
@@ -54,6 +54,17 @@ def check_punctuation(form, field):
 	for i in field.data:
 		if i in string.punctuation:
 			raise ValidationError("Username cannot contain special characters")
+
+def check_hex_string(form, field):
+	"""
+	Helper function to check if the field contains hexadecimal digits only
+	"""
+
+	address = field.data
+
+	if all(c in string.hexdigits for c in address[2:]) is False:
+		raise ValidationError("Address contains non-hexadecimal digits")
+
 
 class UserForm(FlaskForm):
 
@@ -87,17 +98,13 @@ class ArtistForm(FlaskForm):
 		URL(), Optional()]
 	)
 
-class EditUserForm(FlaskForm):
-	profile_picture = FileField('Profile Picture', validators=[
-		FileRequired(),
-		FileAllowed(['jpg', 'jpeg', 'png'], 'Image only!')],
-		render_kw={'id': "image-input"}
-	)
-
 class EditArtistForm(FlaskForm):
 
 	artist_wallet_address = StringField('Wallet Address',
-		validators=[Length(0, 42, "You have provided an invalid Ethereum address.")],
+		validators=[
+			Length(0, 42, "You have provided an invalid Ethereum address."),
+			check_hex_string
+		],
 		render_kw={
 			'placeholder': '0x'
 		}
@@ -114,6 +121,11 @@ class EditArtistForm(FlaskForm):
 	artist_instagram_url = URLField(validators = [
 		URL(), Optional()]
 	)
+
+	artist_country = SelectField(
+			'artist_country', validators=[DataRequired()],
+			choices = sorted([(country.name, country.name) for country in pycountry.countries])
+		)
 
 
 class TrackForm(FlaskForm):

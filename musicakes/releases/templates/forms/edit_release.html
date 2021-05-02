@@ -1,0 +1,167 @@
+
+{% extends 'layouts/layout.html' %}
+{% block title %}Edit your release{% endblock %}
+{% block content %}
+
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+
+        <h2>Edit release</h2>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class = "container">
+
+  	<div class="row pt-4 mt-4">
+
+    	<div class="col">
+	    <meta id="artist-id" data-id="{{ artist.id }}">
+
+
+		<form method="post" action="{{ url_for('releases.edit_release_form', release_id=release.id) }}">
+		    {{ form.hidden_tag() }}
+		    <fieldset>
+	    	<legend>Release Information</legend>
+	    	<div class="form-group row mt-5">
+	            <label for="release_name" class="col-sm-2 col-form-label">Name of release</label>
+
+	          	<div class="col-sm-4">
+	            	{{ form.release_name(class_ = 'form-control', autofocus = true) }}
+	          	</div>
+	        </div>
+
+
+          	<div class="form-group row">
+
+          		<p class="col-sm-2 col-form-label">Cover Art</p>
+          		<div class="col-sm-4">
+	          		<div class = "release-cover-art">
+		          		<img src="{{ release.cover_art }}" />
+		        	</div>
+		        </div>
+          	</div>
+
+	        <div class="form-group row">
+
+	        	<div class="col-sm-4 offset-sm-2">
+	        		<a href="./edit_cover_art" class="btn btn-sm btn-outline-secondary" type="button">Change cover art</a>
+
+	        	</div>
+	        </div>
+
+          	<div class="form-group row">
+            	<label for="release_description" class="col-sm-2 col-form-label">Description of release</label>
+          		<div class="col-sm-4">
+            		{{ form.release_description(class_ = 'form-control', autofocus = true) }}
+            	</div>
+          	</div>
+
+          	<div class="form-group row">
+            	<label for="release_price" class="col-sm-2 col-form-label">Price of release</label>
+
+          		<div class="col-sm-1">
+            	{{ form.release_price(class_ = 'form-control', autofocus = true) }}
+            	</div>
+          	</div>
+          	</fieldset>
+	    </div>
+	</div>
+</div>
+
+<div class = "container">
+
+  	<div class="row pt-4 mt-4">
+
+    	<div class="col">
+
+
+		    <fieldset>
+		    <legend>Track(s) Information</legend>
+
+	        <div class="form-group row">
+	          <label class="col-sm-4 col-form-label">Track name</label>
+	          <label class="col-sm-1 col-form-label">Price</label>
+	          <label class="col-sm-4 col-form-label">YouTube URL
+	          	<p><small>Example: https://youtu.be/SLzb1oO0xxQ</small></p>
+	          </label>
+
+	        </div>
+
+		    {% for track_form in form.tracks %}
+		    <div class="form-group row">
+		      	{{ track_form.hidden_tag() }}
+		      	<div class="col-sm-4">
+		      		{{ track_form.track_name(class_ = 'form-control', autofocus = true) }}
+		      	</div>
+		      	<div class="col-sm-1">
+		      		{{ track_form.track_price(class_ = 'form-control', autofocus = true) }}
+		      	</div>
+		      	<div class="col-sm-4">
+		      		{{ track_form.track_youtube_url(class_ = 'form-control', autofocus = true) }}
+		      	</div>
+		    </div>
+		    {% endfor %}
+
+		    </fieldset>
+	    </div>
+	</div>
+</div>
+
+<div class = "container">
+	<div class="row justify-content-md-center py-4 my-4">
+    <div class="col col-sm-2">
+
+    	<input type="submit" value="Update" class="btn btn-sm btn-outline-secondary">
+  	</div>
+	</form>
+
+    <div class="col col-sm-2">
+      <button class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#delete-release-modal">Delete</button>
+    </div>
+
+    <!-- Modal for purchase of release -->
+
+    <div class="modal fade" id="delete-release-modal" tabindex="-1" role="dialog" aria-labelledby="#delete-release-modal-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="delete-release-modal-title">Delete release</h5>
+          </div>
+
+          <div class="modal-body">
+
+            <p>Are you sure you want to delete this release?</p>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-outline-secondary" data-dismiss="modal">No</button>
+            <button type="button" id="delete-release-btn" class="btn btn-sm btn-outline-danger">Yes</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</div>
+
+<!-- proxy element to store and query release id for window.appConfig --->
+<meta id="release-id" data-address="{{ release.id }}">
+
+
+<script type="text/javascript">
+  window.appConfig = {
+    release_id: $('#release-id').data(),
+  }
+</script>
+
+<script type="text/javascript" src="{{ url_for('releases.static', filename='js/delete_release.js') }}"></script>
+
+{% endblock %}
