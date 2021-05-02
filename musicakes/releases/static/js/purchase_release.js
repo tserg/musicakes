@@ -27,7 +27,7 @@ const seeMoreText = document.querySelector('#text-see-more');
 const musicakesDashboard = document.querySelector('#musicakes-dashboard');
 // const musicakesManagementDashboard = document.querySelector('#musicakes-management-dashboard');
 
-const ethereumChainId = parseInt(window.appConfig.chain_id.value);
+var ethereumChainId = parseInt(window.appConfig.chain_id.value);
 
 var web3 = new Web3(Web3.givenProvider);
 
@@ -42,7 +42,7 @@ if (csrf_token_purchase) {
 
 /* Payment token contract */
 
-const paymentTokenAddress = window.appConfig.payment_token_address.value.toLowerCase();
+var paymentTokenAddress = window.appConfig.payment_token_address.value.toLowerCase();
 const musicakesAddress = window.appConfig.smart_contract_address.value.toLowerCase();
 
 var _paymentTokenAbi = [
@@ -630,7 +630,7 @@ var _musicakesAbi = [
     }
   ];
 
-const paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
+var paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
 
 if (musicakesAddress.length > 2) {
   window.musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);

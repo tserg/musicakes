@@ -1,134 +1,127 @@
 const supportArtistButton = document.querySelector('#btn-support-artist');
 const supportArtistValue = document.querySelector('#support-artist-amount');
 
-if (!ethereumChainId) {
-  const ethereumChainId = parseInt(window.appConfig.chain_id.value);
-};
+var ethereumChainId = parseInt(window.appConfig.chain_id.value);
 
-if (!web3) {
-  var web3 = new Web3(Web3.givenProvider);
-};
+var web3 = new Web3(Web3.givenProvider);
 
 const artistWalletAddress = window.appConfig.artist_wallet_address.value.toLowerCase();
 
 /* Payment token contract */
+var paymentTokenAddress = window.appConfig.payment_token_address.value.toLowerCase();
 
-if (!paymentTokenAddress) {
-
-  const paymentTokenAddress = window.appConfig.payment_token_address.value.toLowerCase();
-
-  var _paymentTokenAbi = [
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "name",
-      "outputs": [
-        {
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "decimals",
-      "outputs": [
-        {
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "_owner",
-          "type": "address"
-        }
-      ],
-      "name": "balanceOf",
-      "outputs": [
-        {
-          "name": "balance",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "symbol",
-      "outputs": [
-        {
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "payable": false,
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-          {
-              "name": "_from",
-              "type": "address"
-          },
-          {
-              "name": "_to",
-              "type": "address"
-          },
-          {
-              "name": "_value",
-              "type": "uint256"
-          }
-      ],
-      "name": "transferFrom",
-      "outputs": [
-          {
-              "name": "",
-              "type": "bool"
-          }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-          "constant": false,
-          "inputs": [
-              {
-                  "name": "_to",
-                  "type": "address"
-              },
-              {
-                  "name": "_value",
-                  "type": "uint256"
-              }
-          ],
-          "name": "transfer",
-          "outputs": [
-              {
-                  "name": "",
-                  "type": "bool"
-              }
-          ],
-          "payable": false,
-          "stateMutability": "nonpayable",
-          "type": "function"
+var _paymentTokenAbi = [
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
       }
-  ];
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "decimals",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "name": "balance",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+        {
+            "name": "_from",
+            "type": "address"
+        },
+        {
+            "name": "_to",
+            "type": "address"
+        },
+        {
+            "name": "_value",
+            "type": "uint256"
+        }
+    ],
+    "name": "transferFrom",
+    "outputs": [
+        {
+            "name": "",
+            "type": "bool"
+        }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+        "constant": false,
+        "inputs": [
+            {
+                "name": "_to",
+                "type": "address"
+            },
+            {
+                "name": "_value",
+                "type": "uint256"
+            }
+        ],
+        "name": "transfer",
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+];
 
-  const paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
-};
+var paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
+
 
 window.addEventListener('load', async () => {
 
