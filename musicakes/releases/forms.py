@@ -1,25 +1,18 @@
-import string
-from datetime import datetime
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 from wtforms import (
 	StringField,
-	SelectField,
-	SelectMultipleField,
-	DateTimeField,
 	BooleanField,
 	IntegerField,
-	FloatField,
 	FormField,
 	FieldList,
 	TextAreaField,
-	HiddenField
+    HiddenField
 )
 
 from wtforms.widgets import (
 	html5,
-	TextInput,
 	TextArea
 )
 
@@ -27,106 +20,10 @@ from wtforms.fields.html5 import URLField
 
 from wtforms.validators import (
 	DataRequired,
-	AnyOf,
-	URL,
+    URL,
 	Optional,
-	Length,
-	NoneOf,
-	ValidationError
+	Length
 )
-
-from werkzeug.utils import secure_filename
-import pycountry
-
-def flash_validation_errors(form):
-	"""
-	Helper function to show form errors
-	"""
-
-	for field, errors in form.errors.items():
-		for error in errors:
-			flash(u"Error in the %s field - %s" % (
-				getattr(form, field).label.text,
-				error),
-			'error')
-
-def check_punctuation(form, field):
-	for i in field.data:
-		if i in string.punctuation:
-			raise ValidationError("Username cannot contain special characters")
-
-def check_hex_string(form, field):
-	"""
-	Helper function to check if the field contains hexadecimal digits only
-	"""
-
-	address = field.data
-
-	if all(c in string.hexdigits for c in address[2:]) is False:
-		raise ValidationError("Address contains non-hexadecimal digits")
-
-
-class UserForm(FlaskForm):
-
-	username = StringField('username', validators=[
-		DataRequired(),
-		Length(1, 100, "Username must be between %(min)d to %(max)d characters."),
-		check_punctuation]
-	)
-
-class ArtistForm(FlaskForm):
-
-	artist_name = StringField('artist_name', validators=[DataRequired(),
-		Length(1, 100, "Username must be between %(min)d to %(max)d characters."),
-		check_punctuation]
-	)
-
-	artist_country = SelectField(
-			'artist_country', validators=[DataRequired()],
-			choices = sorted([(country.name, country.name) for country in pycountry.countries])
-		)
-
-	artist_soundcloud_url = URLField(
-		validators=[URL(), Optional()]
-	)
-
-	artist_facebook_url = URLField(validators=[
-		URL(), Optional()]
-	)
-
-	artist_instagram_url = URLField(validators=[
-		URL(), Optional()]
-	)
-
-class EditArtistForm(FlaskForm):
-
-	artist_wallet_address = StringField('Wallet Address',
-		validators=[
-			Length(0, 42, "You have provided an invalid Ethereum address."),
-			check_hex_string
-		],
-		render_kw={
-			'placeholder': '0x'
-		}
-	)
-
-	artist_soundcloud_url = URLField(
-		validators=[URL(), Optional()]
-	)
-
-	artist_facebook_url = URLField(validators=[
-		URL(), Optional()]
-	)
-
-	artist_instagram_url = URLField(validators = [
-		URL(), Optional()]
-	)
-
-	artist_country = SelectField(
-			'artist_country', validators=[DataRequired()],
-			choices = sorted([(country.name, country.name) for country in pycountry.countries])
-		)
-
 
 class TrackForm(FlaskForm):
 
@@ -146,7 +43,6 @@ class TrackForm(FlaskForm):
 		'YouTube URL (e.g. https://youtu.be/obe02lLwyps)',
 		validators=[URL(), Optional()]
 	)
-
 
 class ReleasePresubmissionForm(FlaskForm):
 
@@ -178,11 +74,15 @@ class EditReleaseForm(FlaskForm):
 
 	tracks = FieldList(FormField(TrackForm))
 
+
+'''
 class EditReleaseCoverArtForm(FlaskForm):
 	release_cover_art = FileField('Cover Art', validators=[
 		FileRequired(),
 		FileAllowed(['jpg', 'jpeg', 'png'], 'Image only!')
 	])
+'''
+
 
 '''
 class ReleaseForm(FlaskForm):

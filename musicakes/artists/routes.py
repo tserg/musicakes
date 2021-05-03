@@ -31,7 +31,7 @@ from ..decorators import (
     requires_log_in
 )
 
-from ..forms import (
+from .forms import (
     ArtistForm,
     EditArtistForm
 )

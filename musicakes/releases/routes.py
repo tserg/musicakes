@@ -23,6 +23,11 @@ from dotenv import load_dotenv
 
 from . import bp
 
+from .forms import (
+    ReleasePresubmissionForm,
+    EditReleaseForm
+)
+
 from ..models import (
     Artist,
     Release,
@@ -40,11 +45,6 @@ from ..session_utils import (
 
 from ..decorators import (
     requires_log_in
-)
-
-from ..forms import (
-    ReleasePresubmissionForm,
-    EditReleaseForm
 )
 
 from ..aws_s3.s3_utils import (

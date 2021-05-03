@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 
 from . import bp
 
-from .. forms import (
+from .forms import (
     UserForm
 )
 
