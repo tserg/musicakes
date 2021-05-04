@@ -8,8 +8,6 @@ console.log(contract_factory_address);
 console.log(release_id);
 const deployContractButton = document.querySelector('#deploy-contract-btn');
 
-var web3 = new Web3(Web3.givenProvider);
-
 deployContractButton.addEventListener('click', () => {
 
   deployMusicakesContract();
@@ -94,15 +92,32 @@ var _abi = [
       "stateMutability": "view",
       "type": "function"
     }
-]
+];
+
+// Helper function to check chain ID
+
+function checkChainId(_current, _expected) {
+  if (_current !== _expected) {
+
+    if (_current === 1) {
+      alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+    } else if (_current === 3) {
+      alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+    } else {
+      alert('You are connected to the wrong network.')
+    }
+    return false;
+  }
+  return true;
+}
 
 // Initialise Metamask
 
 window.addEventListener('load', async () => {
 
-  window.provider = await detectEthereumProvider();
+  if (window.ethereum) {
 
-  if (provider) {
+    window.web3 = new Web3(window.ethereum);
 
     console.log('Ethereum successfully detected!');
 
@@ -116,22 +131,18 @@ window.addEventListener('load', async () => {
     // Access the decentralized web!
 
     // Legacy providers may only have ethereum.sendAsync
-    const chainId = await provider.request({
-      method: 'eth_chainId'
-    })
+    var chainId = await web3.eth.getChainId();
 
     window.currentChainId = parseInt(chainId);
 
-    if (currentChainId != ethereumChainId) {
+    checkChainId(currentChainId, ethereumChainId);
 
-      if (ethereumChainId == 1) {
-        alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
-      } else if (ethereumChainId == 3) {
-        alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
-      } else {
-        alert('You are connected to the wrong network.')
-      }
+    var paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
 
+    if (musicakesAddress.length > 2) {
+      window.musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
+    } else {
+      window.musicakesContract = null;
     }
 
   } else {
@@ -140,7 +151,7 @@ window.addEventListener('load', async () => {
     alert('Please install MetaMask to continue!');
   }
 
-})
+});
 
 
 const musicakesFactoryContractAddress = contract_factory_address;

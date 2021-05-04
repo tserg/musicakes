@@ -3,12 +3,11 @@ const supportArtistValue = document.querySelector('#support-artist-amount');
 
 var ethereumChainId = parseInt(window.appConfig.chain_id.value);
 
-var web3 = new Web3(Web3.givenProvider);
-
-const artistWalletAddress = window.appConfig.artist_wallet_address.value.toLowerCase();
+const artistWalletAddress = window.appConfig.artist_wallet_address.value;
+console.log(artistWalletAddress);
 
 /* Payment token contract */
-var paymentTokenAddress = window.appConfig.payment_token_address.value.toLowerCase();
+var paymentTokenAddress = window.appConfig.payment_token_address.value;
 
 var _paymentTokenAbi = [
   {
@@ -120,14 +119,29 @@ var _paymentTokenAbi = [
     }
 ];
 
-var paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
+// Helper function to check chain ID
+
+function checkChainId(_current, _expected) {
+  if (_current !== _expected) {
+
+    if (_current === 1) {
+      alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
+    } else if (_current === 3) {
+      alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
+    } else {
+      alert('You are connected to the wrong network.')
+    }
+    return false;
+  }
+  return true;
+}
 
 
 window.addEventListener('load', async () => {
 
-  window.provider = await detectEthereumProvider();
+  if (window.ethereum) {
 
-  if (provider) {
+    window.web3 = new Web3(window.ethereum);
 
     console.log('Ethereum successfully detected!');
 
@@ -141,38 +155,35 @@ window.addEventListener('load', async () => {
     // Access the decentralized web!
 
     // Legacy providers may only have ethereum.sendAsync
-    const chainId = await provider.request({
-      method: 'eth_chainId'
-    })
+    var chainId = await web3.eth.getChainId();
 
     window.currentChainId = parseInt(chainId);
 
+    checkChainId(currentChainId, ethereumChainId);
+
+    window.paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
+
+  } else {
+
+    // if the provider is not detected, detectEthereumProvider resolves to null
+    alert('Please install MetaMask to continue!');
   }
-	if (supportArtistButton != null) {
-		supportArtistButton.addEventListener('click', () => {
-
-		  if (provider) {
-
-		    if (currentChainId != ethereumChainId) {
-
-		      if (ethereumChainId == 1) {
-		        alert('You are connected to the wrong network. Please switch to the Ethereum mainnet to continue!')
-		      } else if (ethereumChainId == 3) {
-		        alert('You are connected to the wrong network. Please switch to the Ropsten testnet to continue!')
-		      } else {
-		        alert('You are connected to the wrong network.')
-		      }
-
-		    } else {
-		      supportArtist();
-		    }
-		  } else {
-		    alert('Please install MetaMask to continue!');
-		  }
-		});
-	}
 
 });
+
+if (supportArtistButton != null) {
+  supportArtistButton.addEventListener('click', () => {
+
+    if (web3) {
+
+      if (checkChainId(window.currentChainId, ethereumChainId)) {
+        supportArtist();
+      }
+    } else {
+      alert('Please install MetaMask to continue!');
+    }
+  });
+}
 
 async function supportArtist() {
 
