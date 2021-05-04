@@ -47,7 +47,11 @@
         <p>
           <small class="text-muted">{{ release.created_on.strftime('%B %Y') }}</small>
         </p>
+        <div class="btn-group">
+          <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ url_for('releases.show_release', release_id=release.id) }}">View</a>
+        </div>
       </div>
+
     </div>
     {% endfor %}
   </div>
