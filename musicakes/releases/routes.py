@@ -39,7 +39,7 @@ from ..models import (
     PurchaseCeleryTask
 )
 
-from ..session_utils import (
+from ..utils.session_utils import (
     get_user_data
 )
 

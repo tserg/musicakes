@@ -10,7 +10,7 @@ from .s3_utils import (
     generate_s3_presigned_upload,
     generate_s3_presigned_download
 )
-from ..session_utils import (
+from ..utils.session_utils import (
     get_user_data
 )
 

@@ -9,7 +9,7 @@ from wtforms.validators import (
 	Length
 )
 
-from ..forms_utils import check_punctuation
+from ..utils.forms_utils import check_punctuation
 
 
 class UserForm(FlaskForm):

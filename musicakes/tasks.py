@@ -18,7 +18,7 @@ from .models import (
     DeployCeleryTask
 )
 
-from .web3_utils import (
+from .utils.web3_utils import (
     check_transaction_receipt
 )
 

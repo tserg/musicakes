@@ -2,7 +2,7 @@ from flask import render_template
 
 from . import bp
 
-from ..session_utils import (
+from ..utils.session_utils import (
     get_user_data
 )
 

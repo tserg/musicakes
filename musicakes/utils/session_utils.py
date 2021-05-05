@@ -1,6 +1,6 @@
 from flask import session
 
-from .models import User
+from ..models import User
 
 def get_user_data(return_user_id=False):
 

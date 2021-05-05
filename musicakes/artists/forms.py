@@ -16,7 +16,7 @@ from wtforms.validators import (
 
 import pycountry
 
-from ..forms_utils import (
+from ..utils.forms_utils import (
     check_punctuation,
     check_hex_string
 )
