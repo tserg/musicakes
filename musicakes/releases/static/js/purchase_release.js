@@ -958,19 +958,3 @@ async function transferMusicakes() {
     console.log(error);
   });
 }
-
-/*
-seeMoreButton.addEventListener('click', () => {
-    if (seeMoreArrow.className == "arrow down") {
-      seeMoreArrow.className = "arrow up";
-      seeMoreText.innerHTML = "  See less";
-      musicakesDashboard.style.display = "block";
-      // musicakesManagementDashboard.style.display = "block";
-    } else {
-      seeMoreArrow.className = "arrow down";
-      seeMoreText.innerHTML = "  See more";
-      musicakesDashboard.style.display = "none";
-      // musicakesManagementDashboard.style.display = "none";
-    }
-});
-*/
