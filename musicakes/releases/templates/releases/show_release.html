@@ -161,43 +161,6 @@
           Manage
         </button>
 
-
-
-
-      <!--
-
-      <div id = "musicakes-management-dashboard" class="hidden">
-
-        <div>
-
-          <h3>Transfer your Musicakes</h3>
-
-        </div>
-
-
-        <div>
-
-            Address to transfer Musicakes:
-            <br>
-            <input type="text"  class="form-control" id="transfer-musicakes-address">
-        </div>
-        <div>
-          Number of Musicakes to transfer:
-          <div class="form-row">
-            <p class="col-sm-2">
-            <input type="text" class="form-control" size=50 id="transfer-musicakes-amount">
-            </p>
-          </div>
-        </div>
-
-        <p>
-          <button type="button" id="btn-transfer-musicakes" class="btn btn-sm btn-outline-secondary">Transfer</button>
-        </p>
-
-      </div>
-
-    -->
-
     {% endif %}
 
 
@@ -241,8 +204,6 @@
               <h5 class="modal-title" id="buy-release-modal-title">Buy Release with DAI</h5>
             </div>
 
-
-            {% if userinfo is none %}
             <div class="modal-body">
               <form action="" method="post" >
 
@@ -250,7 +211,7 @@
               <label for="pay-contract-amount">Amount: </label>
               <div class="form-row">
                 <p class="col-sm-2">
-                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" />
+                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" min="{{ release.price }}" />
                 </p>
               </div>
             </div>
@@ -260,27 +221,6 @@
 
             </form>
             </div>
-
-            {% elif userinfo and not userinfo.has_purchased %}
-            <div class="modal-body">
-            <form action="" method="post" >
-
-
-              <label for="pay-contract-amount">Amount: </label>
-              <div class="form-row">
-                <p class="col-sm-2">
-                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" />
-                </p>
-              </div>
-            </div>
-            <div class="modal-footer">
-
-              <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
-
-            </form>
-            </div>
-
-            {% endif %}
 
           </div>
         </div>
