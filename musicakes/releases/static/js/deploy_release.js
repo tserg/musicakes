@@ -1,8 +1,8 @@
 const ethereumChainId = parseInt(window.appConfig.chain_id.value);
 
 const release_id = parseInt(window.appConfig.release_id.address);
-const contract_factory_address = window.appConfig.contract_factory_address.address;
-console.log(contract_factory_address);
+const musicakesFactoryContractAddress = window.appConfig.contract_factory_address.address;
+console.log(musicakesFactoryContractAddress);
 
 
 console.log(release_id);
@@ -137,10 +137,8 @@ window.addEventListener('load', async () => {
 
     checkChainId(currentChainId, ethereumChainId);
 
-    var paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
-
-    if (musicakesAddress.length > 2) {
-      window.musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
+    if (musicakesFactoryContractAddress.length > 2) {
+      window.musicakesFactoryContract = new web3.eth.Contract(_abi, musicakesFactoryContractAddress);
     } else {
       window.musicakesContract = null;
     }
@@ -152,13 +150,6 @@ window.addEventListener('load', async () => {
   }
 
 });
-
-
-const musicakesFactoryContractAddress = contract_factory_address;
-// const musicakesFactoryContractAddress = "0xec67abe36b67afB03228101b7110A0a6155fdCdD";
-const musicakesFactoryContract = new web3.eth.Contract(_abi, musicakesFactoryContractAddress);
-
-
 
 async function deployMusicakesContract() {
 
