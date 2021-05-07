@@ -342,6 +342,8 @@ def deploy_release_smart_contract(release_id):
         transaction_hash = request.get_json()['transaction_hash']
         wallet_address = request.get_json()['wallet_address']
 
+        from ..tasks import check_smart_contract_deployed
+
         task = check_smart_contract_deployed.apply_async(
                     args=(transaction_hash,
                             release_id))
