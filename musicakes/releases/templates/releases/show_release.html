@@ -1,5 +1,6 @@
 {% extends "layouts/layout.html" %}
 {% from 'macros/artist_jumbotron_macro.html' import artist_jumbotron with context %}
+{% from 'macros/musicakes_dashboard_macro.html' import musicakes_dashboard with context %}
 {% block title %}{{ release.release_name }} | {{ artist.name }}{% endblock %}
 {% block content %}
 
@@ -87,9 +88,7 @@
 
         <!-- Launch modal for Musicakes dashboard -->
 
-        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#manage-musicakes-modal" id="btn-manage-musicakes">
-          Manage
-        </button>
+        {{ musicakes_dashboard(release) }}
 
     {% endif %}
 
@@ -124,52 +123,7 @@
         </div>
       </div>
 
-      <!-- Modal for Musicakes dashboard -->
-      <div class="modal fade" id="manage-musicakes-modal" tabindex="-1" role="dialog" aria-labelledby="#manage-musicakes-modal-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="manage-musicakes-modal-title">Musicakes Dashboard</h5>
-            </div>
 
-            <div class="modal-body">
-              <p id = "musicakes-contract-address-display">
-                <span>Contract address: {{ release.smart_contract_address }}</span>
-
-                <span id = "musicakes-address"></span>
-              </p>
-
-              <p id = "musicakes-supply-display">
-                <span>Total supply of Musicakes: </span>
-                <span id = "musicakes-supply"></span>
-              </p>
-
-              <p id = "user-token-balance-display">
-                <span>Number of Musicakes held in this wallet: </span>
-                <span id = "user-musicakes-balance"></span>
-              </p>
-
-
-              <p id = "musicakes-payment-token-display">
-                <span>DAI balance in Musicakes contract: </span>
-                <span id = "musicakes-payment-token-balance"></span>
-              </p>
-
-              <p id="account-unclaimed-dividends-display">
-                <span>Dividends unclaimed: </span>
-                <span id="account-unclaimed-dividends"></span>
-              </p>
-            </div>
-
-            <div class="modal-footer">
-
-              <button type="button" id="btn-update-dividends" class="btn btn-sm btn-outline-secondary">Update Dividends</button>
-              <button type="button" id="btn-claim-dividends" class="btn btn-sm btn-outline-secondary">Claim Dividends</button>
-
-            </div>
-          </div>
-        </div>
-      </div>
 
     </div>
   </div>
