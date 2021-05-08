@@ -695,7 +695,7 @@ if (manageMusicakesButton != null) {
   manageMusicakesButton.addEventListener('click', () => {
     if (web3) {
 
-      if (checkChainId(currentChainId, ethereumChainId)) {
+      if (checkChainId(window.currentChainId, ethereumChainId)) {
         loadInterface();
       }
     } else {
@@ -710,7 +710,7 @@ if (musicakesPayButton != null) {
 
     if (web3) {
 
-      if (checkChainId(currentChainId, ethereumChainId)) {
+      if (checkChainId(window.currentChainId, ethereumChainId)) {
         payMusicakes();
       }
 
@@ -726,7 +726,7 @@ if (musicakesClaimDividendsButton != null) {
 
     if (web3) {
 
-      if (checkChainId(currentChainId, ethereumChainId)) {
+      if (checkChainId(window.currentChainId, ethereumChainId)) {
         claimDividends();
       }
 
@@ -741,7 +741,7 @@ if (musicakesUpdateDividendsButton != null) {
 
     if (web3) {
 
-      if (checkChainId(currentChainId, ethereumChainId)) {
+      if (checkChainId(window.currentChainId, ethereumChainId)) {
         updateDividends();
       }
 
@@ -757,7 +757,7 @@ if (musicakesTransferButton != null) {
 
     if (web3) {
 
-      if (checkChainId(currentChainId, ethereumChainId)) {
+      if (checkChainId(window.currentChainId, ethereumChainId)) {
         transferMusicakes();
       }
     } else {
