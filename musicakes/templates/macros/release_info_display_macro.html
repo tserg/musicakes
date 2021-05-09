@@ -1,0 +1,24 @@
+{% macro release_info_display(_type, _object) %}
+
+<div class="col-sm-3">
+
+  <h3>
+    {% if _type == 'track' %}
+    {{ _object.track_name }}
+    {% elif _type == 'release' %}
+    {{ _object.release_name }}
+    {% endif %}
+  </h3>
+  {% if _type == 'track' %}
+  <p>
+    <small>
+      from <a href="{{ url_for('releases.show_release', release_id=_object.release_id) }}">{{ _object.release_name }}</a>
+    </small>
+  <p>
+  {% endif %}
+  <h5>
+    Price: {{ _object.price }} DAI
+  </h5>
+</div>
+
+{% endmacro %}

@@ -4,6 +4,8 @@
 {% from 'macros/purchase_modal_macro.html' import purchase_modal with context %}
 {% from 'macros/youtube_embed_macro.html' import youtube_embed with context %}
 {% from 'macros/display_purchasers_macro.html' import display_purchasers with context %}
+{% from 'macros/release_info_display_macro.html' import release_info_display with context %}
+
 
 {% block title %}{{ release.release_name }} | {{ artist.name }}{% endblock %}
 {% block content %}
@@ -13,17 +15,7 @@
 <div class="container mt-2 mb-5">
   <div class="row mb-3">
 
-    <div class="col-sm-3">
-
-
-      <h3>
-        {{ release.release_name }}
-      </h3>
-
-      <h5>
-        Price: {{ release.price }} DAI
-      </h5>
-    </div>
+    {{ release_info_display('release', release) }}
     <div class="col-xl-6">
 
       {% if release.smart_contract_address|length == 2 %}
@@ -132,7 +124,6 @@
 
       </div>
 
-
       <p>
         <pre>{{ release.description }}</pre>
       </p>
@@ -140,8 +131,6 @@
         <small>Released on {{ release.created_on.strftime('%#d %B %Y') }}</small>
       </p>
     </div>
-
-
 
     <div class="col-xl-3" id="release-dashboard-3">
       {% if release.youtube_embed_url is not none %}
@@ -159,8 +148,6 @@
 
   </div>
 </div>
-
-
 
 <script type="text/javascript">
   window.appConfig = {

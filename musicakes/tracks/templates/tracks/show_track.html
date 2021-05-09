@@ -4,6 +4,7 @@
 {% from 'macros/purchase_modal_macro.html' import purchase_modal with context %}
 {% from 'macros/youtube_embed_macro.html' import youtube_embed with context %}
 {% from 'macros/display_purchasers_macro.html' import display_purchasers with context %}
+{% from 'macros/release_info_display_macro.html' import release_info_display with context %}
 
 {% block title %}{{ track.track_name }} | {{ artist.name }}{% endblock %}
 {% block content %}
@@ -12,20 +13,8 @@
 
 <div class="container mt-2 mb-5">
   <div class="row">
-    <div class="col-sm-3">
 
-      <h3>
-        {{ track.track_name }}
-      </h3>
-      <p>
-        <small>
-          from <a href="{{ url_for('releases.show_release', release_id=track.release_id) }}">{{ track.release_name }}</a>
-        </small>
-      <p>
-      <h5>
-        Price: {{ track.price }} DAI
-      </h5>
-    </div>
+    {{ release_info_display('track', track) }}
 
     <div class="col-xl-6">
 
@@ -89,9 +78,6 @@
 
       {% endif %}
 
-
-
-
     </div>
   </div>
 
@@ -128,9 +114,6 @@
         <small>Released on {{ track.created_on.strftime('%#d %B %Y') }}</small>
       </p>
     </div>
-
-
-
 
     <div class="col-xl-3" id="release-dashboard-3">
       {% if track.youtube_embed_url is not none %}
