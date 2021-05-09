@@ -1,0 +1,9 @@
+{% macro youtube_embed(_url) %}
+
+<div>
+  <iframe id="ytplayer" type="text/html" width="384" height="256"
+    src="{{ _url }}"
+    frameborder="0"></iframe>
+</div>
+
+{% endmacro %}

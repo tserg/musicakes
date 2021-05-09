@@ -2,7 +2,7 @@
 {% from 'macros/artist_jumbotron_macro.html' import artist_jumbotron with context %}
 {% from 'macros/musicakes_dashboard_macro.html' import musicakes_dashboard with context %}
 {% from 'macros/purchase_modal_macro.html' import purchase_modal with context %}
-
+{% from 'macros/youtube_embed_macro.html' import youtube_embed with context %}
 
 {% block title %}{{ release.release_name }} | {{ artist.name }}{% endblock %}
 {% block content %}
@@ -144,11 +144,8 @@
 
     <div class="col-xl-3" id="release-dashboard-3">
       {% if release.youtube_embed_url is not none %}
-      <div>
-        <iframe id="ytplayer" type="text/html" width="384" height="256"
-          src="{{ release.youtube_embed_url }}"
-          frameborder="0"></iframe>
-      </div>
+
+        {{ youtube_embed(release.youtube_embed_url) }}
       {% endif %}
 
       {% if release.smart_contract_address|length != 2 and release.purchasers|length > 0 %}
