@@ -3,6 +3,7 @@
 {% from 'macros/musicakes_dashboard_macro.html' import musicakes_dashboard with context %}
 {% from 'macros/purchase_modal_macro.html' import purchase_modal with context %}
 {% from 'macros/youtube_embed_macro.html' import youtube_embed with context %}
+{% from 'macros/display_purchasers_macro.html' import display_purchasers with context %}
 
 {% block title %}{{ release.release_name }} | {{ artist.name }}{% endblock %}
 {% block content %}
@@ -149,29 +150,10 @@
       {% endif %}
 
       {% if release.smart_contract_address|length != 2 and release.purchasers|length > 0 %}
-      <h5>
-        Purchasers
-      </h5>
 
-      <div class="row">
+        {{ display_purchasers(release.purchasers) }}
 
-          {% for purchaser in release.purchasers %}
-          <div class="col">
-            <a href="../users/{{ purchaser.user_id }}">
-            <div class="display-picture-thumbnail">
-            {% if purchaser.profile_picture is none %}
-              <img id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}">
-            {% else %}
-              <img src="{{ purchaser.profile_picture }}" />
-            {% endif %}
-            </div>
-            </a>
-          </div>
-          {% endfor %}
-        {% endif %}
-
-      </div>
-
+      {% endif %}
 
     </div>
 

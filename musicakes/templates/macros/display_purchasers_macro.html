@@ -1,0 +1,23 @@
+{% macro display_purchasers(_objectList) %}
+
+<h5>
+  Purchasers
+</h5>
+
+<div class="row">
+  {% for purchaser in _objectList %}
+  <div class="col">
+    <a href="../users/{{ purchaser.user_id }}">
+    <div class="display-picture-thumbnail">
+      {% if purchaser.profile_picture is none %}
+      <img id="preview" src="{{ url_for('static', filename='img/musicakes.png') }}">
+      {% else %}
+      <img src="{{ purchaser.profile_picture }}" />
+      {% endif %}
+    </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+
+{% endmacro %}
