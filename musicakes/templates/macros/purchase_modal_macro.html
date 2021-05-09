@@ -1,0 +1,37 @@
+{% macro purchase_modal(_type, _object, _userinfo) %}
+
+<button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
+  data-target="#buy-modal" {% if not userinfo %}disabled{% endif %}>
+    Buy {% if _type == 'track' %}track{% elif _type == 'release' %}release{% endif %}
+</button>
+
+<!-- Modal for purchase of track -->
+
+<div class="modal fade" id="buy-modal" tabindex="-1" role="dialog" aria-labelledby="#buy-modal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="buy-track-modal-title">Buy {% if _type == 'track' %}Track{% elif _type == 'release' %}Release{% endif %} with DAI</h5>
+      </div>
+
+      <div class="modal-body">
+
+        <form action="" method="post" >
+        <label for="pay-contract-amount">Amount: </label>
+        <div class="form-row">
+          <p class="col-sm-2">
+            <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ _object.price }}" min="{{ _object.price }}" />
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
+      </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endmacro %}

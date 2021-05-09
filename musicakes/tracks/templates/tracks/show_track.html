@@ -1,6 +1,7 @@
 {% extends "layouts/layout.html" %}
 {% from 'macros/artist_jumbotron_macro.html' import artist_jumbotron with context %}
 {% from 'macros/musicakes_dashboard_macro.html' import musicakes_dashboard with context %}
+{% from 'macros/purchase_modal_macro.html' import purchase_modal with context %}
 {% block title %}{{ track.track_name }} | {{ artist.name }}{% endblock %}
 {% block content %}
 
@@ -60,28 +61,16 @@
       {% if track.smart_contract_address|length > 2 %}
 
 
-        {% if userinfo %}
-
-          {% if userinfo.has_purchased is true %}
+        {% if userinfo and userinfo.has_purchased is true %}
 
         <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
           Download
         </a>
 
-          {% else %}
-
-        <!-- Launch modal for purchase of track -->
-
-        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-track-modal">
-          Buy track
-        </button>
-
-          {% endif %}
-
         {% else %}
-        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-track-modal" disabled>
-          Buy track
-        </button>
+
+        {{ purchase_modal('track', track) }}
+
         {% endif %}
 
         <!--
@@ -97,34 +86,7 @@
 
       {% endif %}
 
-      <!-- Modal for purchase of track -->
 
-      <div class="modal fade" id="buy-track-modal" tabindex="-1" role="dialog" aria-labelledby="#buy-track-modal-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="buy-track-modal-title">Buy Track with DAI</h5>
-            </div>
-
-            <div class="modal-body">
-
-              <form action="" method="post" >
-              <label for="pay-contract-amount">Amount: </label>
-              <div class="form-row">
-                <p class="col-sm-2">
-                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ track.price }}" min="{{ track.price }}" />
-                </p>
-              </div>
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
-            </form>
-            </div>
-
-          </div>
-        </div>
-      </div>
 
 
     </div>

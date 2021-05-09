@@ -1,6 +1,9 @@
 {% extends "layouts/layout.html" %}
 {% from 'macros/artist_jumbotron_macro.html' import artist_jumbotron with context %}
 {% from 'macros/musicakes_dashboard_macro.html' import musicakes_dashboard with context %}
+{% from 'macros/purchase_modal_macro.html' import purchase_modal with context %}
+
+
 {% block title %}{{ release.release_name }} | {{ artist.name }}{% endblock %}
 {% block content %}
 
@@ -55,27 +58,15 @@
 
       {% if release.smart_contract_address|length > 2 %}
 
-        {% if userinfo %}
+        {% if userinfo and userinfo.has_purchased %}
 
-          {% if userinfo.has_purchased %}
         <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
           Download
         </a>
-          {% else %}
-
-        <!-- Launch modal for purchase of release -->
-
-        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-release-modal">
-          Buy release
-        </button>
-
-          {% endif %}
-
         {% else %}
 
-        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#buy-release-modal" disabled>
-          Buy release
-        </button>
+        {{ purchase_modal('release', release, userinfo) }}
+
         {% endif %}
         <!--
         <p>Current DAI balance: </p>
@@ -90,40 +81,7 @@
 
         {{ musicakes_dashboard(release) }}
 
-    {% endif %}
-
-
-      <!-- Modal for purchase of release -->
-
-      <div class="modal fade" id="buy-release-modal" tabindex="-1" role="dialog" aria-labelledby="#buy-release-modal-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="buy-release-modal-title">Buy Release with DAI</h5>
-            </div>
-
-            <div class="modal-body">
-              <form action="" method="post" >
-
-              <label for="pay-contract-amount">Amount: </label>
-              <div class="form-row">
-                <p class="col-sm-2">
-                  <input type="number" class="form-control" id="pay-contract-amount" name='pay-contract-amount' value="{{ release.price }}" min="{{ release.price }}" />
-                </p>
-              </div>
-            </div>
-            <div class="modal-footer">
-
-              <button type="button" id="btn-pay-contract" class="btn btn-sm btn-outline-secondary">Buy now</button>
-
-            </form>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-
+      {% endif %}
 
     </div>
   </div>
