@@ -81,24 +81,6 @@
   <div class="row">
     <div class="col-xl-3">
 
-      <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
-      <meta id="chain_id" data-value="{{ chain_id }}">
-
-      <!-- proxy element to store and query payment token address for window.appConfig --->
-      <meta id="payment_token_address" data-value="{{ release.payment_token_address }}">
-
-      <!-- proxy element to store and query release price for window.appConfig --->
-      <meta id="price" data-value="{{ release.price }}">
-
-      <!-- proxy element to store and query release id for window.appConfig --->
-      <meta id="release-id" data-value="{{ release.id }}">
-
-      <!-- proxy element to store and query smart contract address for window.appConfig --->
-      <meta id="smart_contract_address" data-value="{{ release.smart_contract_address }}">
-
-      <!-- proxy element to store and query artist wallet address for window.appConfig --->
-
-      <meta id="artist_wallet_address" data-value="{{ artist.wallet_address }}">
 
       <div class = "release-cover-art justify-content-center mb-3">
           <img src={{ release.cover_art }} />
@@ -133,6 +115,16 @@
     </div>
 
     <div class="col-xl-3" id="release-dashboard-3">
+      <div class="col-xl-3">
+      <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
+      <meta id="chain_id" data-value="{{ chain_id }}">
+
+      <!-- proxy element to store and query CSRF token for window.appConfig --->
+      <meta id="csrf-token" data-value="{{ csrf_token() }}">
+
+      <!-- proxy element to store and query artist wallet address for window.appConfig --->
+      <meta id="artist_wallet_address" data-value="{{ artist.wallet_address }}">
+
       {% if release.youtube_embed_url is not none %}
 
         {{ youtube_embed(release.youtube_embed_url) }}
@@ -151,11 +143,7 @@
 
 <script type="text/javascript">
   window.appConfig = {
-    smart_contract_address: $('#smart_contract_address').data(),
-    price: $('#price').data(),
-    release_id: $('#release-id').data(),
     csrf_token: $('#csrf-token').data(),
-    payment_token_address: $('#payment_token_address').data(),
     chain_id: $('#chain_id').data(),
     artist_wallet_address: $('#artist_wallet_address').data()
   }
@@ -165,7 +153,7 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
 <script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
 
-<script type="text/javascript" src="{{ url_for('releases.static', filename='js/purchase_release.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/purchase_object.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('artists.static', filename='js/support_artist.js') }}"></script>
 
 

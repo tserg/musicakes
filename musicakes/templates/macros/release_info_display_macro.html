@@ -21,4 +21,30 @@
   </h5>
 </div>
 
+<!-- proxy element to store and query payment token address for window.appConfig --->
+<meta property="payment-token-address" content="{{ _object.payment_token_address }}">
+
+<!-- proxy element to store and query release price for window.appConfig --->
+<meta property="price" content="{{ _object.price }}">
+
+<!-- proxy element to store and query release id for window.appConfig --->
+<meta property="release-id" content="{{ _object.id }}">
+
+<!-- proxy element to store and query smart contract address for window.appConfig --->
+<meta property="smart-contract-address" content="{{ _object.smart_contract_address }}">
+
+<!-- proxy element to store and query object type for window.appConfig --->
+<meta property="object-type" content="{{ _type }}">
+
+<script type="text/javascript">
+  window.appConfig = {
+    smart_contract_address: $('#smart_contract_address').data(),
+    price: $('#price').data(),
+    release_id: $('#release-id').data(),
+    payment_token_address: $('#payment_token_address').data(),
+    chain_id: $('#chain_id').data(),
+    object_type: $('#object-type').data()
+  }
+</script>
+
 {% endmacro %}

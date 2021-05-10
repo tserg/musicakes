@@ -1,8 +1,9 @@
 // const ethereumButton = document.querySelector('#btn-enable-ethereum');
-// const showAccountAddress = document.querySelector('#account-address');
+const showAccountAddress = document.querySelector('#account-address');
 // const showAccountBalance = document.querySelector('#account-balance');
 
-// const showAccountPaymentTokenBalance = document.querySelector('#payment-token-balance');
+const launchPurchaseModalButton = document.querySelector("#buy-modal-btn");
+const showAccountPaymentTokenBalance = document.querySelector('#payment-token-balance');
 
 const manageMusicakesButton = document.querySelector('#btn-manage-musicakes');
 
@@ -29,9 +30,9 @@ const musicakesDashboard = document.querySelector('#musicakes-dashboard');
 
 var ethereumChainId = parseInt(window.appConfig.chain_id.value);
 
-const price = parseFloat(window.appConfig.price.value);
-
-const release_id = parseInt(window.appConfig.release_id.value);
+const price = parseFloat(document.querySelector('meta[property~="price"]').getAttribute('content'));
+const objectId = parseInt(document.querySelector('meta[property~="release-id"]').getAttribute('content'));
+const objectType = document.querySelector('meta[property~="object-type"]').getAttribute('content')
 
 const csrf_token_purchase = window.appConfig.csrf_token.value;
 if (csrf_token_purchase) {
@@ -40,8 +41,10 @@ if (csrf_token_purchase) {
 
 /* Payment token contract */
 
-var paymentTokenAddress = window.appConfig.payment_token_address.value;
-const musicakesAddress = window.appConfig.smart_contract_address.value;
+// paymentTokenAddress is declared as var because it may be re-declared in support-artist.js
+
+var paymentTokenAddress = document.querySelector('meta[property~="payment-token-address"]').getAttribute('content');
+const musicakesAddress = document.querySelector('meta[property~="smart-contract-address"]').getAttribute('content');
 
 var _paymentTokenAbi = [
   {
@@ -690,6 +693,22 @@ window.addEventListener('load', async () => {
 
 // Initialise buttons
 
+
+
+if (launchPurchaseModalButton != null) {
+
+  launchPurchaseModalButton.addEventListener('click', () => {
+    if (web3) {
+
+      if (checkChainId(window.currentChainId, ethereumChainId)) {
+        loadInterface();
+      }
+    } else {
+      alert('Please install MetaMask to continue!');
+    }
+  });
+}
+
 if (manageMusicakesButton != null) {
 
   manageMusicakesButton.addEventListener('click', () => {
@@ -771,6 +790,7 @@ async function loadInterface() {
 
   var accounts = await web3.eth.getAccounts();
   const account = accounts[0];
+  showAccountAddress.innerHTML = account;
 
 	// Get ETH balance of current address
 
@@ -788,7 +808,7 @@ async function loadInterface() {
 	var accountPaymentTokenBalance = paymentTokenContract.methods.balanceOf(account).call(function(error, result) {
 		if (!error) {
 			var accountPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-			// showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
+			showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
 		} else {
 			console.log(error);
 		}
@@ -834,7 +854,7 @@ async function loadInterface() {
 		} else {
 			console.log(error);
 		}
-	})
+	});
 
 }
 
@@ -862,8 +882,16 @@ async function payMusicakes() {
         transaction_hash: hash,
         wallet_address: account
       });
-      releaseIdString = release_id.toString();
-      fetch('/releases/' + releaseIdString + '/purchase', {
+
+      var url;
+
+      if (objectType === 'release') {
+        url = '/releases/' + objectId.toString() + '/purchase';
+      } else if (objectType === 'track') {
+        url = '/tracks/' + objectId.toString() + '/purchase';
+      }
+      
+      fetch(url, {
         method: 'POST',
         credentials: 'same-origin',
         headers: {

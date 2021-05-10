@@ -87,18 +87,6 @@
       <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
       <meta id="chain_id" data-value="{{ chain_id }}">
 
-      <!-- proxy element to store and query smart contract address for window.appConfig --->
-      <meta id="smart_contract_address" data-value="{{ track.smart_contract_address }}">
-
-      <!-- proxy element to store and query payment token address for window.appConfig --->
-      <meta id="payment_token_address" data-value="{{ track.payment_token_address }}">
-
-      <!-- proxy element to store and query track price for window.appConfig --->
-      <meta id="price" data-value="{{ track.price }}">
-
-      <!-- proxy element to store and query track id for window.appConfig --->
-      <meta id="track-id" data-value="{{ track.id }}">
-
       <!-- proxy element to store and query CSRF token for window.appConfig --->
       <meta id="csrf-token" data-value="{{ csrf_token() }}">
 
@@ -129,11 +117,7 @@
 
 <script type="text/javascript">
   window.appConfig = {
-    smart_contract_address: $('#smart_contract_address').data(),
-    price: $('#price').data(),
-    track_id: $('#track-id').data(),
     csrf_token: $('#csrf-token').data(),
-    payment_token_address: $('#payment_token_address').data(),
     chain_id: $('#chain_id').data(),
     artist_wallet_address: $('#artist_wallet_address').data()
   }
@@ -145,7 +129,7 @@
 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
 
-<script type="text/javascript" src="{{ url_for('tracks.static', filename='js/purchase_track.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/purchase_object.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('artists.static', filename='js/support_artist.js') }}"></script>
 
 {% endblock %}
