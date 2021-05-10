@@ -84,16 +84,6 @@
   <div class="row">
     <div class="col-xl-3">
 
-      <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
-      <meta id="chain_id" data-value="{{ chain_id }}">
-
-      <!-- proxy element to store and query CSRF token for window.appConfig --->
-      <meta id="csrf-token" data-value="{{ csrf_token() }}">
-
-      <!-- proxy element to store and query artist wallet address for window.appConfig --->
-
-      <meta id="artist_wallet_address" data-value="{{ artist.wallet_address }}">
-
       <div class = "release-cover-art justify-content-center mb-3">
           <img src={{ track.release_cover_art }} />
       </div>
@@ -114,14 +104,6 @@
     </div>
   </div>
 </div>
-
-<script type="text/javascript">
-  window.appConfig = {
-    csrf_token: $('#csrf-token').data(),
-    chain_id: $('#chain_id').data(),
-    artist_wallet_address: $('#artist_wallet_address').data()
-  }
-</script>
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>
 

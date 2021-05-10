@@ -1,13 +1,13 @@
 const supportArtistButton = document.querySelector('#btn-support-artist');
 const supportArtistValue = document.querySelector('#support-artist-amount');
 
-var ethereumChainId = parseInt(window.appConfig.chain_id.value);
+var ethereumChainId = parseInt(document.querySelector('meta[property~="chain-id"]').getAttribute('content'));
 
-const artistWalletAddress = window.appConfig.artist_wallet_address.value;
+const artistWalletAddress = document.querySelector('meta[property~="artist-wallet-address"]').getAttribute('content');
 console.log(artistWalletAddress);
 
 /* Payment token contract */
-var paymentTokenAddress = window.appConfig.payment_token_address.value;
+var paymentTokenAddress = document.querySelector('meta[property~="payment-token-address"]').getAttribute('content');
 
 var _paymentTokenAbi = [
   {

@@ -56,24 +56,13 @@
 
 </div>
 
-<!-- proxy element to store and query ethereum chain ID for window.appConfig --->
-<meta id="chain_id" data-value="{{ chain_id }}">
 
-<!-- proxy element to store and query payment token address for window.appConfig --->
-<meta id="payment_token_address" data-value="{{ payment_token_address }}">
-
-<!-- proxy element to store and query artist wallet address for window.appConfig --->
-
-<meta id="artist_wallet_address" data-value="{{ artist.wallet_address }}">
 
 
 
 <script type="text/javascript">
   window.appConfig = {
-    release_count: $('#release-count').data(),
-    payment_token_address: $('#payment_token_address').data(),
-    chain_id: $('#chain_id').data(),
-    artist_wallet_address: $('#artist_wallet_address').data()
+    release_count: $('#release-count').data()
   }
 </script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/libs/truffle-contract.js') }}"></script>

@@ -28,13 +28,13 @@ const seeMoreText = document.querySelector('#text-see-more');
 const musicakesDashboard = document.querySelector('#musicakes-dashboard');
 // const musicakesManagementDashboard = document.querySelector('#musicakes-management-dashboard');
 
-var ethereumChainId = parseInt(window.appConfig.chain_id.value);
+var ethereumChainId = parseInt(document.querySelector('meta[property~="chain-id"]').getAttribute('content'));
 
 const price = parseFloat(document.querySelector('meta[property~="price"]').getAttribute('content'));
 const objectId = parseInt(document.querySelector('meta[property~="release-id"]').getAttribute('content'));
 const objectType = document.querySelector('meta[property~="object-type"]').getAttribute('content')
 
-const csrf_token_purchase = window.appConfig.csrf_token.value;
+const csrf_token_purchase = document.querySelector('meta[property~="csrf-token"]').getAttribute('content');
 if (csrf_token_purchase) {
   console.log("CSRF Token loaded");
 }
@@ -890,7 +890,7 @@ async function payMusicakes() {
       } else if (objectType === 'track') {
         url = '/tracks/' + objectId.toString() + '/purchase';
       }
-      
+
       fetch(url, {
         method: 'POST',
         credentials: 'same-origin',
