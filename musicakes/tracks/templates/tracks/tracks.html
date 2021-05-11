@@ -5,11 +5,4 @@
 
 {{ album_display('tracks', tracks) }}
 
-<script type="text/javascript">
-  window.appConfig = {
-    page: $('#page').data(),
-  }
-</script>
-<script type="text/javascript" src="{{ url_for('tracks.static', filename='js/scroll_tracks.js') }}"></script>
-
 {% endblock %}

@@ -5,11 +5,4 @@
 
 {{ album_display('artists', artists) }}
 
-<script type="text/javascript">
-  window.appConfig = {
-    page: $('#page').data(),
-  }
-</script>
-<script type="text/javascript" src="{{ url_for('artists.static', filename='js/scroll_artists.js') }}"></script>
-
 {% endblock %}

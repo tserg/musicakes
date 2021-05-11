@@ -4,7 +4,7 @@ var tracks_count = $('.track-count-group').length;
 
 const createReleaseButton = document.querySelector('#create-release-btn');
 
-var created_track_count = 0
+window.created_track_count = 0
 
 createReleaseButton.addEventListener('click', () => {
   validateForm().then(function(response) {
@@ -320,11 +320,11 @@ function addTrackToServer(file_name, track_name, track_price, release_id) {
 
         response = JSON.parse(xhr.response);
 
-        created_track_count += 1;
+        window.created_track_count += 1;
 
-        if (created_track_count == tracks_count) {
+        if (window.created_track_count == tracks_count) {
           alert("All tracks have been successfully uploaded");
-          // window.location.replace('/releases/' + release_id.toString() + '/deploy');
+          window.location.replace('/releases/' + release_id.toString() + '/deploy');
 
         }
 

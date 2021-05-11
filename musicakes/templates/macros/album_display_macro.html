@@ -122,11 +122,11 @@
 		<div class="row">
 			<div class="col">
 			{% if (request.args.get('page')|int > 1) %}
-				<button class="btn btn-sm btn-outline-secondary" type="button" id ="previous-page-btn" value="Previous Page">Previous Page</button>
+				<a href="{{ scroll_previous_page() }}" class="btn btn-sm btn-outline-secondary" type="button" id ="previous-page-btn" value="Previous Page">Previous Page</a>
 			{% endif %}
 
-			{% if (artists|length == 10) %}
-				<button class="btn btn-sm btn-outline-secondary" type="button" id="next-page-btn" value="Next Page">Next Page</button>
+			{% if (_objectList|length == 10) %}
+				<a href="{{ scroll_next_page() }}" class="btn btn-sm btn-outline-secondary" type="button" id="next-page-btn" value="Next Page">Next Page</a>
 			{% endif %}
 
 			</div>

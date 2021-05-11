@@ -19,6 +19,8 @@ from sqlalchemy.sql import func
 from flask_cors import CORS
 from flask_wtf import CSRFProtect
 
+from werkzeug.urls import url_encode
+
 from .models import (
     setup_db,
     User,
@@ -131,6 +133,46 @@ def create_app(test_config=None):
     )
 
     flask_app.config.from_object(FlaskConfig)
+
+    ###################################################
+
+    # Template global functions
+
+    ###################################################
+
+    @flask_app.template_global()
+    def scroll_previous_page():
+        """
+        Global template function to scroll to previous page
+        Used in album display macro
+        """
+
+        args = request.args.copy()
+
+        if args['page'] != None and args['page'] != 1:
+
+            args['page'] = str(int(args['page'])-1)
+
+        return '{}?{}'.format(request.path, url_encode(args))
+
+    @flask_app.template_global()
+    def scroll_next_page():
+        """
+        Global template function to scroll to next page
+        Used in album display macro
+        """
+
+        args = request.args.copy()
+
+        if len(args) == 0:
+
+            args = {'page': '2'}
+
+        else:
+
+            args['page'] = str(int(args['page'])+1)
+
+        return '{}?{}'.format(request.path, url_encode(args))
 
     ###################################################
 

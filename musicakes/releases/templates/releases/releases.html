@@ -5,11 +5,4 @@
 
 {{ album_display('releases', releases) }}
 
-<script type="text/javascript">
-  window.appConfig = {
-    page: $('#page').data(),
-  }
-</script>
-<script type="text/javascript" src="{{ url_for('releases.static', filename='js/scroll_releases.js') }}"></script>
-
 {% endblock %}
