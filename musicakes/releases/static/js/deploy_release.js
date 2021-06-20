@@ -1,8 +1,10 @@
-const ethereumChainId = parseInt(window.appConfig.chain_id.value);
+var ethereumChainId = parseInt(document.querySelector('meta[property~="chain-id"]').getAttribute('content'));
 
-const release_id = parseInt(window.appConfig.release_id.address);
-const musicakesFactoryContractAddress = window.appConfig.contract_factory_address.address;
-console.log(musicakesFactoryContractAddress);
+const release_id = parseInt(document.querySelector('meta[property~="release-id"]').getAttribute('content'));
+
+var paymentTokenAddress = document.querySelector('meta[property~="payment-token-address"]').getAttribute('content');
+const musicakesFactoryContractAddress = document.querySelector('meta[property~="contract-factory-address"]').getAttribute('content');
+
 
 
 console.log(release_id);
@@ -16,83 +18,126 @@ deployContractButton.addEventListener('click', () => {
 
 var _abi = [
     {
-      "constant": true,
+      "anonymous": false,
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "",
+          "indexed": false,
+          "name": "fundsId",
           "type": "uint256"
-        }
-      ],
-      "name": "contracts",
-      "outputs": [
+        },
         {
-          "internalType": "address",
-          "name": "",
+          "indexed": true,
+          "name": "token",
           "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
+        },
         {
-          "internalType": "string",
+          "indexed": false,
           "name": "name",
           "type": "string"
         },
         {
-          "internalType": "string",
+          "indexed": false,
           "name": "symbol",
           "type": "string"
         }
       ],
-      "name": "createNewMusicakes",
+      "name": "FundsDistributionTokenCreated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "name": "_target",
+          "type": "address"
+        },
+        {
+          "name": "_admin",
+          "type": "address"
+        }
+      ],
       "outputs": [],
-      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "gas": 132429,
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "name": "_symbol",
+          "type": "string"
+        },
+        {
+          "name": "_decimals",
+          "type": "uint256"
+        },
+        {
+          "name": "_supply",
+          "type": "uint256"
+        },
+        {
+          "name": "_paymentTokenAddress",
+          "type": "address"
+        }
+      ],
+      "name": "deploy_fdt_contract",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "constant": true,
+      "gas": 1118,
       "inputs": [],
-      "name": "getMusicakesCount",
+      "name": "target",
       "outputs": [
         {
-          "internalType": "uint256",
-          "name": "musicakesCount",
-          "type": "uint256"
+          "name": "",
+          "type": "address"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": true,
-      "inputs": [
+      "gas": 1148,
+      "inputs": [],
+      "name": "fundsId",
+      "outputs": [
         {
-          "internalType": "uint256",
-          "name": "count",
+          "name": "",
           "type": "uint256"
         }
       ],
-      "name": "getMusicakesAddress",
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1293,
+      "inputs": [
+        {
+          "name": "arg0",
+          "type": "uint256"
+        }
+      ],
+      "name": "fundsIdToAddress",
       "outputs": [
         {
-          "internalType": "address",
-          "name": "musicakesAddress",
+          "name": "",
           "type": "address"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     }
-];
+  ];
 
 // Helper function to check chain ID
 
@@ -159,7 +204,7 @@ async function deployMusicakesContract() {
   const token_name = "Musicakes" + release_id.toString();
   const token_symbol = "MSC_" + release_id.toString();
 
-  musicakesFactoryContract.methods.createNewMusicakes(token_name, token_symbol).send({from: account})
+  musicakesFactoryContract.methods.deploy_fdt_contract(token_name, token_symbol, 0, 100, paymentTokenAddress).send({from: account})
   .once('transactionHash', function(hash) {
     console.log(hash);
 
