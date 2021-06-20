@@ -50,11 +50,12 @@
 
 
       <!-- proxy element to store and query release id for window.appConfig --->
-      <meta id="release-id" data-address="{{ release.id }}">
-      <meta id="contract-factory-address" data-address="{{ contract_factory_address }}">
+      <meta property="release-id" content="{{ release.id }}">
+      <meta property="contract-factory-address" content="{{ contract_factory_address }}">
+	  <meta property="payment-token-address" content="{{ payment_token_address }}">
 
       <!-- proxy element to store and query ethereum chain ID for window.appConfig --->
-      <meta id="chain_id" data-value="{{ chain_id }}">
+      <meta property="chain-id" content="{{ chain_id }}">
 
       <input type="hidden" id="csrf_token" value="{{ csrf_token() }}" />
 
@@ -66,13 +67,6 @@
 
 </div>
 
-<script type="text/javascript">
-  window.appConfig = {
-    release_id: $('#release-id').data(),
-    contract_factory_address: $('#contract-factory-address').data(),
-    chain_id: $('#chain_id').data()
-  }
-</script>
 <script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
 <script type="text/javascript" src="{{ url_for('releases.static', filename='js/deploy_release.js') }}"></script>
 {% endblock %}

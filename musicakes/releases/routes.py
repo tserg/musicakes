@@ -309,12 +309,14 @@ def show_release_for_deployment(release_id):
 
             '''
 
-            contract_factory_address = MusicakesContractFactory.query.get(1).smart_contract_address
+            contract_factory_address = MusicakesContractFactory.query.get(2).smart_contract_address
+            payment_token_address = PaymentToken.query.get(1).smart_contract_address
 
             return render_template('releases/deploy_release.html',
                                     release=release_data,
                                     userinfo=data,
                                     contract_factory_address=contract_factory_address,
+									payment_token_address=payment_token_address,
                                     chain_id=ETHEREUM_CHAIN_ID)
 
         else:

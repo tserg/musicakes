@@ -31,7 +31,7 @@ const musicakesDashboard = document.querySelector('#musicakes-dashboard');
 var ethereumChainId = parseInt(document.querySelector('meta[property~="chain-id"]').getAttribute('content'));
 
 const price = parseFloat(document.querySelector('meta[property~="price"]').getAttribute('content'));
-const objectId = parseInt(document.querySelector('meta[property~="release-id"]').getAttribute('content'));
+const objectId = parseInt(document.querySelector('meta[property~="object-id"]').getAttribute('content'));
 const objectType = document.querySelector('meta[property~="object-type"]').getAttribute('content')
 
 const csrf_token_purchase = document.querySelector('meta[property~="csrf-token"]').getAttribute('content');
@@ -158,45 +158,42 @@ var _paymentTokenAbi = [
 
 var _musicakesAbi = [
     {
+      "anonymous": false,
       "inputs": [
         {
-          "internalType": "address",
-          "name": "owner",
+          "indexed": true,
+          "name": "sender",
           "type": "address"
         },
         {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
+          "indexed": true,
+          "name": "receiver",
+          "type": "address"
         },
         {
-          "internalType": "string",
-          "name": "symbol",
-          "type": "string"
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
         }
       ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "constructor"
+      "name": "Transfer",
+      "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [
         {
           "indexed": true,
-          "internalType": "address",
           "name": "owner",
           "type": "address"
         },
         {
           "indexed": true,
-          "internalType": "address",
           "name": "spender",
           "type": "address"
         },
         {
           "indexed": false,
-          "internalType": "uint256",
           "name": "value",
           "type": "uint256"
         }
@@ -209,14 +206,29 @@ var _musicakesAbi = [
       "inputs": [
         {
           "indexed": true,
-          "internalType": "address",
-          "name": "by",
+          "name": "sender",
           "type": "address"
         },
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "fundsDistributed",
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "FundsDeposited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
           "type": "uint256"
         }
       ],
@@ -228,14 +240,12 @@ var _musicakesAbi = [
       "inputs": [
         {
           "indexed": true,
-          "internalType": "address",
-          "name": "by",
+          "name": "receiver",
           "type": "address"
         },
         {
           "indexed": false,
-          "internalType": "uint256",
-          "name": "fundsWithdrawn",
+          "name": "value",
           "type": "uint256"
         }
       ],
@@ -243,390 +253,326 @@ var _musicakesAbi = [
       "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "from",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "to",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        }
-      ],
-      "name": "Transfer",
-      "type": "event"
+      "inputs": [],
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
     },
     {
-      "constant": true,
+      "gas": 415269,
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_owner",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "name": "_symbol",
+          "type": "string"
+        },
+        {
+          "name": "_decimals",
+          "type": "uint256"
+        },
+        {
+          "name": "_supply",
+          "type": "uint256"
+        },
+        {
+          "name": "_ownerAddress",
+          "type": "address"
+        },
+        {
+          "name": "_paymentTokenAddress",
           "type": "address"
         }
       ],
-      "name": "accumulativeFundsOf",
+      "name": "initialize",
       "outputs": [
         {
-          "internalType": "uint256",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 1208,
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
           "name": "",
           "type": "uint256"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": true,
+      "gas": 1668,
       "inputs": [
         {
-          "internalType": "address",
-          "name": "owner",
+          "name": "_owner",
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "spender",
+          "name": "_spender",
           "type": "address"
         }
       ],
       "name": "allowance",
       "outputs": [
         {
-          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": false,
+      "gas": 148546,
       "inputs": [
         {
-          "internalType": "address",
-          "name": "spender",
+          "name": "_to",
           "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "approve",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        }
-      ],
-      "name": "balanceOf",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "decimals",
-      "outputs": [
-        {
-          "internalType": "uint8",
-          "name": "",
-          "type": "uint8"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "spender",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "subtractedValue",
-          "type": "uint256"
-        }
-      ],
-      "name": "decreaseAllowance",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "fundsToken",
-      "outputs": [
-        {
-          "internalType": "contract IERC20",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "fundsTokenBalance",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "spender",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "addedValue",
-          "type": "uint256"
-        }
-      ],
-      "name": "increaseAllowance",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "name",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "symbol",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
-      "inputs": [],
-      "name": "totalSupply",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "recipient",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
+          "name": "_value",
           "type": "uint256"
         }
       ],
       "name": "transfer",
       "outputs": [
         {
-          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
       ],
-      "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "constant": false,
+      "gas": 111245,
       "inputs": [
         {
-          "internalType": "address",
-          "name": "sender",
+          "name": "_from",
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "recipient",
+          "name": "_to",
           "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "amount",
+          "name": "_value",
           "type": "uint256"
         }
       ],
       "name": "transferFrom",
       "outputs": [
         {
-          "internalType": "bool",
           "name": "",
           "type": "bool"
         }
       ],
-      "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
-      "constant": true,
+      "gas": 37971,
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_owner",
+          "name": "_spender",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 75508,
+      "inputs": [
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "burn",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 111859,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "burnFrom",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 166839,
+      "inputs": [],
+      "name": "withdrawFunds",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 81882,
+      "inputs": [],
+      "name": "updateFundsTokenBalance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 1872,
+      "inputs": [
+        {
+          "name": "_receiver",
           "type": "address"
         }
       ],
       "name": "withdrawableFundsOf",
       "outputs": [
         {
-          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": true,
+      "gas": 1723,
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_owner",
+          "name": "_receiver",
           "type": "address"
         }
       ],
       "name": "withdrawnFundsOf",
       "outputs": [
         {
-          "internalType": "uint256",
           "name": "",
           "type": "uint256"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": false,
-      "inputs": [],
-      "name": "withdrawFunds",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
-      "name": "updateFundsReceived",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [],
+      "gas": 6060,
+      "inputs": [
+        {
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
       "name": "payToContract",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "fallback"
+    },
+    {
+      "gas": 1568,
+      "inputs": [],
+      "name": "getPointsPerShare",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 8000,
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 7053,
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1658,
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1903,
+      "inputs": [
+        {
+          "name": "arg0",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     }
   ];
@@ -944,7 +890,7 @@ async function updateDividends() {
   var accounts = await web3.eth.getAccounts();
   const account = accounts[0];
 
-	musicakesContract.methods.updateFundsReceived().send({from: account})
+	musicakesContract.methods.updateFundsTokenBalance().send({from: account})
 	.once('transactionHash', function(hash) {
 		console.log(hash);
 	})
