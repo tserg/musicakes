@@ -320,7 +320,7 @@ def update_transaction(transaction_hash):
 
         abort(404)
 
-    from .tasks import remove_celery_task, check_purchase_transaction_confirmed
+    from ..tasks import remove_celery_task, check_purchase_transaction_confirmed
 
     try:
 

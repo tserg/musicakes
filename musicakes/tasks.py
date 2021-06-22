@@ -109,7 +109,7 @@ def check_purchase_transaction_confirmed(self, _transactionHash, _userId):
 
         # Checks if wallet address is same as when transaction hash was first submitted
 
-        if str(walletAddress).lower() == purchase_celery_task.wallet_address:
+        if str(walletAddress).lower() == purchase_celery_task.wallet_address.lower():
 
             # Update the task status to confirmed
 
