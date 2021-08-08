@@ -1,4 +1,4 @@
-{% macro purchase_modal(_type, _object, _userinfo) %}
+{% macro purchase_modal(_type, _object, _userinfo, accepted_payment_tokens) %}
 
 <button id="buy-modal-btn" type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal"
   data-target="#buy-modal" {% if not userinfo %}disabled{% endif %}>
@@ -11,7 +11,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="buy-track-modal-title">Buy {% if _type == 'track' %}Track{% elif _type == 'release' %}Release{% endif %} with DAI</h5>
+        <h5 class="modal-title" id="buy-track-modal-title">Buy {% if _type == 'track' %}Track{% elif _type == 'release' %}Release{% endif %}</h5>
       </div>
 
       <div class="modal-body">
@@ -21,11 +21,19 @@
           <span id="account-address"></span>
         </p>
 
+		<div class="form-group">
+			<label for="paymentTokenSelect">Select token</label>
+			<select class="form-control" id="paymentTokenSelect">
+				{% for payment_token in accepted_payment_tokens %}
+				<option value="{{ payment_token.address }}" {% if loop.index == 1 %}selected{% endif %}>{{ payment_token.symbol }} - {{ payment_token.name }}</option>
+				{% endfor %}
+			</select>
+		</div>
+
         <p>
           <span class="font-weight-bold">Current DAI balance: </span>
           <span id ="payment-token-balance"></span>
         </p>
-
         <form action="" method="post" >
 
         <div class="form-row">

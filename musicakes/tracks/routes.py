@@ -33,6 +33,10 @@ from ..utils.session_utils import (
     get_user_data
 )
 
+from ..utils.web3_utils import (
+	get_accepted_payment_tokens_info,
+)
+
 from ..decorators import (
     requires_log_in
 )
@@ -98,6 +102,7 @@ def show_track(track_id):
     user, data = get_user_data(True)
 
     try:
+        accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID)
 
         current_track = Track.query.filter(Track.id==track_id).one_or_none()
 
@@ -151,6 +156,7 @@ def show_track(track_id):
                                 userinfo=data,
                                 creator=creator,
                                 chain_id=ETHEREUM_CHAIN_ID,
+								accepted_payment_tokens=accepted_payment_tokens,
                                 artist=artist_data)
 
     except:

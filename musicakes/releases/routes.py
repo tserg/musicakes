@@ -44,6 +44,10 @@ from ..utils.session_utils import (
     get_user_data
 )
 
+from ..utils.web3_utils import (
+	get_accepted_payment_tokens_info,
+)
+
 from ..decorators import (
     requires_log_in
 )
@@ -111,6 +115,7 @@ def show_release(release_id):
     user, data = get_user_data(True)
 
     try:
+        accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID)
 
         current_release = Release.query.filter(Release.id==release_id).one_or_none()
         if current_release is None:
@@ -154,6 +159,7 @@ def show_release(release_id):
                                 userinfo=data,
                                 creator=creator,
                                 chain_id=ETHEREUM_CHAIN_ID,
+								accepted_payment_tokens=accepted_payment_tokens,
                                 artist=artist_data)
 
     except Exception as e:

@@ -34,6 +34,9 @@ const price = parseFloat(document.querySelector('meta[property~="price"]').getAt
 const objectId = parseInt(document.querySelector('meta[property~="object-id"]').getAttribute('content'));
 const objectType = document.querySelector('meta[property~="object-type"]').getAttribute('content')
 
+const paymentTokenSelect = document.querySelector('#paymentTokenSelect');
+console.log(paymentTokenSelect);
+
 const csrf_token_purchase = document.querySelector('meta[property~="csrf-token"]').getAttribute('content');
 if (csrf_token_purchase) {
   console.log("CSRF Token loaded");
@@ -43,116 +46,286 @@ if (csrf_token_purchase) {
 
 // paymentTokenAddress is declared as var because it may be re-declared in support-artist.js
 
-var paymentTokenAddress = document.querySelector('meta[property~="payment-token-address"]').getAttribute('content');
+var paymentTokenAddress = paymentTokenSelect.value;
+console.log(paymentTokenAddress);
 const musicakesAddress = document.querySelector('meta[property~="smart-contract-address"]').getAttribute('content');
 
 var _paymentTokenAbi = [
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "name",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "decimals",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "payable": false,
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [
-      {
-        "name": "_owner",
-        "type": "address"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "name": "balance",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "symbol",
-    "outputs": [
-      {
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "payable": false,
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
+    {
+      "anonymous": false,
+      "inputs": [
         {
-            "name": "_from",
-            "type": "address"
+          "indexed": true,
+          "name": "sender",
+          "type": "address"
         },
         {
-            "name": "_to",
-            "type": "address"
+          "indexed": true,
+          "name": "receiver",
+          "type": "address"
         },
         {
-            "name": "_value",
-            "type": "uint256"
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
         }
-    ],
-    "name": "transferFrom",
-    "outputs": [
+      ],
+      "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
         {
-            "name": "",
-            "type": "bool"
+          "indexed": true,
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
         }
-    ],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_to",
-                "type": "address"
-            },
-            {
-                "name": "_value",
-                "type": "uint256"
-            }
-        ],
-        "name": "transfer",
-        "outputs": [
-            {
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
+      ],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "name": "_symbol",
+          "type": "string"
+        },
+        {
+          "name": "_decimals",
+          "type": "uint256"
+        },
+        {
+          "name": "_supply",
+          "type": "uint256"
+        }
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "gas": 74710,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transfer",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 111065,
+      "inputs": [
+        {
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 37791,
+      "inputs": [
+        {
+          "name": "_spender",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 75641,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "mint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 75298,
+      "inputs": [
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "burn",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 111649,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "burnFrom",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 7670,
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 6723,
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1328,
+      "inputs": [],
+      "name": "decimals",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1573,
+      "inputs": [
+        {
+          "name": "arg0",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1818,
+      "inputs": [
+        {
+          "name": "arg0",
+          "type": "address"
+        },
+        {
+          "name": "arg1",
+          "type": "address"
+        }
+      ],
+      "name": "allowance",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1418,
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     }
 ];
 
@@ -210,6 +383,11 @@ var _musicakesAbi = [
           "type": "address"
         },
         {
+          "indexed": true,
+          "name": "paymentToken",
+          "type": "address"
+        },
+        {
           "indexed": false,
           "name": "value",
           "type": "uint256"
@@ -224,6 +402,11 @@ var _musicakesAbi = [
         {
           "indexed": true,
           "name": "receiver",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "paymentToken",
           "type": "address"
         },
         {
@@ -244,6 +427,11 @@ var _musicakesAbi = [
           "type": "address"
         },
         {
+          "indexed": true,
+          "name": "paymentToken",
+          "type": "address"
+        },
+        {
           "indexed": false,
           "name": "value",
           "type": "uint256"
@@ -253,13 +441,35 @@ var _musicakesAbi = [
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "name": "beneficiary",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "name": "paymentToken",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "name": "value",
+          "type": "uint256"
+        }
+      ],
+      "name": "AdminFeeWithdrawn",
+      "type": "event"
+    },
+    {
       "inputs": [],
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "constructor"
     },
     {
-      "gas": 415269,
+      "gas": 430228,
       "inputs": [
         {
           "name": "_name",
@@ -282,7 +492,11 @@ var _musicakesAbi = [
           "type": "address"
         },
         {
-          "name": "_paymentTokenAddress",
+          "name": "_payment_token_governor_proxy_address",
+          "type": "address"
+        },
+        {
+          "name": "_fee_governor_proxy_address",
           "type": "address"
         }
       ],
@@ -332,7 +546,7 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 148546,
+      "gas": 771084,
       "inputs": [
         {
           "name": "_to",
@@ -354,7 +568,7 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 111245,
+      "gas": 807439,
       "inputs": [
         {
           "name": "_from",
@@ -432,7 +646,7 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 166839,
+      "gas": 5723693,
       "inputs": [],
       "name": "withdrawFunds",
       "outputs": [],
@@ -440,7 +654,7 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 81882,
+      "gas": 1451223,
       "inputs": [],
       "name": "updateFundsTokenBalance",
       "outputs": [],
@@ -448,10 +662,22 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 1872,
+      "gas": 902097,
+      "inputs": [],
+      "name": "withdrawAdminFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "gas": 2868,
       "inputs": [
         {
           "name": "_receiver",
+          "type": "address"
+        },
+        {
+          "name": "_payment_token_address",
           "type": "address"
         }
       ],
@@ -466,10 +692,14 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 1723,
+      "gas": 1968,
       "inputs": [
         {
           "name": "_receiver",
+          "type": "address"
+        },
+        {
+          "name": "_payment_token_address",
           "type": "address"
         }
       ],
@@ -484,11 +714,15 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 6060,
+      "gas": 6878,
       "inputs": [
         {
           "name": "_amount",
           "type": "uint256"
+        },
+        {
+          "name": "_payment_token_address",
+          "type": "address"
         }
       ],
       "name": "payToContract",
@@ -506,8 +740,13 @@ var _musicakesAbi = [
       "type": "fallback"
     },
     {
-      "gas": 1568,
-      "inputs": [],
+      "gas": 1813,
+      "inputs": [
+        {
+          "name": "_payment_token_address",
+          "type": "address"
+        }
+      ],
       "name": "getPointsPerShare",
       "outputs": [
         {
@@ -519,7 +758,7 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 8000,
+      "gas": 7958,
       "inputs": [],
       "name": "name",
       "outputs": [
@@ -532,7 +771,7 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 7053,
+      "gas": 7011,
       "inputs": [],
       "name": "symbol",
       "outputs": [
@@ -545,7 +784,7 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 1658,
+      "gas": 1688,
       "inputs": [],
       "name": "decimals",
       "outputs": [
@@ -558,7 +797,7 @@ var _musicakesAbi = [
       "type": "function"
     },
     {
-      "gas": 1903,
+      "gas": 1933,
       "inputs": [
         {
           "name": "arg0",
@@ -574,8 +813,26 @@ var _musicakesAbi = [
       ],
       "stateMutability": "view",
       "type": "function"
+    },
+    {
+      "gas": 1963,
+      "inputs": [
+        {
+          "name": "arg0",
+          "type": "address"
+        }
+      ],
+      "name": "payment_token_to_admin_fee_balance",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     }
-  ];
+];
 
 // Helper function to check chain ID
 
@@ -638,8 +895,6 @@ window.addEventListener('load', async () => {
 });
 
 // Initialise buttons
-
-
 
 if (launchPurchaseModalButton != null) {
 
@@ -731,6 +986,21 @@ if (musicakesTransferButton != null) {
   });
 }
 
+if (paymentTokenSelect != null) {
+paymentTokenSelect.addEventListener('change', () => {
+	if (web3) {
+	  if (checkChainId(window.currentChainId, ethereumChainId)) {
+		var paymentTokenAddress = paymentTokenSelect.value;
+		console.log(paymentTokenAddress);
+		window.paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
+	        loadInterface();
+	      }
+	} else {
+		alert('Please install MetaMask to continue!');
+	}
+});
+}
+
 
 async function loadInterface() {
 
@@ -793,13 +1063,63 @@ async function loadInterface() {
 
 	// Get unclaimed dividends of current account
 
-	var accountUnclaimedDividends = musicakesContract.methods.withdrawableFundsOf(account).call(function(error, result) {
+	var accountUnclaimedDividends = musicakesContract.methods.withdrawableFundsOf(account, paymentTokenAddress).call(function(error, result) {
 		if (!error) {
 			accountUnclaimedDividendsFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
 			showAccountUnclaimedDividends.innerHTML = accountUnclaimedDividendsFormatted;
 		} else {
 			console.log(error);
 		}
+	});
+
+}
+
+function _payMusicakes(_account, _payAmountFormatted, _paymentTokenAddress) {
+	console.log("pay musicakes");
+	musicakesContract.methods.payToContract(_payAmountFormatted, _paymentTokenAddress).send({from: _account})
+	.
+	once('transactionHash', function(hash) {
+		console.log(hash);
+
+		var data = JSON.stringify({
+			transaction_hash: hash,
+			wallet_address: _account
+		});
+
+		var url;
+
+		if (objectType === 'release') {
+			url = '/releases/' + objectId.toString() + '/purchase';
+		} else if (objectType === 'track') {
+			url = '/tracks/' + objectId.toString() + '/purchase';
+		}
+
+		fetch(url, {
+			method: 'POST',
+			credentials: 'same-origin',
+			headers: {
+		  		'X-CSRFToken': csrf_token_purchase,
+		  		'Content-Type': 'application/json',
+		  		'Accept': 'application/json'
+			},
+			body: data
+		})
+		.then(response => {
+			console.log(response);
+
+			if (response.ok) {
+			  alert("Your transaction is pending.");
+			}
+
+			return response.json();
+		})
+		.then(data => {
+			console.log(data);
+		});
+
+	})
+	.catch(error => {
+		console.log(error);
 	});
 
 }
@@ -819,49 +1139,37 @@ async function payMusicakes() {
 
   	var payAmountFormatted = web3.utils.toWei(payAmount);
 
+	paymentTokenContract.methods.allowance(account, musicakesAddress).call(function(error, result) {
+		if (!error) {
+			console.log(result);
 
-		paymentTokenContract.methods.transfer(musicakesAddress, payAmountFormatted).send({from: account})
-		.once('transactionHash', function(hash) {
-			console.log(hash);
 
-      var data = JSON.stringify({
-        transaction_hash: hash,
-        wallet_address: account
-      });
+			if (result < payAmountFormatted) {
+				paymentTokenContract.methods.approve(musicakesAddress, payAmountFormatted).send({from: account})
 
-      var url;
+				.once('transactionHash', function(hash) {
+					console.log(hash);
+				})
+				.once('receipt', function(receipt) {
+					console.log(receipt);
+					_payMusicakes(account, payAmountFormatted, paymentTokenContract.options.address);
 
-      if (objectType === 'release') {
-        url = '/releases/' + objectId.toString() + '/purchase';
-      } else if (objectType === 'track') {
-        url = '/tracks/' + objectId.toString() + '/purchase';
-      }
+				})
+				.on('error', function(error) {
+					console.log(error);
+				});
+			} else {
+				_payMusicakes(account, payAmountFormatted, paymentTokenContract.options.address);
+			}
 
-      fetch(url, {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-          'X-CSRFToken': csrf_token_purchase,
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: data
-      })
-      .then(response => {
-        console.log(response);
-        if (response.ok) {
-          alert("Your transaction is pending.");
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log(data);
-      });
-
-		})
-		.catch(error => {
+		} else {
 			console.log(error);
-		});
+		}
+	});
+
+
+
+
 
   }
 
