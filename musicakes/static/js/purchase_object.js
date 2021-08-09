@@ -923,7 +923,6 @@ function _loadMusicakesWithdrawablePaymentTokenBalances(_account) {
 		(function(cntr) {
 			var currentHolder = withdrawablePaymentTokenBalanceHolders[i];
 			var _currentPaymentTokenAddress = currentHolder.dataset.address;
-			var _paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, _currentPaymentTokenAddress);
 			musicakesContract.methods.withdrawableFundsOf(_account, _currentPaymentTokenAddress).call(function(error, result) {
 				if (!error) {
 					var currentWithdrawablePaymentTokenBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
@@ -1062,6 +1061,19 @@ async function loadInterface() {
   		var accountBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
   		// showAccountBalance.innerHTML = accountBalance;
   		} else {
+			console.log(error);
+		}
+	});
+
+	// Get payment token balance of current address
+
+	var accountPaymentTokenBalance = paymentTokenContract.methods.balanceOf(account).call(function(error, result) {
+		if (!error) {
+			var accountPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
+			if (showAccountPaymentTokenBalance) {
+				showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
+			}
+		} else {
 			console.log(error);
 		}
 	});
