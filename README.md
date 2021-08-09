@@ -114,7 +114,7 @@ flask run
 
 7. In a new terminal, run the following command to start a Celery worker
 ```
-celery -A musicakes.celery worker
+celery -A musicakes.celery_app worker
 ```
 
 #### Ropsten Testnet
