@@ -1,4 +1,4 @@
-{% macro musicakes_dashboard(_object) %}
+{% macro musicakes_dashboard(_object, _accepted_payment_tokens) %}
 
 <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#manage-musicakes-modal" id="btn-manage-musicakes">
   Manage
@@ -29,16 +29,27 @@
           <span id = "user-musicakes-balance"></span>
         </p>
 
+		<p>Balance held in Musicakes contract:</p>
+        <div id = "musicakes-payment-token-display">
+          {% for payment_token in accepted_payment_tokens %}
+		  <p>{{ payment_token.symbol }}:
+			  <span data-address="{{ payment_token.address }}">
 
-        <p id = "musicakes-payment-token-display">
-          <span>DAI balance in Musicakes contract: </span>
-          <span id = "musicakes-payment-token-balance"></span>
-        </p>
+			  </span>
+		  </p>
+		  {% endfor %}
+        </div>
 
-        <p id="account-unclaimed-dividends-display">
-          <span>Dividends unclaimed: </span>
-          <span id="account-unclaimed-dividends"></span>
-        </p>
+        <p>Dividends unclaimed:</p>
+		<div id="account-unclaimed-dividends-display">
+		  {% for payment_token in accepted_payment_tokens %}
+		  <p>{{ payment_token.symbol }}:
+			  <span data-address="{{ payment_token.address }}">
+
+			  </span>
+		  </p>
+		  {% endfor %}
+        </div>
       </div>
 
       <div class="modal-footer">
