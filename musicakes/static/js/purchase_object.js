@@ -1049,7 +1049,7 @@ paymentTokenSelect.addEventListener('change', () => {
 async function loadInterface() {
 
   var accounts = await web3.eth.getAccounts();
-  const account = accounts[0];
+  const account = web3.utils.toChecksumAddress(accounts[0]);
   if (showAccountAddress) {
 	  showAccountAddress.innerHTML = account;
   }
