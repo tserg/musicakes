@@ -45,9 +45,9 @@ if (csrf_token_purchase) {
 
 // paymentTokenAddress is declared as var because it may be re-declared in support-artist.js
 
-var paymentTokenAddress = paymentTokenSelect.value;
+var paymentTokenAddress = web3.utils.toChecksumAddress((paymentTokenSelect.value);
 console.log(paymentTokenAddress);
-const musicakesAddress = document.querySelector('meta[property~="smart-contract-address"]').getAttribute('content');
+const musicakesAddress = web3.utils.toChecksumAddress(document.querySelector('meta[property~="smart-contract-address"]').getAttribute('content'));
 
 var _paymentTokenAbi = [
     {
@@ -899,7 +899,7 @@ function _loadMusicakesPaymentTokenBalances() {
 	for (var i=0; i<paymentTokenBalancesHolders.length; i++) {
 		(function(cntr) {
 			var currentHolder = paymentTokenBalancesHolders[i];
-			var _currentPaymentTokenAddress = currentHolder.dataset.address;
+			var _currentPaymentTokenAddress = web3.utils.toChecksumAddress(currentHolder.dataset.address);
 
 			var _paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, _currentPaymentTokenAddress);
 			_paymentTokenContract.methods.balanceOf(musicakesAddress).call(function(error, result) {
@@ -922,7 +922,7 @@ function _loadMusicakesWithdrawablePaymentTokenBalances(_account) {
 	for (var i=0; i<withdrawablePaymentTokenBalanceHolders.length; i++) {
 		(function(cntr) {
 			var currentHolder = withdrawablePaymentTokenBalanceHolders[i];
-			var _currentPaymentTokenAddress = currentHolder.dataset.address;
+			var _currentPaymentTokenAddress = web3.utils.toChecksumAddress(currentHolder.dataset.address);
 			musicakesContract.methods.withdrawableFundsOf(_account, _currentPaymentTokenAddress).call(function(error, result) {
 				if (!error) {
 					var currentWithdrawablePaymentTokenBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
