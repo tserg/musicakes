@@ -48,6 +48,7 @@ if (csrf_token_purchase) {
 var paymentTokenAddress = paymentTokenSelect.value;
 console.log(paymentTokenAddress);
 const musicakesAddress = document.querySelector('meta[property~="smart-contract-address"]').getAttribute('content');
+console.log("musicakesAddress: " + musicakesAddress);
 
 var _paymentTokenAbi = [
     {
@@ -1049,7 +1050,9 @@ paymentTokenSelect.addEventListener('change', () => {
 async function loadInterface() {
 
   var accounts = await web3.eth.getAccounts();
-  const account = web3.utils.toChecksumAddress(accounts[0]);
+  console.log("load interface: get accounts" + accounts);
+  var account = web3.utils.toChecksumAddress(accounts[0]);
+  console.log("loadinterface account: " + account);
   if (showAccountAddress) {
 	  showAccountAddress.innerHTML = account;
   }
