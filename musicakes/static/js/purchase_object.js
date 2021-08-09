@@ -1049,9 +1049,9 @@ paymentTokenSelect.addEventListener('change', () => {
 
 async function loadInterface() {
 
-  var accounts = await web3.eth.getAccounts();
+  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
   console.log("load interface: get accounts" + accounts);
-  var account = web3.utils.toChecksumAddress(accounts[0]);
+  const account = web3.utils.toChecksumAddress(accounts[0]);
   console.log("loadinterface account: " + account);
   if (showAccountAddress) {
 	  showAccountAddress.innerHTML = account;
