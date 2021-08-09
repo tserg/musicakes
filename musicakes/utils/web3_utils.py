@@ -2,14 +2,21 @@ import json
 import os
 import time
 
+from dotenv import load_dotenv
+
 from web3 import Web3, HTTPProvider
 from web3.exceptions import TransactionNotFound
 
-PTG_ADDRESS = '0x8A004497650f51ea0FfA204fEd2Ef436189c224A'
+load_dotenv()
+
+# Environment variables for Ethereum blockchain
+
+FDT_FACTORY_ADDRESS = os.getenv('FDT_FACTORY_ADDRESS', 'Does not exist')
 
 dir = os.path.dirname(__file__)
 ptg_filename = os.path.join(dir, 'abis/PaymentTokenGovernorProxy.json')
 erc20_filename = os.path.join(dir, 'abis/ERC20.json')
+fdtf_filename = os.path.join(dir, 'abis/FundsDistributionTokenMultiERC20WithFeeFactory.json')
 
 with open(ptg_filename) as f:
 	ptg_json = json.load(f)
@@ -17,8 +24,12 @@ with open(ptg_filename) as f:
 with open(erc20_filename) as f:
 	erc20_json = json.load(f)
 
+with open(fdtf_filename) as f:
+	fdtf_json = json.load(f)
+
 ptg_abi = ptg_json["abi"]
 erc20_abi = erc20_json["abi"]
+fdtf_abi = fdtf_json["abi"]
 
 def check_transaction_receipt(_chainId, _transactionHash):
     """
@@ -84,7 +95,11 @@ def get_accepted_payment_tokens_info(_chainId):
 
 	result = []
 
-	payment_token_governor_instance = w3.eth.contract(address=PTG_ADDRESS, abi=ptg_abi)
+	fdt_factory_instance = w3.eth.contract(address=Web3.toChecksumAddress(FDT_FACTORY_ADDRESS), abi=fdtf_abi)
+
+	_payment_token_governor_proxy_address = fdt_factory_instance.functions.payment_token_governor_proxy_address().call()
+
+	payment_token_governor_instance = w3.eth.contract(address=_payment_token_governor_proxy_address, abi=ptg_abi)
 
 	_accepted_payment_token_count = payment_token_governor_instance.functions.get_accepted_payment_token_count().call()
 
