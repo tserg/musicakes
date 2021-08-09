@@ -315,7 +315,7 @@ def show_release_for_deployment(release_id):
 
             '''
 
-            contract_factory_address = MusicakesContractFactory.query.get(2).smart_contract_address
+            contract_factory_address = MusicakesContractFactory.query.get(3).smart_contract_address
             payment_token_address = PaymentToken.query.get(1).smart_contract_address
 
             return render_template('releases/deploy_release.html',

@@ -2,7 +2,6 @@ var ethereumChainId = parseInt(document.querySelector('meta[property~="chain-id"
 
 const release_id = parseInt(document.querySelector('meta[property~="release-id"]').getAttribute('content'));
 
-var paymentTokenAddress = document.querySelector('meta[property~="payment-token-address"]').getAttribute('content');
 const musicakesFactoryContractAddress = document.querySelector('meta[property~="contract-factory-address"]').getAttribute('content');
 
 
@@ -26,7 +25,7 @@ var _abi = [
           "type": "uint256"
         },
         {
-          "indexed": true,
+          "indexed": false,
           "name": "token",
           "type": "address"
         },
@@ -53,6 +52,14 @@ var _abi = [
         {
           "name": "_admin",
           "type": "address"
+        },
+        {
+          "name": "_payment_token_governor_proxy_address",
+          "type": "address"
+        },
+        {
+          "name": "_fee_governor_proxy_address",
+          "type": "address"
         }
       ],
       "outputs": [],
@@ -60,7 +67,7 @@ var _abi = [
       "type": "constructor"
     },
     {
-      "gas": 132429,
+      "gas": 134529,
       "inputs": [
         {
           "name": "_name",
@@ -77,10 +84,6 @@ var _abi = [
         {
           "name": "_supply",
           "type": "uint256"
-        },
-        {
-          "name": "_paymentTokenAddress",
-          "type": "address"
         }
       ],
       "name": "deploy_fdt_contract",
@@ -96,7 +99,7 @@ var _abi = [
     {
       "gas": 1118,
       "inputs": [],
-      "name": "target",
+      "name": "admin",
       "outputs": [
         {
           "name": "",
@@ -109,7 +112,20 @@ var _abi = [
     {
       "gas": 1148,
       "inputs": [],
-      "name": "fundsId",
+      "name": "target",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1178,
+      "inputs": [],
+      "name": "funds_id",
       "outputs": [
         {
           "name": "",
@@ -120,14 +136,53 @@ var _abi = [
       "type": "function"
     },
     {
-      "gas": 1293,
+      "gas": 1323,
       "inputs": [
         {
           "name": "arg0",
           "type": "uint256"
         }
       ],
-      "name": "fundsIdToAddress",
+      "name": "funds_id_to_address",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1238,
+      "inputs": [],
+      "name": "payment_token_address",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1268,
+      "inputs": [],
+      "name": "payment_token_governor_proxy_address",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "gas": 1298,
+      "inputs": [],
+      "name": "fee_governor_proxy_address",
       "outputs": [
         {
           "name": "",
@@ -204,7 +259,7 @@ async function deployMusicakesContract() {
   const token_name = "Musicakes" + release_id.toString();
   const token_symbol = "MSC_" + release_id.toString();
 
-  musicakesFactoryContract.methods.deploy_fdt_contract(token_name, token_symbol, 0, 100, paymentTokenAddress).send({from: account})
+  musicakesFactoryContract.methods.deploy_fdt_contract(token_name, token_symbol, 0, 100).send({from: account})
   .once('transactionHash', function(hash) {
     console.log(hash);
 
