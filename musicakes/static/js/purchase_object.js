@@ -1051,7 +1051,9 @@ async function loadInterface() {
 
   var accounts = await web3.eth.getAccounts();
   const account = accounts[0];
-  showAccountAddress.innerHTML = account;
+  if (showAccountAddress) {
+	  showAccountAddress.innerHTML = account;
+  }
 
 	// Get ETH balance of current address
 
@@ -1060,17 +1062,6 @@ async function loadInterface() {
   		var accountBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
   		// showAccountBalance.innerHTML = accountBalance;
   		} else {
-			console.log(error);
-		}
-	});
-
-	// Get payment token balance of current address
-
-	var accountPaymentTokenBalance = paymentTokenContract.methods.balanceOf(account).call(function(error, result) {
-		if (!error) {
-			var accountPaymentTokenBalanceFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-			showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
-		} else {
 			console.log(error);
 		}
 	});

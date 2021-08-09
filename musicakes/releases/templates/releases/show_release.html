@@ -56,6 +56,11 @@
         <a href="/account/purchases" type="button" class="btn btn-sm btn-outline-secondary">
           Download
         </a>
+		<select class="form-control" id="paymentTokenSelect" style="display: none;">
+			{% for payment_token in accepted_payment_tokens %}
+			<option value="{{ payment_token.address }}" {% if loop.index == 1 %}selected{% endif %}>{{ payment_token.symbol }} - {{ payment_token.name }}</option>
+			{% endfor %}
+		</select>
         {% else %}
 
         {{ purchase_modal('release', release, userinfo, accepted_payment_tokens) }}
