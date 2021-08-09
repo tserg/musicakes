@@ -45,9 +45,9 @@ if (csrf_token_purchase) {
 
 // paymentTokenAddress is declared as var because it may be re-declared in support-artist.js
 
-var paymentTokenAddress = web3.utils.toChecksumAddress((paymentTokenSelect.value);
+var paymentTokenAddress = paymentTokenSelect.value;
 console.log(paymentTokenAddress);
-const musicakesAddress = web3.utils.toChecksumAddress(document.querySelector('meta[property~="smart-contract-address"]').getAttribute('content'));
+const musicakesAddress = document.querySelector('meta[property~="smart-contract-address"]').getAttribute('content');
 
 var _paymentTokenAbi = [
     {
@@ -876,10 +876,10 @@ window.addEventListener('load', async () => {
 
     checkChainId(currentChainId, ethereumChainId);
 
-    window.paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
+    window.paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, web3.utils.toChecksumAddress(paymentTokenAddress));
 
     if (musicakesAddress.length > 2) {
-      window.musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
+      window.musicakesContract = new web3.eth.Contract(_musicakesAbi, web3.utils.toChecksumAddress(musicakesAddress));
     } else {
       window.musicakesContract = null;
     }
