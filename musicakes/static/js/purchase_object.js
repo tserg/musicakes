@@ -48,6 +48,7 @@ if (csrf_token_purchase) {
 var paymentTokenAddress = paymentTokenSelect.value;
 console.log(paymentTokenAddress);
 const musicakesAddress = document.querySelector('meta[property~="smart-contract-address"]').getAttribute('content');
+console.log("musicakesAddress: " + musicakesAddress);
 
 var _paymentTokenAbi = [
     {
@@ -876,10 +877,10 @@ window.addEventListener('load', async () => {
 
     checkChainId(currentChainId, ethereumChainId);
 
-    window.paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
+    window.paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, web3.utils.toChecksumAddress(paymentTokenAddress));
 
     if (musicakesAddress.length > 2) {
-      window.musicakesContract = new web3.eth.Contract(_musicakesAbi, musicakesAddress);
+      window.musicakesContract = new web3.eth.Contract(_musicakesAbi, web3.utils.toChecksumAddress(musicakesAddress));
     } else {
       window.musicakesContract = null;
     }
@@ -899,7 +900,7 @@ function _loadMusicakesPaymentTokenBalances() {
 	for (var i=0; i<paymentTokenBalancesHolders.length; i++) {
 		(function(cntr) {
 			var currentHolder = paymentTokenBalancesHolders[i];
-			var _currentPaymentTokenAddress = currentHolder.dataset.address;
+			var _currentPaymentTokenAddress = web3.utils.toChecksumAddress(currentHolder.dataset.address);
 
 			var _paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, _currentPaymentTokenAddress);
 			_paymentTokenContract.methods.balanceOf(musicakesAddress).call(function(error, result) {
@@ -922,7 +923,7 @@ function _loadMusicakesWithdrawablePaymentTokenBalances(_account) {
 	for (var i=0; i<withdrawablePaymentTokenBalanceHolders.length; i++) {
 		(function(cntr) {
 			var currentHolder = withdrawablePaymentTokenBalanceHolders[i];
-			var _currentPaymentTokenAddress = currentHolder.dataset.address;
+			var _currentPaymentTokenAddress = web3.utils.toChecksumAddress(currentHolder.dataset.address);
 			musicakesContract.methods.withdrawableFundsOf(_account, _currentPaymentTokenAddress).call(function(error, result) {
 				if (!error) {
 					var currentWithdrawablePaymentTokenBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
@@ -1048,8 +1049,10 @@ paymentTokenSelect.addEventListener('change', () => {
 
 async function loadInterface() {
 
-  var accounts = await web3.eth.getAccounts();
-  const account = accounts[0];
+  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+  console.log("load interface: get accounts" + accounts);
+  const account = web3.utils.toChecksumAddress(accounts[0]);
+  console.log("loadinterface account: " + account);
   if (showAccountAddress) {
 	  showAccountAddress.innerHTML = account;
   }

@@ -99,7 +99,7 @@ def get_accepted_payment_tokens_info(_chainId):
 
 	_payment_token_governor_proxy_address = fdt_factory_instance.functions.payment_token_governor_proxy_address().call()
 
-	payment_token_governor_instance = w3.eth.contract(address=_payment_token_governor_proxy_address, abi=ptg_abi)
+	payment_token_governor_instance = w3.eth.contract(address=Web3.toChecksumAddress(_payment_token_governor_proxy_address), abi=ptg_abi)
 
 	_accepted_payment_token_count = payment_token_governor_instance.functions.get_accepted_payment_token_count().call()
 
@@ -107,7 +107,7 @@ def get_accepted_payment_tokens_info(_chainId):
 		return result
 
 	for i in range(1, _accepted_payment_token_count+1):
-		_payment_token_address = payment_token_governor_instance.functions.get_accepted_payment_tokens(i).call()
+		_payment_token_address = Web3.toChecksumAddress(payment_token_governor_instance.functions.get_accepted_payment_tokens(i).call())
 		print(_payment_token_address)
 
 		_payment_token = w3.eth.contract(address=_payment_token_address, abi=erc20_abi)
