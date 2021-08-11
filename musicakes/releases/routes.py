@@ -46,6 +46,7 @@ from ..utils.session_utils import (
 
 from ..utils.web3_utils import (
 	get_accepted_payment_tokens_info,
+	get_fdt_total_supply,
 )
 
 from ..decorators import (
@@ -115,7 +116,6 @@ def show_release(release_id):
     user, data = get_user_data(True)
 
     try:
-        accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID)
 
         current_release = Release.query.filter(Release.id==release_id).one_or_none()
         if current_release is None:
@@ -123,15 +123,18 @@ def show_release(release_id):
 
         release_data = current_release.short_public()
 
-        payment_token_address = PaymentToken.query.get(1).smart_contract_address
-        release_data['payment_token_address'] = payment_token_address
-
         release_data['purchasers'] = current_release.get_purchasers()
 
         # Checks if smart contract address is in db
 
         if current_release.smart_contract_address is None:
             release_data['smart_contract_address'] = "0x"
+            accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID)
+            fdt_total_supply = None
+
+        else:
+            accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID, current_release.smart_contract_address)
+            fdt_total_supply = get_fdt_total_supply(ETHEREUM_CHAIN_ID, current_release.smart_contract_address)
 
         # Get YouTube playlist URL
 
@@ -154,13 +157,16 @@ def show_release(release_id):
         else:
             creator = False
 
-        return render_template('releases/show_release.html',
-                                release=release_data,
-                                userinfo=data,
-                                creator=creator,
-                                chain_id=ETHEREUM_CHAIN_ID,
-								accepted_payment_tokens=accepted_payment_tokens,
-                                artist=artist_data)
+        return render_template(
+			'releases/show_release.html',
+            release=release_data,
+            userinfo=data,
+            creator=creator,
+            chain_id=ETHEREUM_CHAIN_ID,
+			accepted_payment_tokens=accepted_payment_tokens,
+            fdt_total_supply=fdt_total_supply,
+            artist=artist_data
+		)
 
     except Exception as e:
         print(e)

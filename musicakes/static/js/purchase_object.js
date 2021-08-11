@@ -7,9 +7,7 @@ const showAccountPaymentTokenBalance = document.querySelector('#payment-token-ba
 
 const manageMusicakesButton = document.querySelector('#btn-manage-musicakes');
 
-const showMusicakesTotalSupply = document.querySelector('#musicakes-supply');
 const showAccountMusicakesBalance = document.querySelector('#user-musicakes-balance');
-const showMusicakesPaymentTokenBalance = document.querySelector('#musicakes-payment-token-balance');
 const showAccountUnclaimedDividends = document.querySelector('#account-unclaimed-dividends');
 
 const musicakesPayButton = document.querySelector('#btn-pay-contract');
@@ -894,27 +892,7 @@ window.addEventListener('load', async () => {
 
 });
 
-function _loadMusicakesPaymentTokenBalances() {
-	var paymentTokenBalancesHolders = document.querySelector('#musicakes-payment-token-display').getElementsByTagName('span');
 
-	for (var i=0; i<paymentTokenBalancesHolders.length; i++) {
-		(function(cntr) {
-			var currentHolder = paymentTokenBalancesHolders[i];
-			var _currentPaymentTokenAddress = web3.utils.toChecksumAddress(currentHolder.dataset.address);
-
-			var _paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, _currentPaymentTokenAddress);
-			_paymentTokenContract.methods.balanceOf(musicakesAddress).call(function(error, result) {
-				if (!error) {
-					var currentMusicakesPaymentTokenBalance = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
-					currentHolder.innerHTML = currentMusicakesPaymentTokenBalance;
-				} else {
-					console.log(error);
-				}
-			});
-
-		})(i);
-	};
-}
 
 function _loadMusicakesWithdrawablePaymentTokenBalances(_account) {
 
@@ -960,7 +938,6 @@ if (manageMusicakesButton != null) {
 
       if (checkChainId(window.currentChainId, ethereumChainId)) {
         loadInterface();
-		_loadMusicakesPaymentTokenBalances();
       }
     } else {
       alert('Please install MetaMask to continue!');
@@ -1076,16 +1053,6 @@ async function loadInterface() {
 			if (showAccountPaymentTokenBalance) {
 				showAccountPaymentTokenBalance.innerHTML = accountPaymentTokenBalanceFormatted;
 			}
-		} else {
-			console.log(error);
-		}
-	});
-
-	// Get total supply of Musicakes
-
-	var musicakesTotalSupply = musicakesContract.methods.totalSupply().call(function(error, result) {
-		if (!error) {
-			showMusicakesTotalSupply.innerHTML = result;
 		} else {
 			console.log(error);
 		}

@@ -102,7 +102,7 @@ def show_track(track_id):
     user, data = get_user_data(True)
 
     try:
-        accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID)
+
 
         current_track = Track.query.filter(Track.id==track_id).one_or_none()
 
@@ -127,6 +127,10 @@ def show_track(track_id):
 
         if formatted_track_data['smart_contract_address'] is None:
             formatted_track_data['smart_contract_address'] = "0x"
+            accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID)
+
+        else:
+            accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID)
 
         # Get YouTube playlist URL
 

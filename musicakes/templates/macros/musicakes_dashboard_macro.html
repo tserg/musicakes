@@ -21,7 +21,7 @@
 
         <p id = "musicakes-supply-display">
           <span>Total supply of Musicakes: </span>
-          <span id = "musicakes-supply"></span>
+          {{ fdt_total_supply }}
         </p>
 
         <p id = "user-token-balance-display">
@@ -29,13 +29,10 @@
           <span id = "user-musicakes-balance"></span>
         </p>
 
-		<p>Balance held in Musicakes contract:</p>
+		<p>Balance held in Musicakes contract (admin fees in bracket):</p>
         <div id = "musicakes-payment-token-display">
           {% for payment_token in accepted_payment_tokens %}
-		  <p>{{ payment_token.symbol }}:
-			  <span data-address="{{ payment_token.address }}">
-
-			  </span>
+		  <p>{{ payment_token.symbol }}: {{ payment_token.balance }} ({{ payment_token.admin_fee_balance }})
 		  </p>
 		  {% endfor %}
         </div>
