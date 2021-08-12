@@ -1,13 +1,18 @@
 const supportArtistButton = document.querySelector('#btn-support-artist');
 const supportArtistValue = document.querySelector('#support-artist-amount');
 
+const showAccountAddressSupportArtist = document.querySelector('#support-artist-account-address');
+const showAccountPaymentTokenBalanceSupportArtist = document.querySelector('#payment-token-balance-support-artist');
+const launchSupportArtistModalButton = document.querySelector("#support-artist-modal-btn");
+
 var ethereumChainId = parseInt(document.querySelector('meta[property~="chain-id"]').getAttribute('content'));
 
 const artistWalletAddress = document.querySelector('meta[property~="artist-wallet-address"]').getAttribute('content');
 console.log(artistWalletAddress);
 
 /* Payment token contract */
-var paymentTokenAddress = document.querySelector('meta[property~="payment-token-address"]').getAttribute('content');
+const paymentTokenSelectSupportArtist = document.querySelector('#paymentTokenSelectSupportArtist');
+var supportArtistPaymentTokenAddress = paymentTokenSelect.value;
 
 var _paymentTokenAbi = [
     {
@@ -329,7 +334,7 @@ window.addEventListener('load', async () => {
 
     checkChainId(currentChainId, ethereumChainId);
 
-    window.paymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, paymentTokenAddress);
+    window.supportArtistPaymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, web3.utils.toChecksumAddress(supportArtistPaymentTokenAddress));
 
   } else {
 
@@ -338,6 +343,36 @@ window.addEventListener('load', async () => {
   }
 
 });
+
+if (launchSupportArtistModalButton != null) {
+
+  launchSupportArtistModalButton.addEventListener('click', () => {
+	console.log("support artist modal launched");
+    if (web3) {
+
+      if (checkChainId(window.currentChainId, ethereumChainId)) {
+        loadSupportArtistInterface();
+      }
+    } else {
+      alert('Please install MetaMask to continue!');
+    }
+  });
+}
+
+if (paymentTokenSelectSupportArtist != null) {
+	paymentTokenSelectSupportArtist.addEventListener('change', () => {
+		if (web3) {
+		  if (checkChainId(window.currentChainId, ethereumChainId)) {
+			var supportArtistPaymentTokenAddress = paymentTokenSelectSupportArtist.value;
+			console.log(supportArtistPaymentTokenAddress);
+			window.supportArtistPaymentTokenContract = new web3.eth.Contract(_paymentTokenAbi, supportArtistPaymentTokenAddress);
+		        loadSupportArtistInterface();
+		      }
+		} else {
+			alert('Please install MetaMask to continue!');
+		}
+	});
+}
 
 if (supportArtistButton != null) {
   supportArtistButton.addEventListener('click', () => {
@@ -353,6 +388,32 @@ if (supportArtistButton != null) {
   });
 }
 
+async function loadSupportArtistInterface() {
+
+  const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+  const account = web3.utils.toChecksumAddress(accounts[0]);
+
+  if (showAccountAddressSupportArtist) {
+	  showAccountAddressSupportArtist.innerHTML = account;
+  }
+
+	// Get payment token balance of current address
+
+	var accountPaymentTokenBalanceSupportArtist = supportArtistPaymentTokenContract.methods.balanceOf(account).call(function(error, result) {
+		if (!error) {
+			var accountPaymentTokenBalanceSupportArtistFormatted = (parseFloat(result)/parseFloat(10**18)).toFixed(18);
+			if (showAccountPaymentTokenBalanceSupportArtist) {
+				showAccountPaymentTokenBalanceSupportArtist.innerHTML = accountPaymentTokenBalanceSupportArtistFormatted;
+			}
+		} else {
+			console.log(error);
+		}
+	});
+
+
+}
+
 async function supportArtist() {
 
   var accounts = await web3.eth.getAccounts();
@@ -361,7 +422,7 @@ async function supportArtist() {
   var supportAmount = supportArtistValue.value;
   var supportAmountFormatted = web3.utils.toWei(supportAmount);
 
-  paymentTokenContract.methods.transfer(artistWalletAddress, supportAmountFormatted).send({from: account})
+  supportArtistPaymentTokenContract.methods.transfer(artistWalletAddress, supportAmountFormatted).send({from: account})
   .once('transactionHash', function(hash) {
     console.log(hash);
   })
