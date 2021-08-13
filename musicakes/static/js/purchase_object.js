@@ -16,13 +16,6 @@ const musicakesPayValue = document.querySelector('#pay-contract-amount');
 const musicakesClaimDividendsButton = document.querySelector('#btn-claim-dividends');
 const musicakesUpdateDividendsButton = document.querySelector('#btn-update-dividends');
 
-const musicakesTransferButton = document.querySelector('#btn-transfer-musicakes');
-const musicakesTransferAddress = document.querySelector('#transfer-musicakes-address');
-const musicakesTransferAmount = document.querySelector('#transfer-musicakes-amount');
-
-const seeMoreButton = document.querySelector('#btn-see-more');
-const seeMoreArrow = document.querySelector('#icon-see-more');
-const seeMoreText = document.querySelector('#text-see-more');
 const musicakesDashboard = document.querySelector('#musicakes-dashboard');
 // const musicakesManagementDashboard = document.querySelector('#musicakes-management-dashboard');
 
@@ -993,20 +986,6 @@ if (musicakesUpdateDividendsButton != null) {
   });
 }
 
-if (musicakesTransferButton != null) {
-  musicakesTransferButton.addEventListener('click', () => {
-
-    if (web3) {
-
-      if (checkChainId(window.currentChainId, ethereumChainId)) {
-        transferMusicakes();
-      }
-    } else {
-      alert('Please install MetaMask to continue!');
-    }
-  });
-}
-
 if (paymentTokenSelect != null) {
 paymentTokenSelect.addEventListener('change', () => {
 	if (web3) {
@@ -1209,34 +1188,4 @@ async function updateDividends() {
 	.on('error', function(error) {
 		console.log(error);
 	});
-}
-
-async function transferMusicakes() {
-
-  var accounts = await web3.eth.getAccounts();
-  const account = accounts[0];
-
-  var musicakesTransferAddressValue = musicakesTransferAddress.value;
-  var musicakesTransferAmountValue = Number(musicakesTransferAmount.value);
-
-  if (musicakesTransferAddressValue.length !== 42 || musicakesTransferAddressValue.indexOf('0x') !== 0) {
-    alert('Please enter a valid Ethereum address.');
-  }
-
-  if (Number.isInteger(musicakesTransferAmountValue) == false) {
-    alert("The amount must be an integer.");
-  }
-
-  musicakesContract.methods.transfer(musicakesTransferAddressValue,
-    musicakesTransferAmountValue).send({from: account})
-  .once('transactionHash', function(hash) {
-    console.log(hash);
-  })
-  .once('receipt', function(receipt) {
-    console.log(receipt);
-    location.reload();
-  })
-  .on('error', function(error) {
-    console.log(error);
-  });
 }

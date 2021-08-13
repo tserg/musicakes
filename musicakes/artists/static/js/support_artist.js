@@ -12,7 +12,7 @@ console.log(artistWalletAddress);
 
 /* Payment token contract */
 const paymentTokenSelectSupportArtist = document.querySelector('#paymentTokenSelectSupportArtist');
-var supportArtistPaymentTokenAddress = paymentTokenSelect.value;
+var supportArtistPaymentTokenAddress = paymentTokenSelectSupportArtist.value;
 
 var _paymentTokenAbi = [
     {

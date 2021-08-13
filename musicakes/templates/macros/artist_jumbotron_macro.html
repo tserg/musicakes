@@ -120,10 +120,7 @@
 <meta property="artist-wallet-address" content="{{ artist.wallet_address }}">
 
 {% if 'artists' in request.path %}
-<!-- check if path is for artist to avoid clashing meta fields for chain_id and payment_token_address -->
-
-<!-- proxy element to store and query payment token address --->
-<meta property="payment-token-address" content="{{ payment_token_address }}">
+<!-- check if path is for artist to avoid clashing meta fields for chain_id -->
 
 <!-- proxy element to store and query ethereum chain ID --->
 <meta property="chain-id" content="{{ chain_id }}">

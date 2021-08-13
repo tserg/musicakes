@@ -25,7 +25,6 @@ from ..models import (
     Artist,
     Release,
     Track,
-    PaymentToken,
     PurchaseCeleryTask
 )
 
@@ -117,9 +116,6 @@ def show_track(track_id):
             abort(404)
 
         formatted_track_data = current_track.short_public()
-
-        payment_token_address = PaymentToken.query.get(1).smart_contract_address
-        formatted_track_data['payment_token_address'] = payment_token_address
 
         formatted_track_data['purchasers'] = current_track.get_purchasers()
 

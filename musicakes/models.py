@@ -574,16 +574,3 @@ class DeployCeleryTask(Web3Task, db.Model):
             'is_confirmed': self.is_confirmed,
             'is_visible': self.is_visible
         }
-
-class PaymentToken(db.Model):
-
-    id = Column(Integer, primary_key=True)
-    smart_contract_address = Column(String, unique=True, nullable=False)
-    ticker = Column(String, unique=False, nullable=False)
-
-    def short(self):
-        return {
-            'id': self.id,
-            'smart_contract_address': self.smart_contract_address,
-            'ticker': self.ticker
-        }

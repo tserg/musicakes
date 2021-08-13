@@ -20,11 +20,14 @@ from ..models import (
     Artist,
     Release,
     Track,
-    PaymentToken
 )
 
 from ..utils.session_utils import (
     get_user_data
+)
+
+from ..utils.web3_utils import (
+	get_accepted_payment_tokens_info,
 )
 
 from ..decorators import (
@@ -99,14 +102,16 @@ def show_artist(artist_id):
 
         artist_data = current_artist.short()
 
-        payment_token_address = PaymentToken.query.get(1).smart_contract_address
+        accepted_payment_tokens = get_accepted_payment_tokens_info(ETHEREUM_CHAIN_ID)
 
-        return render_template('artists/show_artist.html',
-                                artist=artist_data,
-                                userinfo=data,
-                                creator=creator,
-                                chain_id=ETHEREUM_CHAIN_ID,
-                                payment_token_address=payment_token_address)
+        return render_template(
+			'artists/show_artist.html',
+            artist=artist_data,
+            userinfo=data,
+            creator=creator,
+            chain_id=ETHEREUM_CHAIN_ID,
+            accepted_payment_tokens=accepted_payment_tokens
+		)
 
     except Exception as e:
         print(e)

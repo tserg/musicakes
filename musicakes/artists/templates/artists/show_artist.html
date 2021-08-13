@@ -4,7 +4,7 @@
 {% block title %}Musicakes | {{ artist.name }}{% endblock %}
 {% block content %}
 
-{{ artist_jumbotron() }}
+{{ artist_jumbotron(accepted_payment_tokens) }}
 
 <div class="album py-5">
 	<meta id="page" data-page="{{ request.args.get('page')|int }}">
